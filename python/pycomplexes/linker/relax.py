@@ -107,6 +107,13 @@ def potential(xyz):
     return torsion_potential(xyz) + bond_potential(xyz) + angle_potential(xyz)
 
 
+def translation(xyz, width):
+    N = len(xyz)
+    idx = np.random.choice(np.arange(N - 2)) + 1
+    xyz[idx] = xyz[idx] + (np.random.random(3) - .5) * width
+    return xyz
+
+
 def relax(xyz, temp=300, nsweep=1000, target=.3, other_coords=None, box=None):
     beta = 300 / temp
     tmp = xyz.copy()
@@ -126,8 +133,7 @@ def relax(xyz, temp=300, nsweep=1000, target=.3, other_coords=None, box=None):
     for i in range(nsweep):
         # do a sweep
         for j in range(nstep):
-            idx = np.random.choice(np.arange(N - 2)) + 1
-            tmp[idx] = tmp[idx] + (np.random.random(3) - .5) * width
+            tmp = translation(tmp, width)
 
             # if a collision occurs this means the trials is rejected
             if col_detector is not None and col_detector.collision(tmp[idx]):
