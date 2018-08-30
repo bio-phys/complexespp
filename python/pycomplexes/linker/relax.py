@@ -157,11 +157,11 @@ def relax(xyz, temp=300, nsweep=100, target=.3, other_coords=None, box=None):
             Enew = potential(tmp)
             dE = Enew - E
             if dE < 0 or np.random.random() < np.exp(-beta * dE):
-                xyz = tmp.copy()
+                np.copyto(xyz, tmp) # in-place copy to minimize allocations
                 E = Enew
                 acc += 1
             else:
-                tmp = xyz.copy()
+                np.copyto(tmp, xyz)
 
         energy[i] = E
 
