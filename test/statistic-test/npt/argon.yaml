@@ -1,0 +1,12 @@
+bead-types:
+  - AR
+charge-radii:
+  AR : 1
+membrane:
+  AR : [0, 0, 0, 0, 0, 0, 0, 0]
+energies:
+  AR:
+    AR : -0.3923437867313639
+diameter:
+  AR:
+    AR : 3.40100

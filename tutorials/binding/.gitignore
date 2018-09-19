@@ -1,0 +1,11 @@
+hydropro*
+uim1*
+ubiquitin*
+*.yaml
+*.xtc
+*.conf
+*.stat
+*_reference.pdb
+*.netcdf
+.*npz
+rmsd.dat

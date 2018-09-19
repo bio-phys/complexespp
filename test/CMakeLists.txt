@@ -1,0 +1,5 @@
+subdirs(unit-test)
+subdirs(app-test)
+if(COMPLEXES_USE_MPI)
+    subdirs(mpi-app-test)
+endif()

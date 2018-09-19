@@ -1,0 +1,19 @@
+definitions:                                                                  
+  domains:                                             
+    rigid:                                                              
+      move: rigid                                                             
+      defaults:
+          rotation: 1
+          translation: 3
+domains:
+  name: "dom1"
+  chain-ids: ["A 1", "A 5", "A 10"]
+  type: "rigid"
+  beads: ["ALA", "ALA", "HIS", "ALA"]
+  charges: [0, 1, -1]
+  coordinates:
+      - [0, 0, 0]
+      - [1, 1, 1]
+      - [2, 2, 2]
+  nbeads: 42
+  mc-moves: {}

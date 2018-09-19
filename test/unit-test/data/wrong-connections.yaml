@@ -1,0 +1,14 @@
+connections:
+    - ['dom1', 'A 1', 'dom2']
+    - ['dom2', 'B 10', 'dom3', 'C 1']
+domains:
+    0:
+        name: "dom1"
+        chain-ids: ["A 1", "A 5", "A 10"]
+    1:
+        name: "dom2"
+        chain-ids: ["B 1", "B 10"]
+    2:
+        name: "dom3"
+        chain-ids: ["C 1", "C 5", "C 10"]
+

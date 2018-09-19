@@ -1,0 +1,7 @@
+file(COPY "deca-ala.cplx" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "conf.yaml" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "conf2.yaml" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "run.sh" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "test.py" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+add_test(app-rerun-energy-trr run.sh)

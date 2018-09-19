@@ -1,0 +1,26 @@
+definitions:                                                                  
+  domains:                                             
+    rigid:                                                              
+      move: rigid                                                             
+      defaults:                                                                         
+        translation: [0, 0, 0]                                             
+        rotation: 0                                           
+    gaussian:                                                                   
+      move: gaussian                                                          
+      defaults:                                                               
+        bond-length: 3.81                                                     
+        collision-check: True  
+        max-placement-trials: 100
+  pair-interaction:
+  - function: LJH
+    domain-type-pair: [default, default]
+topologies:
+- ndomains: 3
+  full-move: false
+  domains:
+    0:
+      type: rigid
+    1:
+      type: gaussian
+    3:
+      type: rigid

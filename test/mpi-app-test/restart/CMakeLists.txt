@@ -1,0 +1,7 @@
+file(COPY "2atoms.cplx" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "conf.yaml" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "conf_restart.yaml" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "run.sh" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "test.py" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+add_test(mpi-app-restart run.sh)

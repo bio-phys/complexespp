@@ -1,0 +1,29 @@
+#ifndef COMPLEXESCONFIG_H
+#define COMPLEXESCONFIG_H
+
+/** To turn ON/OFF the log system */
+#cmakedefine USE_LOGOUTPUT
+
+/** To enable the default timing option */
+#cmakedefine USE_TIMINGOUTPUT
+
+/** To have access to the original complexes folder */
+#define COMPLEXES_SOURCE_DIR "@CMAKE_SOURCE_DIR@"
+
+
+///////////////////////////////////////////////////////
+// Flags and libs used to compile
+///////////////////////////////////////////////////////
+#include <string>
+inline std::string ComplexesCompileFlags(){
+    return "@CMAKE_CXX_FLAGS@";
+}
+inline std::string ComplexesCompileLibs(){
+    return "@LIBRARIES@";
+}
+
+/** To turn ON/OFF the MPI */
+#cmakedefine COMPLEXES_USE_MPI
+
+#endif
+

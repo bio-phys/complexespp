@@ -1,0 +1,69 @@
+box: [100, 100, 100]
+definitions:
+  domains:
+    A:
+      defaults: {rotation: 2, translation: 1}
+      move: rigid
+    EM:
+      defaults: {rotation: 2, translation: 1}
+      move: rigid
+  pair-interaction:
+  - domain-type-pair: [A, EM]
+    function: WCA
+  - domain-type-pair: [A, A]
+    function: None
+  - domain-type-pair: [EM, EM]
+    function: None
+topologies:
+- connections: []
+  domains:
+    0:
+      beads: [EM]
+      chain-ids: [A 2]
+      charges: [1.0]
+      coordinates:
+      - [0.0, 0.0, 0.0]
+      mc-moves: {}
+      meta-data: {}
+      name: EM
+      nbeads: 1
+      type: EM
+    1:
+      beads: [ALA]
+      chain-ids: [A 1]
+      charges: [1.0]
+      coordinates:
+      - [0.0, 0.0, 0.0]
+      mc-moves: {}
+      meta-data: {}
+      name: protein
+      nbeads: 1
+      type: A
+  name: test
+  ndomains: 2
+  full-move: false
+forcefield:
+  alpha: 0
+  dielectric-constant: 80
+  debye-length: 10
+  bead-types:
+    - ALA
+    - EM
+  charge-radii:
+    ALA : 1
+    EM : 1
+  membrane:
+    ALA : [0, 0, 0, 0, 0, 0, 0, 0]
+    EM : [0, 0, 0, 0, 0, 0, 0, 0]
+  energies:
+    ALA:
+      ALA : 1
+      EM : 1
+    EM:
+      EM : 1
+  diameter:
+    ALA:
+      ALA : 1
+      EM : 1
+    EM:
+      EM : 1

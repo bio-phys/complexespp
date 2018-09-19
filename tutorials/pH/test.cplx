@@ -1,0 +1,139 @@
+box: [100.0, 100.0, 100.0]
+definitions:
+  domains:
+    flat:
+      defaults: {ePSI0: -30, type: flat, z0: 15}
+      move: membrane
+    gaussian:
+      defaults: {bond-length: 3.81, collision-check: true, max-placement-trials: 100,
+        self-collision-check: true}
+      move: gaussian
+    rigid:
+      defaults: {rotation: 1.00, translation: 87.5}
+      move: rigid
+    tube:
+      defaults: {ePSI0: -30, type: tube, z0: 15}
+      move: membrane
+  pair-interaction:
+  - domain-type-pair: [default, default]
+    function: LJH
+  - domain-type-pair: [rigid, gaussian]
+    function: None
+  - domain-type-pair: [rigid, flat]
+    function: Membrane
+  - domain-type-pair: [gaussian, flat]
+    function: None
+  - domain-type-pair: [flat, flat]
+    function: None
+  - domain-type-pair: [rigid, tube]
+    function: Membrane
+  - domain-type-pair: [gaussian, tube]
+    function: None
+  - domain-type-pair: [tube, tube]
+    function: None
+topologies:
+- connections: []
+  domains:
+    0:
+      beads: [ARG]
+      chain-ids: [A 1]
+      charges: [1.0]
+      coordinates:
+      - [30.027069091796875, 70.77397155761719, 99.51589965820312]
+      mc-moves: {}
+      meta-data: {}
+      name: B0
+      nbeads: 1
+      type: rigid
+    1:
+      beads: [LYS]
+      chain-ids: [A 2]
+      charges: [1.0]
+      coordinates:
+      - [5.866093635559082, 85.31914520263672, 0.08214234560728073]
+      mc-moves: {}
+      meta-data: {}
+      name: B1
+      nbeads: 1
+      type: rigid
+  name: top0
+  ndomains: 2
+- connections: []
+  domains:
+    2:
+      beads: [GLU]
+      chain-ids: [A 3]
+      charges: [-1.0]
+      coordinates:
+      - [99.82919311523438, 8.024333953857422, 95.56975555419922]
+      mc-moves: {}
+      meta-data: {}
+      name: B2
+      nbeads: 1
+      type: rigid
+    3:
+      beads: [HIS]
+      chain-ids: [A 4]
+      charges: [0.5]
+      coordinates:
+      - [98.79429626464844, 9.090110778808594, 3.543257236480713]
+      mc-moves: {}
+      meta-data: {}
+      name: B3
+      nbeads: 1
+      type: rigid
+  name: top1
+  ndomains: 2
+- connections: []
+  domains:
+    4:
+      beads: [TYR]
+      chain-ids: [A 5]
+      charges: [0.0]
+      coordinates:
+      - [70.48287963867188, 19.852346420288086, 34.03544616699219]
+      mc-moves: {}
+      meta-data: {}
+      name: B4
+      nbeads: 1
+      type: rigid
+    5:
+      beads: [ASP]
+      chain-ids: [A 6]
+      charges: [-1.0]
+      coordinates:
+      - [81.28691101074219, 19.205848693847656, 92.348876953125]
+      mc-moves: {}
+      meta-data: {}
+      name: B5
+      nbeads: 1
+      type: rigid
+  name: top2
+  ndomains: 2
+- connections: []
+  domains:
+    6:
+      beads: [ALA]
+      chain-ids: [A 6]
+      charges: [0.0]
+      coordinates:
+      - [70.48287963867188, 19.852346420288086, 34.03544616699219]
+      mc-moves: {}
+      meta-data: {}
+      name: B6
+      nbeads: 1
+      type: rigid
+    7:
+      beads: [ALA]
+      chain-ids: [A 7]
+      charges: [0.0]
+      coordinates:
+      - [81.28691101074219, 19.205848693847656, 92.348876953125]
+      mc-moves: {}
+      meta-data: {}
+      name: B7
+      nbeads: 1
+      type: rigid
+  name: top3
+  ndomains: 2
+

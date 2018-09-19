@@ -1,0 +1,18 @@
+definitions:                                                                  
+  domains:                                             
+    rigid:                                                              
+      move: rigid                                                             
+      defaults:                                                                               
+        translation: [0, 0, 0]                                             
+        rotation: 0 
+  pair-interaction:
+  - function: LJH
+    domain-type-pair: [default, default]
+topologies:
+- ndomains: 1
+  full-move: false
+  domains:
+    0:
+      type: rigid
+    1:
+      type: rigid

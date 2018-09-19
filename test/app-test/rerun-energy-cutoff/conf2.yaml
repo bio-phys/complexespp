@@ -1,0 +1,20 @@
+structure: deca-ala.cplx
+montecarlo:
+    algorithm: nvt
+    algorithm-params:
+        accept-func: glauber
+        temperatur: 300
+    seed: 21
+    initial-position:
+        strategy: none
+    short-range-cutoff:
+            enable: True
+            radius: 30
+            container: sparse
+output:
+    log: complexes.log
+    file: run-test.pdb
+    freq: 1
+    nstructures: 500
+    stat-file: run-energy.stat
+    restart-freq: -1

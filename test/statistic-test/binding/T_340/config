@@ -1,0 +1,10 @@
+
+montecarlo:
+  algorithm: nvt
+  algorithm-params: {accept-func: metropolis, rot: 1, temperatur: 340, trans: 8}
+  initial-position: {strategy: none}
+  seed: 310977
+  short-range-cutoff: {enable: false}
+output: {file: out.xtc, freq: 1000, log: out.log, nstructures: 10000, restart-freq: -1,
+  stat-file: out.stat}
+structure: ../1q0w_A_B.cplx

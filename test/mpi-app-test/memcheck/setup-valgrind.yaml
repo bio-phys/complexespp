@@ -1,0 +1,18 @@
+structure: complex.cplx
+montecarlo:
+    algorithm: nvt
+    algorithm-params:
+        temperatur: 300
+        accept-func: metropolis
+    seed: 42
+    initial-position:
+        strategy: none
+    short-range-cutoff:
+            enable: False
+output:
+    log: complexes.log
+    file: out_00.xtc
+    freq: 1
+    nstructures: 10
+    stat-file: out_00.stat
+    restart-freq: -1

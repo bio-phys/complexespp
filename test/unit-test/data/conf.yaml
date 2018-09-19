@@ -1,0 +1,10 @@
+structure: 2atoms.yml
+montecarlo:
+    algorithm: nvt
+    algorithm-params:
+        temperatur: 300
+    seed: 424242424242424242424242
+output:
+    file: run-test.pdb
+    freq: 1
+    stat-file: run-energy.data

@@ -1,0 +1,15 @@
+build
+run-test
+*egg-info
+callgrind*
+dist
+dev
+compile.sh
+*pyc
+.cproject
+.project
+.pydevproject
+.settings
+.unison
+.cache
+*.xtc_offsets.npz

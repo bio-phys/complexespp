@@ -1,0 +1,10 @@
+#include "version.h"
+
+// This file contains some information about the exact version of complexes that
+// is being build. For this it leverages the build system to include information
+// from git and also some other hard coded information. To know how the git SHA1
+// and branch are included have a look into the CMakeLists.txt file in this
+// folder.
+
+extern const std::string GIT_BRANCH = "@GIT_REFSPEC@";
+extern const std::string GIT_COMMIT_HASH = "@GIT_SHA1@";

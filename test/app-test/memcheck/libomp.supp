@@ -1,0 +1,203 @@
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:start_thread
+   fun:clone
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_dl_signal_error
+   fun:do_sym
+   fun:dlsym_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlsym
+   fun:__kmp_itt_fini_ittlib
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:_dl_fini
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:start_thread
+   fun:clone
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:start_thread
+   fun:clone
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_dlerror_run
+   fun:dlsym
+   fun:__kmp_itt_fini_ittlib
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:_dl_fini
+   fun:__run_exit_handlers
+   fun:exit
+   fun:(below main)
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:omp_get_max_threads
+   fun:_ZN6config7CLIArgs10defineArgsEv
+   fun:_ZN6config7CLIArgsC1ERKiPKPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:start_thread
+   fun:clone
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   sched_setaffinity(mask)
+   fun:syscall
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:omp_get_max_threads
+   fun:_ZN6config7CLIArgs10defineArgsEv
+   fun:_ZN6config7CLIArgsC1ERKiPKPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   sched_setaffinity(mask)
+   fun:syscall
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:omp_get_max_threads
+   fun:_ZN5setup7CLIArgs10defineArgsEv
+   fun:_ZN5setup7CLIArgsC1ERKiPKPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:omp_get_max_threads
+   fun:_ZN5setup7CLIArgs10defineArgsEv
+   fun:_ZN5setup7CLIArgsC1ERKiPKPKc
+   fun:mai
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:omp_get_max_threads
+   fun:_ZN5setup7CLIArgs10defineArgsEv
+   fun:_ZN5setup7CLIArgsC1ERKiPKPKc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   sched_setaffinity(mask)
+   fun:syscall
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:omp_get_max_threads
+   fun:_ZN5setup7CLIArgs10defineArgsEv
+   fun:_ZN5setup7CLIArgsC1ERKiPKPKc
+   fun:_ZN5setup11ApplicationC2EiPPc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:omp_get_max_threads
+   fun:_ZN5setup7CLIArgs10defineArgsEv
+   fun:_ZN5setup7CLIArgsC1ERKiPKPKc
+   fun:_ZN5setup11ApplicationC2EiPPc
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:omp_get_max_threads
+   fun:_ZN5setup7CLIArgs10defineArgsEv
+   fun:_ZN5setup7CLIArgsC1ERKiPKPKc
+   fun:_ZN5setup11ApplicationC2EiPPc
+}

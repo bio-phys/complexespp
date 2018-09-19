@@ -1,0 +1,19 @@
+
+structure: GLY.cplx
+montecarlo:
+    algorithm: nvt
+    algorithm-params:
+        accept-func: metropolis
+        temperatur: 100
+    seed: 3333
+    initial-position:
+        strategy: none
+    short-range-cutoff:
+        enable: False
+output:
+    log: log.log
+    file: ../test-energy.trr
+    freq: 5
+    nstructures: 50
+    stat-file: energy.stat
+    restart-freq: -1

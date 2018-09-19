@@ -1,0 +1,80 @@
+box: [100.0, 100.0, 100.0]
+topologies:
+- domains:
+    0:
+      beads: [LJ]
+      chain-ids: [A 1]
+      charges: [0.0]
+      coordinates:
+      - [30.027069091796875, 70.77397155761719, 99.51589965820312]
+      mc-moves: {}
+      meta-data: {}
+      name: LJ0
+      nbeads: 1
+      type: rigid
+    1:
+      beads: [LJ]
+      chain-ids: [A 2]
+      charges: [0.0]
+      coordinates:
+      - [5.866093635559082, 85.31914520263672, 0.08214234560728073]
+      mc-moves: {}
+      meta-data: {}
+      name: LJ1
+      nbeads: 1
+      type: rigid
+  name: top0
+  ndomains: 2
+  full-move: false
+- domains:
+    2:
+      beads: [LJ]
+      chain-ids: [A 3]
+      charges: [0.0]
+      coordinates:
+      - [99.82919311523438, 8.024333953857422, 95.56975555419922]
+      mc-moves: {}
+      meta-data: {}
+      name: LJ2
+      nbeads: 1
+      type: rigid
+    3:
+      beads: [LJ]
+      chain-ids: [A 4]
+      charges: [0.0]
+      coordinates:
+      - [98.79429626464844, 9.090110778808594, 3.543257236480713]
+      mc-moves: {}
+      meta-data: {}
+      name: LJ3
+      nbeads: 1
+      type: rigid
+  name: top1
+  ndomains: 2
+  full-move: false
+- domains:
+    4:
+      beads: [LJ]
+      chain-ids: [A 5]
+      charges: [0.0]
+      coordinates:
+      - [70.48287963867188, 19.852346420288086, 34.03544616699219]
+      mc-moves: {}
+      meta-data: {}
+      name: LJ4
+      nbeads: 1
+      type: rigid
+    5:
+      beads: [LJ]
+      chain-ids: [A 6]
+      charges: [0.0]
+      coordinates:
+      - [81.28691101074219, 19.205848693847656, 92.348876953125]
+      mc-moves: {}
+      meta-data: {}
+      name: LJ5
+      nbeads: 1
+      type: rigid
+  name: top2
+  ndomains: 2
+  full-move: false

@@ -1,0 +1,131 @@
+variables:
+  USE_DEVTOOLS: "false"
+  BUILD_TYPE: release
+  RUN_TEST: "true"
+
+# structure builds into phases to quit early in the build process and be careful
+# with build resources.
+stages:
+  - minimal  # test pycomplexes and a single c++ build
+  - python  # python packages and tutorials
+  - compilers  # check multiple compilers
+  - debug  # do a debug build
+
+##################
+# STAGE: MINIMAL #
+##################
+
+release-clang-3.9:
+  image: biophys/complexespp:builder-debian
+  stage: minimal
+  variables:
+    CC: "clang-3.9"
+    CXX: "clang++-3.9"
+  script:
+    - scripts/gitlab-ci/gitlab-complexes-ci.sh
+
+#################
+# STAGE: PYTHON #
+#################
+
+pycomplexes-2.7:
+  image: debian:9
+  stage: python
+  variables:
+    PYTHON_VERSION: "2.7"
+    NUMPY_VERSION: "stable"
+    CONDA_DEPENDENCIES: 'pyyaml MDAnalysis tqdm numba'
+    CONDA_CHANNELS: "conda-forge"
+  script:
+    - apt-get update -y
+    - apt-get install git wget bzip2 -y
+    - git clone git://github.com/astropy/ci-helpers.git
+    - source ci-helpers/travis/setup_conda_linux.sh
+    - cd python
+    - python -m pytest
+
+pycomplexes-3.6:
+  image: debian:9
+  stage: python
+  variables:
+    PYTHON_VERSION: "3.6"
+    NUMPY_VERSION: "stable"
+    CONDA_DEPENDENCIES: 'pyyaml MDAnalysis tqdm numba'
+    CONDA_CHANNELS: "conda-forge"
+  script:
+    - apt-get update -y
+    - apt-get install git wget bzip2 -y
+    - git clone git://github.com/astropy/ci-helpers.git
+    - source ci-helpers/travis/setup_conda_linux.sh
+    - cd python
+    - python -m pytest
+
+# run tutorials
+notebook-tutorials:
+  image: biophys/complexespp:builder-debian
+  stage: python
+  variables:
+    PYTHON_VERSION: "3.6"
+    NUMPY_VERSION: "stable"
+    CONDA_DEPENDENCIES: 'pyyaml MDAnalysis tqdm numba notebook'
+    CONDA_CHANNELS: "conda-forge"
+  script:
+    - apt-get update -y
+    - apt-get install git wget bzip2 -y
+    - git clone git://github.com/astropy/ci-helpers.git
+    - source ci-helpers/travis/setup_conda_linux.sh
+    - scripts/gitlab-ci/gitlab-tutorials-ci.sh
+
+####################
+# STAGE: COMPILERS #
+####################
+# TODO test gcc 7 and clang 4
+
+release-gcc-5.3:
+  image: biophys/complexespp:builder-centos
+  stage: compilers
+  variables:
+    USE_DEVTOOLS: "true"
+  script:
+    - scripts/gitlab-ci/gitlab-complexes-ci.sh
+
+release-gcc-6.3:
+  image: biophys/complexespp:builder-debian
+  stage: compilers
+  script:
+    - scripts/gitlab-ci/gitlab-complexes-ci.sh
+
+release-mpi-gcc-6.3:
+  image: biophys/complexespp:builder-debian
+  stage: compilers
+  variables:
+    CC: "mpicc"
+    CXX: "mpicxx"
+  script:
+    - scripts/gitlab-ci/gitlab-complexes-ci.sh
+
+################
+# STAGE: DEBUG #
+################
+
+# check at once the debug builds. This is useful to catch wrongly defined
+# `assert` statements activated in debug builds
+debug-clang-3.9:
+  image: biophys/complexespp:builder-debian
+  stage: debug
+  variables:
+    CC: "clang-3.9"
+    CXX: "clang++-3.9"
+    BUILD_TYPE: debug
+  script:
+    - scripts/gitlab-ci/gitlab-complexes-ci.sh
+
+debug-mpi:
+  image: biophys/complexespp:builder-debian
+  stage: debug
+  variables:
+    CC: "mpicc"
+    CXX: "mpicxx"
+    BUILD_TYPE: debug
+  script:
+    - scripts/gitlab-ci/gitlab-complexes-ci.sh

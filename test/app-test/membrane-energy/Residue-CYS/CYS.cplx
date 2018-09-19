@@ -1,0 +1,170 @@
+box: [500, 500, 500]
+definitions:
+  domains:
+    flat:
+      defaults: 
+        ePSI0: -30 
+        type: flat
+        z0: 0
+      move: membrane
+    rigid:
+      defaults: 
+        rotation: 0.2
+        translation: 5
+      move: rigid
+  pair-interaction:
+  - domain-type-pair: [default, default]
+    function: LJH
+  - domain-type-pair: [rigid, flat]
+    function: Membrane
+topologies:
+- connections: []
+  domains:
+    0:
+      chain-ids: [Z 1]
+      name: cellsurface
+      nbeads: 1
+      type: flat
+      zaxis: 250
+  name: membrane
+  ndomains: 1
+  full-move: false
+- connections: []
+  domains:
+    1:
+      beads: [CYS,]
+      chain-ids: [A 1,]
+      charges: [0,]
+      coordinates:
+      - [250, 250, 250]
+      mc-moves: {}
+      meta-data: {}
+      name: 1rigid1
+      nbeads: 1
+      type: rigid
+  name: aminoacid
+  ndomains: 1
+  full-move: false
+forcefield:
+  alpha: 1
+  bead-types: [ALA, ARG, ASN, ASP, CYS, GLN, GLU, GLY, HIS, ILE, LEU, LYS, MET, PHE,
+    PRO, SER, THR, TRP, TYR, VAL, MMM]
+  charge-radii: {ALA: 1, ARG: 1, ASN: 1, ASP: 1, CYS: 1, GLN: 1, GLU: 1, GLY: 1, HIS: 1,
+    ILE: 1, LEU: 1, LYS: 1, MET: 1, MMM: 1, PHE: 1, PRO: 1, SER: 1, THR: 1, TRP: 1,
+    TYR: 1, VAL: 1}
+  debye-length: 10
+  diameter:
+    ALA: {ALA: 5.0, ARG: 5.85, ASN: 5.35, ASP: 5.3, CYS: 5.25, GLN: 5.5, GLU: 5.45,
+      GLY: 4.75, HIS: 5.55, ILE: 5.6, LEU: 5.6, LYS: 5.7, MET: 5.6, PHE: 5.7, PRO: 5.3,
+      SER: 5.1, THR: 5.3, TRP: 5.9, TYR: 5.75, VAL: 5.45}
+    ARG: {ARG: 6.7, ASN: 6.2, ASP: 6.15, CYS: 6.1, GLN: 6.35, GLU: 6.3, GLY: 5.6,
+      HIS: 6.4, ILE: 6.45, LEU: 6.45, LYS: 6.55, MET: 6.45, PHE: 6.55, PRO: 6.15,
+      SER: 5.95, THR: 6.15, TRP: 6.75, TYR: 6.6, VAL: 6.3}
+    ASN: {ASN: 5.7, ASP: 5.65, CYS: 5.6, GLN: 5.85, GLU: 5.8, GLY: 5.1, HIS: 5.9,
+      ILE: 5.95, LEU: 5.95, LYS: 6.05, MET: 5.95, PHE: 6.05, PRO: 5.65, SER: 5.45,
+      THR: 5.65, TRP: 6.25, TYR: 6.1, VAL: 5.8}
+    ASP: {ASP: 5.6, CYS: 5.55, GLN: 5.8, GLU: 5.75, GLY: 5.05, HIS: 5.85, ILE: 5.9,
+      LEU: 5.9, LYS: 6.0, MET: 5.9, PHE: 6.0, PRO: 5.6, SER: 5.4, THR: 5.6, TRP: 6.2,
+      TYR: 6.05, VAL: 5.75}
+    CYS: {CYS: 5.5, GLN: 5.75, GLU: 5.7, GLY: 5.0, HIS: 5.8, ILE: 5.85, LEU: 5.85,
+      LYS: 5.95, MET: 5.85, PHE: 5.95, PRO: 5.55, SER: 5.35, THR: 5.55, TRP: 6.15,
+      TYR: 6.0, VAL: 5.7}
+    GLN: {GLN: 6.0, GLU: 5.95, GLY: 5.25, HIS: 6.05, ILE: 6.1, LEU: 6.1, LYS: 6.2,
+      MET: 6.1, PHE: 6.2, PRO: 5.8, SER: 5.6, THR: 5.8, TRP: 6.4, TYR: 6.25, VAL: 5.95}
+    GLU: {GLU: 5.9, GLY: 5.2, HIS: 6.0, ILE: 6.05, LEU: 6.05, LYS: 6.15, MET: 6.05,
+      PHE: 6.15, PRO: 5.75, SER: 5.55, THR: 5.75, TRP: 6.35, TYR: 6.2, VAL: 5.9}
+    GLY: {GLY: 4.5, HIS: 5.3, ILE: 5.35, LEU: 5.35, LYS: 5.45, MET: 5.35, PHE: 5.45,
+      PRO: 5.05, SER: 4.85, THR: 5.05, TRP: 5.65, TYR: 5.5, VAL: 5.2}
+    HIS: {HIS: 6.1, ILE: 6.15, LEU: 6.15, LYS: 6.25, MET: 6.15, PHE: 6.25, PRO: 5.85,
+      SER: 5.65, THR: 5.85, TRP: 6.45, TYR: 6.3, VAL: 6.0}
+    ILE: {ILE: 6.2, LEU: 6.2, LYS: 6.3, MET: 6.2, PHE: 6.3, PRO: 5.9, SER: 5.7, THR: 5.9,
+      TRP: 6.5, TYR: 6.35, VAL: 6.05}
+    LEU: {LEU: 6.2, LYS: 6.3, MET: 6.2, PHE: 6.3, PRO: 5.9, SER: 5.7, THR: 5.9, TRP: 6.5,
+      TYR: 6.35, VAL: 6.05}
+    LYS: {LYS: 6.4, MET: 6.3, PHE: 6.4, PRO: 6.0, SER: 5.8, THR: 6.0, TRP: 6.6, TYR: 6.45,
+      VAL: 6.15}
+    MET: {MET: 6.2, PHE: 6.3, PRO: 5.9, SER: 5.7, THR: 5.9, TRP: 6.5, TYR: 6.35, VAL: 6.05}
+    MMM: {ALA: 5, ARG: 5, ASN: 5, ASP: 5, CYS: 5, GLN: 5, GLU: 5, GLY: 5, HIS: 5,
+      ILE: 5, LEU: 5, LYS: 5, MET: 5, MMM: 5, PHE: 5, PRO: 5, SER: 5, THR: 5, TRP: 5,
+      TYR: 5, VAL: 5}
+    PHE: {PHE: 6.4, PRO: 6.0, SER: 5.8, THR: 6.0, TRP: 6.6, TYR: 6.45, VAL: 6.15}
+    PRO: {PRO: 5.6, SER: 5.4, THR: 5.6, TRP: 6.2, TYR: 6.05, VAL: 5.75}
+    SER: {SER: 5.2, THR: 5.4, TRP: 6.0, TYR: 5.85, VAL: 5.55}
+    THR: {THR: 5.6, TRP: 6.2, TYR: 6.05, VAL: 5.75}
+    TRP: {TRP: 6.8, TYR: 6.65, VAL: 6.35}
+    TYR: {TYR: 6.5, VAL: 6.2}
+    VAL: {VAL: 5.9}
+  dielectric-constant: 80
+  energies:
+    ALA: {ALA: -0.07155, ARG: 0.06996, ASN: 0.06837, ASP: 0.09063, GLN: 0.06042, GLU: 0.12084,
+      GLY: -0.00636, HIS: -0.02226, LYS: 0.15264, PRO: 0.03816, SER: 0.04134, THR: -0.00795}
+    ARG: {ARG: 0.11448, LYS: 0.26712, PRO: 0.09063}
+    ASN: {ARG: 0.10017, ASN: 0.09381, ASP: 0.09381, GLN: 0.08904, GLU: 0.12084, HIS: 0.03021,
+      LYS: 0.16854, PRO: 0.11766}
+    ASP: {ARG: -0.00318, ASP: 0.16854, GLU: 0.19875, HIS: -0.00795, LYS: 0.09381,
+      PRO: 0.14946}
+    CYS: {ALA: -0.2067, ARG: -0.0477, ASN: -0.05088, ASP: -0.02226, CYS: -0.50403,
+      GLN: -0.09222, GLU: 0.0, GLY: -0.14151, HIS: -0.21147, ILE: -0.51357, LEU: -0.56604,
+      LYS: 0.05088, MET: -0.43248, PHE: -0.56127, PRO: -0.1272, SER: -0.09381, THR: -0.13356,
+      TRP: -0.42612, TYR: -0.30051, VAL: -0.42771}
+    GLN: {ARG: 0.07473, ASP: 0.12879, GLN: 0.11607, GLU: 0.13515, HIS: 0.04611, LYS: 0.15582,
+      PRO: 0.08586}
+    GLU: {ARG: 0.0, GLU: 0.21624, HIS: 0.01908, LYS: 0.07473, PRO: 0.16059}
+    GLY: {ARG: 0.08745, ASN: 0.08427, ASP: 0.10812, GLN: 0.09699, GLU: 0.16695, GLY: 0.00477,
+      HIS: 0.01908, LYS: 0.17808, PRO: 0.0636, SER: 0.07155, THR: 0.03021}
+    HIS: {ARG: 0.01749, HIS: -0.12402, LYS: 0.14628, PRO: 0.00318}
+    ILE: {ALA: -0.36729, ARG: -0.21624, ASN: -0.15423, ASP: -0.1431, GLN: -0.2226,
+      GLU: -0.159, GLY: -0.24009, HIS: -0.29733, ILE: -0.67893, LEU: -0.75843, LYS: -0.11766,
+      PRO: -0.23691, SER: -0.19875, THR: -0.27984, TRP: -0.55809, TYR: -0.47382, VAL: -0.60102}
+    LEU: {ALA: -0.41976, ARG: -0.27984, ASN: -0.23373, ASP: -0.17967, GLN: -0.28143,
+      GLU: -0.20988, GLY: -0.30051, HIS: -0.36093, LEU: -0.8109, LYS: -0.1749, PRO: -0.30687,
+      SER: -0.26235, THR: -0.32913, TRP: -0.61533, TYR: -0.5406, VAL: -0.66939}
+    LYS: {LYS: 0.34185, PRO: 0.2067}
+    MET: {ALA: -0.26553, ARG: -0.13515, ASN: -0.10812, ASP: -0.0477, GLN: -0.16377,
+      GLU: -0.09858, GLY: -0.17808, HIS: -0.27189, ILE: -0.59625, LEU: -0.65826, LYS: -0.03339,
+      MET: -0.50721, PHE: -0.68211, PRO: -0.18762, SER: -0.12084, THR: -0.19716, TRP: -0.52152,
+      TYR: -0.41976, VAL: -0.48495}
+    MMM: {ALA: 0, ARG: 0, ASN: 0, ASP: 0, CYS: 0, GLN: 0, GLU: 0, GLY: 0, HIS: 0,
+      ILE: 0, LEU: 0, LYS: 0, MET: 0, MMM: 0, PHE: 0, PRO: 0, SER: 0, THR: 0, TRP: 0,
+      TYR: 0, VAL: 0}
+    PHE: {ALA: -0.40386, ARG: -0.27189, ASN: -0.23532, ASP: -0.19239, GLN: -0.29097,
+      GLU: -0.20511, GLY: -0.29574, HIS: -0.3975, ILE: -0.72663, LEU: -0.79659, LYS: -0.17331,
+      PHE: -0.79341, PRO: -0.31482, SER: -0.27825, THR: -0.31959, TRP: -0.61851, TYR: -0.53901,
+      VAL: -0.63918}
+    PRO: {PRO: 0.08268}
+    SER: {ARG: 0.10335, ASN: 0.10971, ASP: 0.10176, GLN: 0.12402, GLU: 0.12561, HIS: 0.02544,
+      LYS: 0.19398, PRO: 0.1113, SER: 0.0954}
+    THR: {ARG: 0.05883, ASN: 0.06201, ASP: 0.07473, GLN: 0.05883, GLU: 0.08427, HIS: -0.02385,
+      LYS: 0.15264, PRO: 0.05883, SER: 0.04929, THR: 0.02385}
+    TRP: {ALA: -0.24645, ARG: -0.18126, ASN: -0.1272, ASP: -0.09063, GLN: -0.13356,
+      GLU: -0.11448, GLY: -0.18285, HIS: -0.27189, LYS: -0.06678, PRO: -0.23214, SER: -0.11448,
+      THR: -0.15105, TRP: -0.44361, TYR: -0.38001}
+    TYR: {ALA: -0.17331, ARG: -0.14151, ASN: -0.07791, ASP: -0.07791, GLN: -0.1113,
+      GLU: -0.08268, GLY: -0.11766, HIS: -0.19875, LYS: -0.05247, PRO: -0.14628, SER: -0.08109,
+      THR: -0.11766, TYR: -0.3021}
+    VAL: {ALA: -0.28143, ARG: -0.1272, ASN: -0.08904, ASP: -0.03339, GLN: -0.1272,
+      GLU: -0.0636, GLY: -0.17649, HIS: -0.20829, LYS: -0.03498, PRO: -0.16695, SER: -0.12402,
+      THR: -0.18921, TRP: -0.46269, TYR: -0.37365, VAL: -0.51675}
+  membrane:
+    ALA: [0.039, 0.042, 0.0081, -2.7, 0.0, 0.0, 0.0, 2.9335758]
+    ARG: [0.055, -0.057, 0.0039, 0.8, 0.05, 0.009, 17.0, 2.5898048]
+    ASN: [0.051, -0.04, 0.0075, -1.6, 0.0, 0.0, 0.0, 2.6653118]
+    ASP: [0.064, -0.063, 0.0028, 1.1, 0.026, 0.02, 25.4, 2.4382828]
+    CYS: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    GLN: [0.054, -0.047, 0.0071, 0.0, 0.0, 0.0, 0.0, 2.6081534]
+    GLU: [0.066, -0.064, 0.0028, -0.7, 0.012, 0.015, 29.4, 2.407534]
+    GLY: [0.04, 0.028, 0.006, -3.5, 0.0, 0.0, 0.0, 2.908258]
+    HIS: [0.025, 0.056, 0.009, -20.0, 0.04, 0.015, 15.0, 3.3782604]
+    ILE: [0.034, 0.071, 0.0058, -0.4, 0.0, 0.0, 0.0, 3.0707769]
+    LEU: [0.032, 0.062, 0.0049, -0.1, 0.0, 0.0, 0.0, 3.1314015]
+    LYS: [0.061, -0.06, 0.0029, -2.8, 0.035, 0.015, 23.6, 2.4863381]
+    MET: [0.034, 0.05, 0.0042, 0.5, 0.0, 0.0, 0.0, 3.0707766]
+    MMM: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    PHE: [0.024, 0.075, 0.0029, -1.5, 0.0, 0.0, 0.0, 3.4189306]
+    PRO: [0.061, -0.041, 0.0051, -1.1, 0.0, 0.0, 0.0, 2.4862636]
+    SER: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    THR: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    TRP: [0.028, 0.064, 0.0143, -14.1, 0.064, 0.015, 12.7, 3.2649329]
+    TYR: [0.03, 0.045, 0.012, -16.0, 0.03, 0.02, 13.7, 3.19594]
+    VAL: [0.035, 0.057, 0.0084, -0.4, 0.0, 0.0, 0.0, 3.0417894]
+

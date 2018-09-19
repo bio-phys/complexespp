@@ -1,0 +1,15 @@
+definitions:                                                                  
+  domains:                                             
+    rigid:                                                              
+      move: foo                                                             
+      defaults:                    
+  pair-interaction:
+  - function: LJH
+    domain-type-pair: [default, default]
+topologies:
+- domains:
+    0:
+      type: "rigid"
+  ndomains: 1
+  full-move: false
+  connections: []

@@ -1,0 +1,30 @@
+box: [200, 200, 200]
+definitions:                                                                  
+  domains:                                             
+    rigid:                                                              
+      move: rigid                                                             
+      defaults:                                                                               
+        translation: 0
+        rotation: 0 
+  pair-interaction:
+  - function: LJH
+    domain-type-pair: [default, default]
+topologies:
+- coordinate-file: 6LYZ.pdb
+  domains:
+    0:
+      beads: [ALA, HIS, ALA]
+      chain-ids: [A 1, A 2, A 3]
+      charges: [1.0, 0.0, 0.0]
+      coordinates:
+      - [82.86544036865234, 144.80255126953125, 134.36830139160156]
+      - [82.81644439697266, 148.1715545654297, 132.61131286621094]
+      - [82.8164443697266, 148.715545654297, 132.1131286621094]
+      name: dom0
+      nbeads: 3
+      type: rigid
+  name: topo1
+  ndomains: 1
+  full-move: false
+  connections: []
+  full-move: false

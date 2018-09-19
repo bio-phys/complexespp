@@ -1,0 +1,11 @@
+box: [222.8722495, 222.8722495, 222.8722495]
+topology:
+    Binding:
+        coordinate-file: 1Q0W.pdb
+        domains:
+            ubiquitin:
+                type: rigid
+                selection: 'protein and name CA and segid B'
+            uim1:
+                type: rigid
+                selection: 'protein and name CA and segid A'

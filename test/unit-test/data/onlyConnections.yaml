@@ -1,0 +1,21 @@
+connections:
+    0:
+      domain-a: ['dom1', A 1]
+      domain-b: ['dom2', B 1]
+      type:  flat
+      params: {}
+    1:
+      domain-a: ['dom2', B 10]
+      domain-b: ['dom3', C 1]
+      type:  flat
+      params: {}
+domains:
+    0:
+        name: "dom1"
+        chain-ids: ["A 1", "A 5", "A 10"]
+    1:
+        name: "dom2"
+        chain-ids: ["B 1", "B 10"]
+    2:
+        name: "dom3"
+        chain-ids: ["C 1", "C 5", "C 10"]

@@ -1,0 +1,42 @@
+box: [100.0, 100.0, 100.0]
+definitions:
+  some:
+    definitions
+topologies:
+- domains:
+    0:
+      beads: [ARG]
+      charges: [1.0]
+    1:
+      beads: [LYS]
+      charges: [1.0]
+  name: rick
+  ndomains: 2
+- domains:
+    2:
+      beads: [GLU]
+      charges: [-1.0]
+    3:
+      beads: [HIS]
+      charges: [0.5]
+  name: trick
+  ndomains: 2
+- domains:
+    4:
+      beads: [TYR]
+      charges: [0.0]
+    5:
+      beads: [ASP]
+      charges: [-1.0]
+  name: track
+  ndomains: 2
+- domains:
+    6:
+      beads: [ALA]
+      charges: [0.0]
+    7:
+      beads: [ALA]
+      charges: [0.0]
+  name: donald
+  ndomains: 2
+

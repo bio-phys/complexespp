@@ -1,0 +1,51 @@
+box: [500, 500, 500]
+definitions:
+  domains:
+    rigid:
+      move: rigid
+      defaults:
+        translation: 5
+        rotation: 0.2
+    still:
+      move: rigid
+      defaults:
+        translation: 0
+        rotation: 0.0
+  pair-interaction:
+  - domain-type-pair: [default, default]
+    function: LJH
+topologies:
+- coordinate-file: 6LYZ.pdb
+  domains:
+    0:
+      beads: [ALA, ALA, ALA]
+      chain-ids: [A 1, A 2, A 3]
+      charges: [1.0, 0.0, 0.0]
+      coordinates:
+      - [81.86544036865234, 144.80255126953125, 134.36830139160156]
+      - [82.81644439697266, 148.1715545654297, 132.61131286621094]
+      - [83.8164443697266, 148.715545654297, 132.1131286621094]
+      name: dom0
+      nbeads: 3
+      type: still
+  name: topo1
+  ndomains: 1
+  full-move: false
+  connections: []
+- coordinate-file: 6LYZ.pdb
+  domains:
+    1:
+      beads: [ALA, ALA, ALA]
+      chain-ids: [A 1, A 2, A 3]
+      charges: [1.0, 0.0, 0.0]
+      coordinates:
+      - [84.86544036865234, 144.80255126953125, 134.36830139160156]
+      - [85.81644439697266, 148.1715545654297, 132.61131286621094]
+      - [86.8164443697266, 148.715545654297, 132.1131286621094]
+      name: dom0
+      nbeads: 3
+      type: rigiddom
+  name: topo2
+  ndomains: 1
+  full-move: false
+  connections: []

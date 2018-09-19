@@ -1,0 +1,19 @@
+structure: 2atoms.cplx
+montecarlo:
+    algorithm: nvt
+    algorithm-params:
+        accept-func: glauber
+        temperatur: 300
+    seed: 42
+    initial-position:
+        strategy: none
+    short-range-cutoff:
+            enable: False
+output:
+    log: complexes.log
+    file: run-test.trr
+    freq: 1
+    nstructures: 50
+    stat-file: run-energy.stat
+    restart-freq: 1
+    restart-file: restart.nc
