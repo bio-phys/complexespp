@@ -606,5 +606,30 @@ def test_write_to_file(tmpdir):
     assert read_string == test_string
 
 
+def test_check_files_exists(tmpdir):
+    files = ["test.xtc", "test.pdb"]
+    with tmpdir.as_cwd():
+        # touch files
+        for f in files:
+            with open(f, "w") as fh:
+                pass
+        vis.check_files_exist(*files)
+        with pytest.raises(RuntimeError):
+            vis.check_files_exist("some", "other")
+
+
+def test_check_file_size(tmpdir):
+    limit = 10 / 1024  # x MB in units of GB
+    with tmpdir.as_cwd():
+        with open("small", "w") as fh:
+            pass
+        # https://stackoverflow.com/a/6497779/2207958
+        with open("large", "w") as fh:
+            fh.truncate(limit * 1024**3 + 1024)
+        vis.check_file_size(["small", ], limit=limit)
+        with pytest.warns(UserWarning):
+            vis.check_file_size(["large", ], limit=limit)
+
+
 # def test_vmd_runner():
 #     ############

@@ -26,14 +26,17 @@ Notes
 might easily be implemented for more
 
 """
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, division
 from six.moves import cStringIO as StringIO
 
 import yaml
 import datetime
 import os
+import numpy as np
 import platform
 import six
+import warnings
+
 from .scripts import _ScriptMeta
 
 ADDREP_FORMAT = (
@@ -315,6 +318,23 @@ def vmd_flat_membrane_rep(chainids, coloring, rep_counter, rep_number, i, dom):
 def vmd_tube_membrane_rep(chainids, coloring, rep_counter, rep_number, i, dom):
     rep = "draw tube {} {} {}\n".format(dom["x"], dom["y"], dom["radius"])
     return rep, rep_counter + 1
+
+
+def check_files_exist(*files):
+    all_isfile = np.array([os.path.isfile(f) for f in files])
+    if not np.all(all_isfile):
+        raise RuntimeError(
+            "Couldn't find files: {}".format(np.array(files)[~all_isfile])
+        )
+
+
+def check_file_size(files, limit=10, message=""):
+    for fname in files:
+        size = os.stat(fname).st_size / 1024 ** 3
+        if size > limit:
+            warnings.warn(
+                "{}\n{} is {} GB big.".format(message, fname, size), UserWarning
+            )
 
 
 def vmd_rigid_rep(chainids, coloring, rep_counter, rep_number, i):
@@ -774,6 +794,12 @@ class Visualize(six.with_metaclass(_ScriptMeta)):
         cplx, vmd_top, xtc, coloring, output_filename, run_vmd, unify, step = argument_processing(
             args
         )
+        check_files_exist(cplx, vmd_top, xtc)
+        check_file_size(
+            [xtc, ],
+            message="Files may to big to load completely into VMD. Consider using '-s' option to skip frames.",
+        )
+
         with open(cplx) as f:
             topology = yaml.load(f)
         print("Given topology: " + cplx)
