@@ -41,7 +41,7 @@ pycomplexes-2.7:
     - apt-get install git wget bzip2 -y
     - git clone git://github.com/astropy/ci-helpers.git
     - source ci-helpers/travis/setup_conda_linux.sh
-    - cd python
+    - cd pycomplexes
     - python -m pytest
 
 pycomplexes-3.6:
@@ -57,7 +57,7 @@ pycomplexes-3.6:
     - apt-get install git wget bzip2 -y
     - git clone git://github.com/astropy/ci-helpers.git
     - source ci-helpers/travis/setup_conda_linux.sh
-    - cd python
+    - cd pycomplexes
     - python -m pytest
 
 # run tutorials

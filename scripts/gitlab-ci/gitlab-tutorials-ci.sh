@@ -5,7 +5,7 @@ set -e
 cwd=$(pwd)
 
 # install python library
-cd python
+cd pycomplexes
 python setup.py install
 
 # build complexes

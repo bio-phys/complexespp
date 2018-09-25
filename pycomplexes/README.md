@@ -32,3 +32,13 @@ The unit test are based on the py.test framework. To run them call:
 
 This ensures that are running against the current version in the checkout. To
 add coverage information as well add `--cov=pycomplexes`.
+
+## Help
+
+To find help about the tools included in pycomplexes run
+
+    pycomplexes --help
+
+For help for an individual tool run
+
+    pycomplexes <command> --help
