@@ -5,7 +5,7 @@ set -e
 cwd=`pwd`
 
 # test python library
-cd python
+cd pycomplexes
 python -m pytest
 
 cd $cwd

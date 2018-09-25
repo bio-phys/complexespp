@@ -1,0 +1,30 @@
+.. -*- coding: utf-8 -*-
+
+=======================
+ Authors of pycomplexes
+=======================
+
+pycomplexes was originally written by Max Linke.
+
+The project is maintained by the Hummer Group
+
+All contributing authors are listed in this file below.  The CHANGELOG
+show individual code contributions.
+
+Chronological list of authors
+-----------------------------
+
+2018
+  - Max Linke
+  - Klaus Reuter
+  - Bramas Berenger
+  - Benoit-Lofti Jacquelin
+  - Patrick Quoika
+  - Gerhard Hummer
+  - Jürgen Köfinger
+
+External code
+-------------
+
+External code (under a GPL-compatible licence) was obtained from
+various sources. The authors (as far as we know them) are listed here.

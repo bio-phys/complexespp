@@ -43,7 +43,7 @@ type $CC
 type $CXX
 
 
-BASE=`pwd`/../..
+BASE=`pwd`/../../complexes++
 # readlink does not work on MAC so we turn towards the following Python hack
 #BASE=`readlink -f $BASE`
 BASE=`python -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' $BASE`
