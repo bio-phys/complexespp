@@ -1,8 +1,8 @@
 import numba
 
 import numpy as np
-
 from scipy import constants
+from MDAnalysis.lib import transformations
 
 from .collision_detector import CollisionDetector
 
@@ -107,7 +107,24 @@ def potential(xyz):
     return torsion_potential(xyz) + bond_potential(xyz) + angle_potential(xyz)
 
 
-def relax(xyz, temp=300, nsweep=1000, target=.3, other_coords=None, box=None):
+@numba.jit(nopython=True)
+def translation(xyz, idx, width):
+    xyz[idx] = xyz[idx] + (np.random.random(3) - .5) * width
+    return xyz
+
+
+@numba.jit
+def rotation(xyz, idx, max_angle):
+    angle = np.random.uniform(0, max_angle)
+    vec = xyz[idx + 1] - xyz[idx - 1]
+    vec /= norm(vec)
+    x = xyz[idx] - xyz[idx-1]
+    mat = transformations.rotation_matrix(angle, vec)[:3, :3]
+    xyz[idx] = np.dot(mat, x) + xyz[idx-1]
+    return xyz
+
+
+def relax(xyz, temp=300, nsweep=100, target=.3, other_coords=None, box=None):
     beta = 300 / temp
     tmp = xyz.copy()
     E = potential(xyz)
@@ -126,8 +143,11 @@ def relax(xyz, temp=300, nsweep=1000, target=.3, other_coords=None, box=None):
     for i in range(nsweep):
         # do a sweep
         for j in range(nstep):
-            idx = np.random.choice(np.arange(N - 2)) + 1
-            tmp[idx] = tmp[idx] + (np.random.random(3) - .5) * width
+            idx = np.random.randint(N-2) + 1
+            if np.random.uniform(1) < 0.5:
+                tmp = translation(tmp, idx, width)
+            else:
+                tmp = rotation(tmp, idx, 2 * np.pi)
 
             # if a collision occurs this means the trials is rejected
             if col_detector is not None and col_detector.collision(tmp[idx]):
@@ -137,11 +157,11 @@ def relax(xyz, temp=300, nsweep=1000, target=.3, other_coords=None, box=None):
             Enew = potential(tmp)
             dE = Enew - E
             if dE < 0 or np.random.random() < np.exp(-beta * dE):
-                xyz = tmp.copy()
+                np.copyto(xyz, tmp) # in-place copy to minimize allocations
                 E = Enew
                 acc += 1
             else:
-                tmp = xyz.copy()
+                np.copyto(tmp, xyz)
 
         energy[i] = E
 
