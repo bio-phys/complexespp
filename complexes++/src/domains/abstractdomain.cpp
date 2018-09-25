@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 
 #include <fmt/format.h>
 #include <stdexcept>
@@ -26,31 +36,25 @@ void AbstractDomain::setXyz(util::rArray xyz_) {
   m_xyz = std::move(xyz_);
 }
 
-const util::rArray& AbstractDomain::xyz() const noexcept {
-  return m_xyz;
-}
+const util::rArray &AbstractDomain::xyz() const noexcept { return m_xyz; }
 
-util::rArray& AbstractDomain::xyz() noexcept {
-  return m_xyz;
-}
+util::rArray &AbstractDomain::xyz() noexcept { return m_xyz; }
 
-const std::vector<domains::Bead>& AbstractDomain::beads() const noexcept {
+const std::vector<domains::Bead> &AbstractDomain::beads() const noexcept {
   return m_beads;
 }
 
-const std::vector<BeadChainID>& AbstractDomain::BeadChainIDs() const noexcept {
+const std::vector<BeadChainID> &AbstractDomain::BeadChainIDs() const noexcept {
   return m_beadChainIDs;
 }
 
-const std::vector<double>& AbstractDomain::charges() const noexcept {
+const std::vector<double> &AbstractDomain::charges() const noexcept {
   return m_charges;
 }
 
-int AbstractDomain::id() const noexcept {
-  return m_id;
-}
+int AbstractDomain::id() const noexcept { return m_id; }
 
-const Connections& AbstractDomain::connections() const noexcept {
+const Connections &AbstractDomain::connections() const noexcept {
   return m_connections;
 }
 
@@ -58,26 +62,22 @@ int AbstractDomain::nBeads() const noexcept {
   return static_cast<int>(m_beads.size());
 }
 
-const std::string& AbstractDomain::name() const noexcept {
-  return m_name;
-}
+const std::string &AbstractDomain::name() const noexcept { return m_name; }
 
-int AbstractDomain::typeId() const noexcept {
-  return m_typeId;
-}
+int AbstractDomain::typeId() const noexcept { return m_typeId; }
 
 void AbstractDomain::energyForAllConnections(
-    const domains::Domains& others, const util::rvec& box,
-    const energy::ForceField& forcefield, energy::rEnergyMatrix& outRes) const {
-  const auto& xyzThis = xyz();
+    const domains::Domains &others, const util::rvec &box,
+    const energy::ForceField &forcefield, energy::rEnergyMatrix &outRes) const {
+  const auto &xyzThis = xyz();
   auto d = util::rvec();
 
-  for (const auto& con : m_connections) {
+  for (const auto &con : m_connections) {
     const auto i = con->beadSelf();
     const auto j = con->beadOther();
 
     const auto idOther = con->domainId();
-    const auto& xyzOther = others[idOther]->xyz();
+    const auto &xyzOther = others[idOther]->xyz();
 
     d[0] = xyzThis(i, 0) - xyzOther(j, 0);
     d[1] = xyzThis(i, 1) - xyzOther(j, 1);
@@ -89,14 +89,14 @@ void AbstractDomain::energyForAllConnections(
 }
 
 double AbstractDomain::energyForConnections(
-    const AbstractDomain& other, const util::rvec& box,
-    const energy::ForceField& forcefield) const {
+    const AbstractDomain &other, const util::rvec &box,
+    const energy::ForceField &forcefield) const {
   if (id() == other.id()) {
     return 0;
   }
 
-  const auto& xyzOther = other.xyz();
-  const auto& xyzThis = xyz();
+  const auto &xyzOther = other.xyz();
+  const auto &xyzThis = xyz();
   auto d = util::rvec();
 
   // The domains are sorted, to find the interval corresponding to other.id()
@@ -104,20 +104,20 @@ double AbstractDomain::energyForConnections(
 
   const auto firstCon = std::lower_bound(
       m_connections.begin(), m_connections.end(), other.id(),
-      [](const std::shared_ptr<Connection>& con, const int idOther) {
+      [](const std::shared_ptr<Connection> &con, const int idOther) {
         return con->domainId() < idOther;
       });
 
   const auto lastCon = std::upper_bound(
       firstCon, m_connections.end(), other.id(),
-      [](const int idOther, const std::shared_ptr<Connection>& con) {
+      [](const int idOther, const std::shared_ptr<Connection> &con) {
         return idOther < con->domainId();
       });
 
   // Loop over connections
   auto enLink = 0.0;
   for (auto iter = firstCon; iter != lastCon; ++iter) {
-    const auto& con = (*iter);
+    const auto &con = (*iter);
     // Could use assert(other.id() == con->domainId());
     const auto i = con->beadSelf();
     const auto j = con->beadOther();
@@ -130,7 +130,7 @@ double AbstractDomain::energyForConnections(
 }
 
 template <typename T>
-void checkSize(int n, std::vector<T> col, const std::string& name, int id) {
+void checkSize(int n, std::vector<T> col, const std::string &name, int id) {
   if (col.size() != static_cast<std::size_t>(n)) {
     throw std::invalid_argument(
         fmt::format("Number of beads in domain (id={}) does not match with "
@@ -139,27 +139,23 @@ void checkSize(int n, std::vector<T> col, const std::string& name, int id) {
   }
 }
 
-AbstractDomain::AbstractDomain(const std::string& inName, int typeId_, int id_,
+AbstractDomain::AbstractDomain(const std::string &inName, int typeId_, int id_,
                                std::vector<Bead> beads_,
                                std::vector<double> charges_,
                                std::vector<BeadChainID> beadChainIDs_,
-                               const Connections& connections_)
-    : m_id(id_),
-      m_name(inName),
-      m_typeId(typeId_),
-      m_xyz(static_cast<int>(beads_.size()), 3),
-      m_beads(beads_),
-      m_charges(charges_),
-      m_beadChainIDs(beadChainIDs_),
+                               const Connections &connections_)
+    : m_id(id_), m_name(inName), m_typeId(typeId_),
+      m_xyz(static_cast<int>(beads_.size()), 3), m_beads(beads_),
+      m_charges(charges_), m_beadChainIDs(beadChainIDs_),
       m_connections(connections_) {
   checkSize(nBeads(), m_charges, "charges", id());
   checkSize(nBeads(), m_beadChainIDs, "beadChainIDs", id());
 
   // Sort the domains based on others' ids
   std::sort(m_connections.begin(), m_connections.end(),
-            [](const std::shared_ptr<Connection>& c1,
-               const std::shared_ptr<Connection>& c2) {
+            [](const std::shared_ptr<Connection> &c1,
+               const std::shared_ptr<Connection> &c2) {
               return c1->domainId() < c2->domainId();
             });
 }
-}  // namespace domains
+} // namespace domains

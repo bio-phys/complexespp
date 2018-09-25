@@ -7,6 +7,7 @@ from . import demux
 from . import addlinker
 from . import generate_config
 from . import ph
+from . import pycomplexes_license
 
 __all__ = [
     "convert",
@@ -18,4 +19,5 @@ __all__ = [
     "addlinker",
     "generate_config",
     "ph",
+    "pycomplexes_license"
 ]

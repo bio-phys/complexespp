@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include "complexes_test.h"
 #include "gtest/gtest.h"
 
@@ -16,7 +26,7 @@
 #include "setup/config.h"
 
 class TestMC : public mc::AbstractMcAlgo {
- protected:
+protected:
   int mcSweep() final {
     // ensure getEnergy returns the same energy as stored in the energy matrix
     EXPECT_DOUBLE_EQ(getEnergy(), m_energy.getTotalEnergy());
@@ -45,23 +55,23 @@ class TestMC : public mc::AbstractMcAlgo {
     return static_cast<int>(m_doms->size());
   }
 
- public:
+public:
   using AbstractMcAlgo::AbstractMcAlgo;
 
-  void serialize(io::Serializer& serializer) const final {
+  void serialize(io::Serializer &serializer) const final {
     AbstractMcAlgo::serializeCore(serializer);
   }
 
   virtual ~TestMC() {}
 };
 
-std::unique_ptr<TestMC> McTestBuild(
-    std::shared_ptr<domains::Domains> doms, util::RNGEngine& rng,
-    const util::rvec& box, const setup::Config& conf,
-    const energy::ForceField& forcefield,
-    pairkernels::PairKernelManager& inKernels,
-    std::unique_ptr<AbstractInteractionAlgorithm<double>>&&
-        interactionComputer) {
+std::unique_ptr<TestMC>
+McTestBuild(std::shared_ptr<domains::Domains> doms, util::RNGEngine &rng,
+            const util::rvec &box, const setup::Config &conf,
+            const energy::ForceField &forcefield,
+            pairkernels::PairKernelManager &inKernels,
+            std::unique_ptr<AbstractInteractionAlgorithm<double>>
+                &&interactionComputer) {
   return std::make_unique<
       mc::McAlgoWithAcceptFunc<TestMC, mc::metropolisAccept>>(
       "", domains::System(doms, std::vector<domains::Topology>()), rng, box,
@@ -69,7 +79,7 @@ std::unique_ptr<TestMC> McTestBuild(
 }
 
 class AbstractMcAlgoTest : public testing::Test {
- public:
+public:
   AbstractMcAlgoTest() {}
   virtual ~AbstractMcAlgoTest() {}
 
@@ -79,7 +89,7 @@ class AbstractMcAlgoTest : public testing::Test {
 
   pairkernels::PairKernelManager m_kernels;
 
- protected:
+protected:
   virtual void SetUp() {
     // Carefull in future one might want to have reproducible random numbers
     std::random_device rd;
@@ -97,7 +107,7 @@ class AbstractMcAlgoTest : public testing::Test {
   }
   virtual void TearDown() {}
 
- private:
+private:
   const energy::ForceField m_forcefield = dummy_forcefield(1, -1, 1, 1, 1);
   const util::rvec m_box = util::rvec(10, 10, 10);
   util::RNGEngine m_rng;

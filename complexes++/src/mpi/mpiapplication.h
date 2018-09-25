@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef MPI_MPIAPPLICATION_H
 #define MPI_MPIAPPLICATION_H
 
@@ -52,9 +62,8 @@ class MpiApplication {
     util::GlobalLog::setNumberOfThreads(nbThreads);
 
     if (nbSimu == 0) {
-      throw std::invalid_argument(
-          "Error in multidir exchange.\n"
-          "No directory has been given in parameter.");
+      throw std::invalid_argument("Error in multidir exchange.\n"
+                                  "No directory has been given in parameter.");
     }
 
     const io::MoveStatRecorder::Verbosity moveStatsVerbosity =
@@ -69,12 +78,12 @@ class MpiApplication {
     if (m_args.hasKey("mpi-partitions")) {
       partitions = m_args.value<std::vector<int>>("mpi-partitions");
       if (static_cast<int>(partitions.size()) != m_nbProcesses) {
-        throw std::runtime_error(fmt::format(
-            "You are currently executing {} processes and provide "
-            "the partition for {} processes.\n"
-            "You must provide one integer per process (or do not "
-            "use the -partition parameter to use default values).",
-            m_nbProcesses, partitions.size()));
+        throw std::runtime_error(
+            fmt::format("You are currently executing {} processes and provide "
+                        "the partition for {} processes.\n"
+                        "You must provide one integer per process (or do not "
+                        "use the -partition parameter to use default values).",
+                        m_nbProcesses, partitions.size()));
       }
 
       partitionsOffset.resize(m_nbProcesses + 1);
@@ -200,7 +209,7 @@ class MpiApplication {
   /// MPI methods to call during the construction
   //////////////////////////////////////////////////////////////////////////
 
-  static int InitMpi(int inArgc, char** inArgv) {
+  static int InitMpi(int inArgc, char **inArgv) {
     MPI_ASSERT(MPI_Init(&inArgc, &inArgv));
     int myRank;
     MPI_ASSERT(MPI_Comm_rank(MPI_COMM_WORLD, &myRank));
@@ -216,10 +225,9 @@ class MpiApplication {
   //////////////////////////////////////////////////////////////////////////
   /// Public methods
   //////////////////////////////////////////////////////////////////////////
- public:
-  MpiApplication(int inArgc, char** inArgv)
-      : m_myRank(InitMpi(inArgc, inArgv)),
-        m_nbProcesses(GetNbProcesses()),
+public:
+  MpiApplication(int inArgc, char **inArgv)
+      : m_myRank(InitMpi(inArgc, inArgv)), m_nbProcesses(GetNbProcesses()),
         m_args(inArgc, inArgv) {}
 
   ~MpiApplication() {
@@ -232,8 +240,8 @@ class MpiApplication {
   }
 
   //! Forbid copy
-  MpiApplication(const MpiApplication&) = delete;
-  MpiApplication& operator=(const MpiApplication&) = delete;
+  MpiApplication(const MpiApplication &) = delete;
+  MpiApplication &operator=(const MpiApplication &) = delete;
 
   //! execute the application
   int run() {
@@ -258,6 +266,6 @@ class MpiApplication {
     }
   }
 };
-}
+} // namespace mpi
 
 #endif

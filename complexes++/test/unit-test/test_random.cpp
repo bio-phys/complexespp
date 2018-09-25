@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include <cmath>
 
 #include "complexes_test.h"
@@ -61,13 +71,12 @@ TEST(RANDOM, random_quat) {
   }
 }
 
-template <typename T>
-class UniformCDF {
- public:
+template <typename T> class UniformCDF {
+public:
   UniformCDF(const T a, const T b) : m_a(a), m_b(b) {}
   T operator()(const T x) const { return (x - m_a) / (m_b - m_a); }
 
- private:
+private:
   const T m_a;
   const T m_b;
 };
@@ -77,7 +86,7 @@ TEST(RANDOM, rand_vec_kstest) {
   const auto scale = util::rvec(10, 20, 30);
   const auto N = 10000;
   auto rvs = std::array<std::vector<double>, 3>();
-  for (auto& vec : rvs) {
+  for (auto &vec : rvs) {
     vec.reserve(N);
   }
 

@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef IO_YAML_H
 #define IO_YAML_H
 
@@ -17,20 +27,18 @@
 namespace io {
 
 class YamlNode {
- public:
+public:
   explicit YamlNode(YAML::Node node) : m_node(node), m_level("/") {}
-  explicit YamlNode(const std::string& file)
+  explicit YamlNode(const std::string &file)
       : m_node(YAML::LoadFile(file)), m_level("/") {}
 
-  template <typename T>
-  T as() const {
+  template <typename T> T as() const {
     try {
       return m_node.as<T>();
-    } catch (YAML::Exception& e) {
-      throw std::runtime_error(
-          fmt::format("ERROR in YAML: Reading key {}\n"
-                      "  LIBRARY ERROR: {}\n",
-                      m_level, e.what()));
+    } catch (YAML::Exception &e) {
+      throw std::runtime_error(fmt::format("ERROR in YAML: Reading key {}\n"
+                                           "  LIBRARY ERROR: {}\n",
+                                           m_level, e.what()));
     }
   }
 
@@ -50,20 +58,19 @@ class YamlNode {
     return YamlNode(m_node[key], m_level + '.' + std::to_string(key));
   }
 
-  template <typename T>
-  std::vector<T> keys() const {
+  template <typename T> std::vector<T> keys() const {
     auto keys = std::vector<T>(m_node.size());
     std::transform(m_node.begin(), m_node.end(), keys.begin(),
-                   [](const auto& el) { return el.first.template as<T>(); });
+                   [](const auto &el) { return el.first.template as<T>(); });
     return keys;
   }
 
   bool IsDefined() const { return m_node.IsDefined(); }
   std::size_t size() const { return m_node.size(); }
   auto Type() const -> decltype(YAML::Node().Type()) { return m_node.Type(); }
-  const std::string& level() const { return m_level; }
+  const std::string &level() const { return m_level; }
 
- private:
+private:
   explicit YamlNode(YAML::Node node, std::string level)
       : m_node(node), m_level(level) {
     if (!m_node.IsDefined()) {
@@ -78,8 +85,7 @@ class YamlNode {
   std::string m_level;
 };
 
-template <typename T>
-std::vector<T> parseVector(const YamlNode& node) {
+template <typename T> std::vector<T> parseVector(const YamlNode &node) {
   auto vec = std::vector<T>();
   vec.reserve(node.size());
   for (auto i = 0u; i < node.size(); ++i) {
@@ -88,8 +94,7 @@ std::vector<T> parseVector(const YamlNode& node) {
   return vec;
 }
 
-template <typename T>
-util::vec<T> parse3DVector(const YamlNode& node) {
+template <typename T> util::vec<T> parse3DVector(const YamlNode &node) {
   if (node.size() != 3) {
     throw std::runtime_error(fmt::format(
         "YAML 3D Vec length not equal to 3 for key = {}\n", node.level()));
@@ -97,8 +102,7 @@ util::vec<T> parse3DVector(const YamlNode& node) {
   return util::vec<T>(node[0].as<T>(), node[1].as<T>(), node[2].as<T>());
 }
 
-template <typename T>
-util::Array<T> parseArray(const YamlNode& node) {
+template <typename T> util::Array<T> parseArray(const YamlNode &node) {
   const auto nrow = node.size();
   const auto ncol = node[0].size();
 
@@ -119,7 +123,7 @@ util::Array<T> parseArray(const YamlNode& node) {
 }
 
 template <typename T, int rows, int cols>
-util::FixedArray<T, rows, cols> parseFixedArray(const YamlNode& node) {
+util::FixedArray<T, rows, cols> parseFixedArray(const YamlNode &node) {
   if (node.size() != rows) {
     throw std::runtime_error(fmt::format(
         "In YAML key = {}, number of rows ([]) in node doesn't match expected "
@@ -149,6 +153,6 @@ util::FixedArray<T, rows, cols> parseFixedArray(const YamlNode& node) {
   return arr;
 }
 
-}  // namespace io
+} // namespace io
 
-#endif  // IO_YAML_H
+#endif // IO_YAML_H

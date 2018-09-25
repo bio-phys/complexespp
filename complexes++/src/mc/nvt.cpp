@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include "domains/rigiddomain.h"
 #include "energy/forcefield.h"
 #include "mc/accept_func.h"
@@ -111,7 +121,7 @@ int NVTMC::mcSweep() {
               trans_accepted, rot_accepted);
   }
 
-  for (auto& topology : m_topologies) {
+  for (auto &topology : m_topologies) {
     if (topology.move(m_box, m_doms.get(), &m_rng)) {
       // We inform the container that these domains have moved
       for (auto domainId : topology.domainIds()) {
@@ -125,13 +135,13 @@ int NVTMC::mcSweep() {
 
 //! This function create a McAlgo (nvt) based on the
 //! accept function specified in the parameter/config.
-std::unique_ptr<NVTMC> McNVTBuild(
-    const std::string& inConfigPath, domains::System system, RNGEngine& rng,
-    const util::rvec& box, const setup::Config& conf,
-    const energy::ForceField& forcefield,
-    const pairkernels::PairKernelManager& inKernels,
-    std::unique_ptr<AbstractInteractionAlgorithm<double>>&&
-        interactionComputer) {
+std::unique_ptr<NVTMC>
+McNVTBuild(const std::string &inConfigPath, domains::System system,
+           RNGEngine &rng, const util::rvec &box, const setup::Config &conf,
+           const energy::ForceField &forcefield,
+           const pairkernels::PairKernelManager &inKernels,
+           std::unique_ptr<AbstractInteractionAlgorithm<double>>
+               &&interactionComputer) {
   if (conf.value<std::string>("montecarlo.algorithm-params.accept-func") ==
       "metropolis") {
     return std::make_unique<McAlgoWithAcceptFunc<NVTMC, metropolisAccept>>(
@@ -159,4 +169,4 @@ std::unique_ptr<NVTMC> McNVTBuild(
   }
   // return std::unique_ptr<McAlgo>();
 }
-}  // namespace mc
+} // namespace mc

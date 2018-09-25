@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include "mc/npt.h"
 #include "domains/rigiddomain.h"
 #include "energy/forcefield.h"
@@ -18,13 +28,13 @@ using util::RNGEngine;
 
 namespace mc {
 
-NPTMC::NPTMC(const std::string& inConfigPath, domains::System system,
-             util::RNGEngine& inRng, const util::rvec& inBox,
-             const setup::Config& inConf,
-             const energy::ForceField& inForcefield,
-             const pairkernels::PairKernelManager& inKernels,
-             std::unique_ptr<AbstractInteractionAlgorithm<double>>&&
-                 inInteractionComputer)
+NPTMC::NPTMC(const std::string &inConfigPath, domains::System system,
+             util::RNGEngine &inRng, const util::rvec &inBox,
+             const setup::Config &inConf,
+             const energy::ForceField &inForcefield,
+             const pairkernels::PairKernelManager &inKernels,
+             std::unique_ptr<AbstractInteractionAlgorithm<double>>
+                 &&inInteractionComputer)
     : AbstractMcAlgo(inConfigPath, system, inRng, inBox, inConf, inForcefield,
                      inKernels, std::move(inInteractionComputer)),
       m_pressure(constants::conversions::barTOktperCubAA *
@@ -41,11 +51,10 @@ int NPTMC::volumeMove() {
   m_V = util::volume(m_box);
   const auto newV = m_V + dV;
 
-  if (newV < 0) {  // discard move without further evaluation
-    util::Log(
-        "New Volume would be negative. dV is in the same magnitude as V "
-        "(or bigger)\n"
-        "Volume-move will be discarded.\n");
+  if (newV < 0) { // discard move without further evaluation
+    util::Log("New Volume would be negative. dV is in the same magnitude as V "
+              "(or bigger)\n"
+              "Volume-move will be discarded.\n");
     const auto notAccepted = false;
     return notAccepted;
   }
@@ -55,7 +64,7 @@ int NPTMC::volumeMove() {
   const auto new_box = util::scale(m_box, scale);
   auto oldXyz = std::vector<util::rArray>();
   oldXyz.reserve(m_doms->size());
-  for (auto& dom : *m_doms) {
+  for (auto &dom : *m_doms) {
     oldXyz.push_back(dom->xyz());
     auto _xyz = dom->xyz();
     dom->setXyz(util::scaleCentroid(_xyz, scale));
@@ -81,7 +90,7 @@ int NPTMC::volumeMove() {
     m_V += dV;
     // the rest was already updated to calculate the energies
   } else {
-    for (auto& dom : *m_doms) {
+    for (auto &dom : *m_doms) {
       dom->setXyz(oldXyz[dom->id()]);
     }
     m_box = oldBox;
@@ -200,13 +209,13 @@ int NPTMC::mcSweep() {
 }
 //! This function create a McAlgo (normal) based on the
 //! accept function specified in the parameter/config.
-std::unique_ptr<NPTMC> McNPTBuild(
-    const std::string& inConfigPath, domains::System system,
-    util::RNGEngine& rng, const util::rvec& box, const setup::Config& conf,
-    const energy::ForceField& forcefield,
-    const pairkernels::PairKernelManager& inKernels,
-    std::unique_ptr<AbstractInteractionAlgorithm<double>>&&
-        interactionComputer) {
+std::unique_ptr<NPTMC>
+McNPTBuild(const std::string &inConfigPath, domains::System system,
+           util::RNGEngine &rng, const util::rvec &box,
+           const setup::Config &conf, const energy::ForceField &forcefield,
+           const pairkernels::PairKernelManager &inKernels,
+           std::unique_ptr<AbstractInteractionAlgorithm<double>>
+               &&interactionComputer) {
   if (conf.value<std::string>("montecarlo.algorithm-params.accept-func") ==
       "metropolis") {
     return std::make_unique<McAlgoWithAcceptFunc<NPTMC, metropolisAccept>>(
@@ -233,4 +242,4 @@ std::unique_ptr<NPTMC> McNPTBuild(
         conf.value<std::string>("montecarlo.algorithm.accept-func")));
   }
 }
-}  // namespace mc
+} // namespace mc

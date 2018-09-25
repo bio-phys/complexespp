@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef EXCHANGELOGGER_H
 #define EXCHANGELOGGER_H
 
@@ -20,12 +30,8 @@ namespace mc {
 class ExchangeLogger {
   struct Attempt {
     Attempt()
-        : m_idx1(-1),
-          m_idx2(-1),
-          m_deltaEnergy(0),
-          m_probability(0),
-          m_exchanges(0),
-          m_attempts(0) {}
+        : m_idx1(-1), m_idx2(-1), m_deltaEnergy(0), m_probability(0),
+          m_exchanges(0), m_attempts(0) {}
 
     int m_idx1;
     int m_idx2;
@@ -39,7 +45,7 @@ class ExchangeLogger {
     return std::max(idx1, idx2) * m_nbReplicas + std::min(idx1, idx2);
   }
 
-  void print(const std::string& inStr, const int idxRep) {
+  void print(const std::string &inStr, const int idxRep) {
     if (m_allLoggers[idxRep]) {
       DEBUG_ASSERT(m_allLoggers[idxRep] != nullptr,
                    "The log filename for replica {} has not been set.", idxRep);
@@ -47,7 +53,7 @@ class ExchangeLogger {
     }
   }
 
-  void printToAll(const std::string& inStr) {
+  void printToAll(const std::string &inStr) {
     for (int idxRep = 0; idxRep < m_nbReplicas; ++idxRep) {
       print(inStr, idxRep);
     }
@@ -59,23 +65,23 @@ class ExchangeLogger {
   int m_currentSweep;
   std::vector<Attempt> m_attemptsStats;
   int m_totalNbAttempts;
-  std::vector<util::Logger*> m_allLoggers;
+  std::vector<util::Logger *> m_allLoggers;
 
- public:
+public:
   ExchangeLogger(const int inNbReplica)
       : m_nbReplicas(inNbReplica), m_currentSweep(-1), m_totalNbAttempts(0) {
     m_attemptsStats.resize(m_nbReplicas * m_nbReplicas);
     m_allLoggers.resize(m_nbReplicas, nullptr);
   }
 
-  void setLoggerRef(const int idxRep, util::Logger& inLogger) {
+  void setLoggerRef(const int idxRep, util::Logger &inLogger) {
     DEBUG_ASSERT(idxRep < m_nbReplicas,
                  "Replica idx must be lower than the number of replicas");
     m_allLoggers[idxRep] = &inLogger;
   }
 
-  void printHeader(const std::vector<std::string>& configDirNames,
-                   const std::string& configFilename, const int exchangeRate,
+  void printHeader(const std::vector<std::string> &configDirNames,
+                   const std::string &configFilename, const int exchangeRate,
                    const int statisticRate, const int totalSweep) {
     DEBUG_ASSERT(
         m_nbReplicas == static_cast<int>(configDirNames.size()),
@@ -90,16 +96,16 @@ class ExchangeLogger {
       }
     }
 
-    const std::string header = fmt::format(
-        "[Replica_Conf]\n"
-        "  number_replica: {}\n"
-        "  replica_directories: {}\n"
-        "  config_file_regex: {}\n"
-        "  exchange_rate: {}\n"
-        "  statistics_rate: {}\n"
-        "  total_mc_sweep: {}\n",
-        configDirNames.size(), dirNamesStr, configFilename, exchangeRate,
-        statisticRate, totalSweep);
+    const std::string header =
+        fmt::format("[Replica_Conf]\n"
+                    "  number_replica: {}\n"
+                    "  replica_directories: {}\n"
+                    "  config_file_regex: {}\n"
+                    "  exchange_rate: {}\n"
+                    "  statistics_rate: {}\n"
+                    "  total_mc_sweep: {}\n",
+                    configDirNames.size(), dirNamesStr, configFilename,
+                    exchangeRate, statisticRate, totalSweep);
     printToAll(header);
   }
 
@@ -136,7 +142,7 @@ class ExchangeLogger {
     m_replicasAttemptIdx[idx1] = idxCurrentAttempt;
     m_replicasAttemptIdx[idx2] = idxCurrentAttempt;
 
-    Attempt& currentAttemptStat =
+    Attempt &currentAttemptStat =
         m_attemptsStats[getAttemptStatsIdx(idx1, idx2)];
     currentAttemptStat.m_probability =
         ((currentAttemptStat.m_probability *
@@ -157,7 +163,7 @@ class ExchangeLogger {
 
       for (size_t idxAttempt = 0; idxAttempt < m_attempts.size();
            ++idxAttempt) {
-        const Attempt& attempt = m_attempts[idxAttempt];
+        const Attempt &attempt = m_attempts[idxAttempt];
         DEBUG_ASSERT(attempt.m_idx1 == attempt.m_idx2 - 1,
                      "Invalid attempts, must odd/even with idx1==idx2-1");
         neighborStats[attempt.m_idx1] = std::pair<std::string, std::string>(
@@ -178,7 +184,7 @@ class ExchangeLogger {
     } else {
       for (size_t idxAttempt = 0; idxAttempt < m_attempts.size();
            ++idxAttempt) {
-        const Attempt& attempt = m_attempts[idxAttempt];
+        const Attempt &attempt = m_attempts[idxAttempt];
         exchangesStr += fmt::format("{}-{}={}", attempt.m_idx1, attempt.m_idx2,
                                     attempt.m_exchanges == 1 ? "x" : "o");
         exchangesProbabilities += fmt::format(
@@ -203,15 +209,15 @@ class ExchangeLogger {
                         m_attempts[m_replicasAttemptIdx[idxRep]].m_idx2);
       }
 
-      const std::string toprint = fmt::format(
-          "[Replica_Attempt]\n"
-          "  sweep: {}\n"
-          "{}"
-          "{}"
-          "  exchanges: {}\n"
-          "  probabilities: {}\n",
-          m_currentSweep, repDeltaEnergy, repAttmptIdxs, exchangesStr,
-          exchangesProbabilities);
+      const std::string toprint =
+          fmt::format("[Replica_Attempt]\n"
+                      "  sweep: {}\n"
+                      "{}"
+                      "{}"
+                      "  exchanges: {}\n"
+                      "  probabilities: {}\n",
+                      m_currentSweep, repDeltaEnergy, repAttmptIdxs,
+                      exchangesStr, exchangesProbabilities);
 
       print(toprint, idxRep);
     }
@@ -231,7 +237,7 @@ class ExchangeLogger {
 
     for (int idx1 = 0; idx1 < m_nbReplicas; ++idx1) {
       for (int idx2 = idx1 + 1; idx2 < m_nbReplicas; ++idx2) {
-        const Attempt& currentAttemptStat =
+        const Attempt &currentAttemptStat =
             m_attemptsStats[getAttemptStatsIdx(idx1, idx2)];
         if (currentAttemptStat.m_attempts) {
           exchangesProbabilities +=
@@ -265,15 +271,14 @@ class ExchangeLogger {
       exchangesAverage.resize(exchangesAverage.size() - separator.size());
     }
 
-    std::string stats = fmt::format(
-        "[Replica_Average]\n"
-        "  total_attempts: {}\n"
-        "  average_probabilities: {}\n"
-        "  number_exchange: {}\n"
-        "  average_exchange: {}\n"
-        "  empirical_transition_matrix:\n",
-        m_totalNbAttempts, exchangesProbabilities, exchangesNumber,
-        exchangesAverage);
+    std::string stats = fmt::format("[Replica_Average]\n"
+                                    "  total_attempts: {}\n"
+                                    "  average_probabilities: {}\n"
+                                    "  number_exchange: {}\n"
+                                    "  average_exchange: {}\n"
+                                    "  empirical_transition_matrix:\n",
+                                    m_totalNbAttempts, exchangesProbabilities,
+                                    exchangesNumber, exchangesAverage);
 
     for (int idx1 = 0; idx1 < m_nbReplicas; ++idx1) {
       stats += "   ";
@@ -287,6 +292,6 @@ class ExchangeLogger {
     printToAll(stats);
   }
 };
-}
+} // namespace mc
 
 #endif

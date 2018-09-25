@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef ENERGY_ENERGYMATRIX_H
 #define ENERGY_ENERGYMATRIX_H
 
@@ -12,8 +22,8 @@
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <iostream>
-#include <vector>
 #include <omp.h>
+#include <vector>
 
 #include "io/serializer.h"
 #include "util/util.h"
@@ -25,7 +35,7 @@ class EnergyMatrix : public io::AbstractSerializable {
   static_assert(BlockingSize > 0, "BlockingSize must geater than 0");
 
   static constexpr int NbMainValues =
-      3;  // for energy + inner energy + energy for connections
+      3; // for energy + inner energy + energy for connections
   static constexpr int InnerEnergyIdx = 1;
   static constexpr int ConnectionEnergyIdx = 2;
 
@@ -46,14 +56,14 @@ class EnergyMatrix : public io::AbstractSerializable {
            (inIdxCol % BlockingSize) * BlockingSize;
   }
 
-  T& getEnergyWrite(const int idDomainRow, const int idDomainCol) {
+  T &getEnergyWrite(const int idDomainRow, const int idDomainCol) {
     DEBUG_ASSERT(idDomainRow < m_nbRowDomains && idDomainCol < m_nbColDomains,
                  "Out of bound array access ({} {}) with rows={}, cols={}",
                  idDomainRow, idDomainCol, m_nbRowDomains, m_nbColDomains);
     return m_pData[indexOf(idDomainRow, idDomainCol) * m_nbValues];
   }
 
-  T& getEnergyConnectionsWrite(const int idDomainRow, const int idDomainCol) {
+  T &getEnergyConnectionsWrite(const int idDomainRow, const int idDomainCol) {
     DEBUG_ASSERT(idDomainRow < m_nbRowDomains && idDomainCol < m_nbColDomains,
                  "Out of bound array access ({} {}) with rows={}, cols={}",
                  idDomainRow, idDomainCol, m_nbRowDomains, m_nbColDomains);
@@ -61,7 +71,7 @@ class EnergyMatrix : public io::AbstractSerializable {
                    ConnectionEnergyIdx];
   }
 
-  T& getContributionWrite(const int idDomainRow, const int idDomainCol,
+  T &getContributionWrite(const int idDomainRow, const int idDomainCol,
                           const int idxContribution) {
     DEBUG_ASSERT(idDomainRow < m_nbRowDomains && idDomainCol < m_nbColDomains &&
                      idxContribution < m_nbContributions,
@@ -73,13 +83,12 @@ class EnergyMatrix : public io::AbstractSerializable {
                    NbMainValues + idxContribution];
   }
 
- public:
+public:
   static const bool IsRowMajor = true;
 
   explicit EnergyMatrix(int inNbRowDomains_, int inNbColDomains_,
                         int nbContributions_)
-      : m_nbRowDomains(inNbRowDomains_),
-        m_nbColDomains(inNbColDomains_),
+      : m_nbRowDomains(inNbRowDomains_), m_nbColDomains(inNbColDomains_),
         m_nbContributions(nbContributions_),
         m_nbValues(nbContributions_ + NbMainValues),
         m_nbRowBlocks((m_nbRowDomains + BlockingSize - 1) / BlockingSize),
@@ -92,13 +101,13 @@ class EnergyMatrix : public io::AbstractSerializable {
       : EnergyMatrix(static_cast<int>(inNbRowDomains_),
                      static_cast<int>(inNbColDomains_), nbValues_) {}
   // support moving
-  EnergyMatrix(EnergyMatrix&& rhs) = default;
-  EnergyMatrix& operator=(EnergyMatrix&& rhs) = default;
+  EnergyMatrix(EnergyMatrix &&rhs) = default;
+  EnergyMatrix &operator=(EnergyMatrix &&rhs) = default;
   // support copying
-  EnergyMatrix(const EnergyMatrix& rhs) = default;
-  EnergyMatrix& operator=(const EnergyMatrix& rhs) = default;
+  EnergyMatrix(const EnergyMatrix &rhs) = default;
+  EnergyMatrix &operator=(const EnergyMatrix &rhs) = default;
 
-  void serialize(io::Serializer& serializer) const final {
+  void serialize(io::Serializer &serializer) const final {
     serializer.append(m_nbRowDomains, "m_nbRowDomains");
     serializer.append(m_nbColDomains, "m_nbColDomains");
     serializer.append(m_nbContributions, "m_nbContributions");
@@ -108,7 +117,7 @@ class EnergyMatrix : public io::AbstractSerializable {
     serializer.append(m_pData, "m_pData");
   }
 
-  EnergyMatrix(io::Deserializer& deserializer)
+  EnergyMatrix(io::Deserializer &deserializer)
       : m_nbRowDomains(
             deserializer.restore<decltype(m_nbRowDomains)>("m_nbRowDomains")),
         m_nbColDomains(
@@ -129,7 +138,7 @@ class EnergyMatrix : public io::AbstractSerializable {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  const T& getEnergy(const int idDomainRow, const int idDomainCol) const {
+  const T &getEnergy(const int idDomainRow, const int idDomainCol) const {
     DEBUG_ASSERT(idDomainRow < m_nbRowDomains && idDomainCol < m_nbColDomains,
                  "Out of bound array access ({} {}) with rows={}, cols={}",
                  idDomainRow, idDomainCol, m_nbRowDomains, m_nbColDomains);
@@ -139,18 +148,18 @@ class EnergyMatrix : public io::AbstractSerializable {
   /////////////////////////////////////////////////////////////////////////////
 
   void addEnergyConnections(const int idDomainRow, const int idDomainCol,
-                            const T& inVal) {
+                            const T &inVal) {
     DEBUG_ASSERT(idDomainRow < m_nbRowDomains && idDomainCol < m_nbColDomains,
                  "Out of bound array access ({} {}) with rows={}, cols={}",
                  idDomainRow, idDomainCol, m_nbRowDomains, m_nbColDomains);
-    T& target = m_pData[indexOf(idDomainRow, idDomainCol) * m_nbValues +
+    T &target = m_pData[indexOf(idDomainRow, idDomainCol) * m_nbValues +
                         ConnectionEnergyIdx];
     target += inVal;
-    T& targetEnergy = m_pData[indexOf(idDomainRow, idDomainCol) * m_nbValues];
+    T &targetEnergy = m_pData[indexOf(idDomainRow, idDomainCol) * m_nbValues];
     targetEnergy += inVal;
   }
 
-  const T& getEnergyConnections(const int idDomainRow,
+  const T &getEnergyConnections(const int idDomainRow,
                                 const int idDomainCol) const {
     DEBUG_ASSERT(idDomainRow < m_nbRowDomains && idDomainCol < m_nbColDomains,
                  "Out of bound array access ({} {}) with rows={}, cols={}",
@@ -162,21 +171,21 @@ class EnergyMatrix : public io::AbstractSerializable {
   /////////////////////////////////////////////////////////////////////////////
 
   void addContribution(const int idDomainRow, const int idDomainCol,
-                       const int idxContribution, const T& inVal) {
+                       const int idxContribution, const T &inVal) {
     DEBUG_ASSERT(idDomainRow < m_nbRowDomains && idDomainCol < m_nbColDomains &&
                      idxContribution < m_nbContributions,
                  "Out of bound array access ({} {} {}) with rows={}, cols={}, "
                  "contributions={}",
                  idDomainRow, idDomainCol, idxContribution, m_nbRowDomains,
                  m_nbColDomains, m_nbContributions);
-    T& target = m_pData[indexOf(idDomainRow, idDomainCol) * m_nbValues +
+    T &target = m_pData[indexOf(idDomainRow, idDomainCol) * m_nbValues +
                         NbMainValues + idxContribution];
     target += inVal;
-    T& targetEnergy = m_pData[indexOf(idDomainRow, idDomainCol) * m_nbValues];
+    T &targetEnergy = m_pData[indexOf(idDomainRow, idDomainCol) * m_nbValues];
     targetEnergy += inVal;
   }
 
-  const T& getContribution(const int idDomainRow, const int idDomainCol,
+  const T &getContribution(const int idDomainRow, const int idDomainCol,
                            const int idxContribution) const {
     DEBUG_ASSERT(idDomainRow < m_nbRowDomains && idDomainCol < m_nbColDomains &&
                      idxContribution < m_nbContributions,
@@ -199,13 +208,13 @@ class EnergyMatrix : public io::AbstractSerializable {
 
   void reset() { setAll(T()); }
 
-  void setAll(const T& inVal) {
+  void setAll(const T &inVal) {
     for (size_t idx = 0; idx < m_pData.size(); ++idx) {
       m_pData[idx] = inVal;
     }
   }
 
-  bool operator==(const EnergyMatrix& other) const {
+  bool operator==(const EnergyMatrix &other) const {
     return m_nbRowDomains == other.m_nbRowDomains &&
            m_nbColDomains == other.m_nbColDomains &&
            m_nbValues == other.m_nbValues &&
@@ -213,9 +222,9 @@ class EnergyMatrix : public io::AbstractSerializable {
            m_pData == other.m_pData;
   }
 
-  bool operator!=(const EnergyMatrix& other) const { return !(*this == other); }
+  bool operator!=(const EnergyMatrix &other) const { return !(*this == other); }
 
-  bool sameDimension(const EnergyMatrix& other) const {
+  bool sameDimension(const EnergyMatrix &other) const {
     return m_nbRowDomains == other.m_nbRowDomains &&
            m_nbColDomains == other.m_nbColDomains &&
            m_nbValues == other.m_nbValues &&
@@ -224,12 +233,12 @@ class EnergyMatrix : public io::AbstractSerializable {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  void replaceRowAndCol(const int rowColIdx, const EnergyMatrix& inValues) {
+  void replaceRowAndCol(const int rowColIdx, const EnergyMatrix &inValues) {
     replaceRow(rowColIdx, inValues);
     replaceCol(rowColIdx, inValues);
   }
 
-  void replaceRow(const int rowIdx, const EnergyMatrix& inRowValues) {
+  void replaceRow(const int rowIdx, const EnergyMatrix &inRowValues) {
     DEBUG_ASSERT(inRowValues.m_nbValues == m_nbValues &&
                      inRowValues.m_nbContributions == m_nbContributions &&
                      ((inRowValues.m_nbRowDomains == 1 &&
@@ -266,7 +275,7 @@ class EnergyMatrix : public io::AbstractSerializable {
     }
   }
 
-  void replaceCol(const int colIdx, const EnergyMatrix& inColValues) {
+  void replaceCol(const int colIdx, const EnergyMatrix &inColValues) {
     DEBUG_ASSERT(inColValues.m_nbValues == m_nbValues &&
                      inColValues.m_nbContributions == m_nbContributions &&
                      ((inColValues.m_nbRowDomains == 1 &&
@@ -372,8 +381,7 @@ class EnergyMatrix : public io::AbstractSerializable {
 
 using rEnergyMatrix = EnergyMatrix<double>;
 
-template <int BufferSize = 1024>
-class EnergyMatrixBuffer {
+template <int BufferSize = 1024> class EnergyMatrixBuffer {
   static_assert(BufferSize > 0, "BufferSize must be positive");
 
   struct BufferValue {
@@ -384,36 +392,35 @@ class EnergyMatrixBuffer {
     double inVal;
   };
 
-  rEnergyMatrix& m_energyArray;
+  rEnergyMatrix &m_energyArray;
   BufferValue m_values[BufferSize];
   int m_nbValues;
 
-  omp_lock_t& m_energyMatrixMutex;
+  omp_lock_t &m_energyMatrixMutex;
 
- public:
-  EnergyMatrixBuffer(rEnergyMatrix& inEnergyArray,
-                     omp_lock_t& inEnergyMatrixMutex)
-      : m_energyArray(inEnergyArray),
-        m_nbValues(0),
+public:
+  EnergyMatrixBuffer(rEnergyMatrix &inEnergyArray,
+                     omp_lock_t &inEnergyMatrixMutex)
+      : m_energyArray(inEnergyArray), m_nbValues(0),
         m_energyMatrixMutex(inEnergyMatrixMutex) {}
 
   ~EnergyMatrixBuffer() { flushWithLock(); }
 
-  EnergyMatrixBuffer(const EnergyMatrixBuffer&) = delete;
-  EnergyMatrixBuffer(EnergyMatrixBuffer&&) = delete;
-  EnergyMatrixBuffer& operator=(const EnergyMatrixBuffer&) = delete;
-  EnergyMatrixBuffer& operator=(EnergyMatrixBuffer&&) = delete;
+  EnergyMatrixBuffer(const EnergyMatrixBuffer &) = delete;
+  EnergyMatrixBuffer(EnergyMatrixBuffer &&) = delete;
+  EnergyMatrixBuffer &operator=(const EnergyMatrixBuffer &) = delete;
+  EnergyMatrixBuffer &operator=(EnergyMatrixBuffer &&) = delete;
 
-  EnergyMatrixBuffer& addContribution(const int idxDomRow, const int idxDomCol,
+  EnergyMatrixBuffer &addContribution(const int idxDomRow, const int idxDomCol,
                                       const int inOffset, const int inIdx,
                                       const double inVal) {
     if (m_nbValues == BufferSize) {
       flushWithLock();
     }
-    DEBUG_ASSERT(
-        inOffset + inIdx < static_cast<int>(m_energyArray.nbEnergyValues()),
-        "Invalid inIdx {} + inOffset {} >= m_contributions.size() {}", inIdx,
-        inOffset, m_energyArray.nbEnergyValues());
+    DEBUG_ASSERT(inOffset + inIdx <
+                     static_cast<int>(m_energyArray.nbEnergyValues()),
+                 "Invalid inIdx {} + inOffset {} >= m_contributions.size() {}",
+                 inIdx, inOffset, m_energyArray.nbEnergyValues());
     m_values[m_nbValues++] =
         BufferValue{idxDomRow, idxDomCol, inOffset, inIdx, inVal};
     return *this;
@@ -432,21 +439,21 @@ class EnergyMatrixBuffer {
   }
 
   class Accesser {
-    EnergyMatrixBuffer& m_buffer;
+    EnergyMatrixBuffer &m_buffer;
     const int m_idxDomRow;
     const int m_idxDomCol;
 
-    Accesser(EnergyMatrixBuffer& inBuffer, const int idxDomRow,
+    Accesser(EnergyMatrixBuffer &inBuffer, const int idxDomRow,
              const int idxDomCol)
         : m_buffer(inBuffer), m_idxDomRow(idxDomRow), m_idxDomCol(idxDomCol) {}
 
-   public:
-    Accesser(const Accesser&) = default;
-    Accesser(Accesser&&) = default;
-    Accesser& operator=(const Accesser&) = default;
-    Accesser& operator=(Accesser&&) = default;
+  public:
+    Accesser(const Accesser &) = default;
+    Accesser(Accesser &&) = default;
+    Accesser &operator=(const Accesser &) = default;
+    Accesser &operator=(Accesser &&) = default;
 
-    Accesser& addContribution(const int inOffset, const int inIdx,
+    Accesser &addContribution(const int inOffset, const int inIdx,
                               const double inVal) {
       m_buffer.addContribution(m_idxDomRow, m_idxDomCol, inOffset, inIdx,
                                inVal);
@@ -461,12 +468,12 @@ class EnergyMatrixBuffer {
   }
 };
 
-}  // namespace energy
+} // namespace energy
 
 namespace std {
 template <typename T>
-std::ostream& operator<<(std::ostream& out,
-                         const energy::EnergyMatrix<T>& mat) {
+std::ostream &operator<<(std::ostream &out,
+                         const energy::EnergyMatrix<T> &mat) {
   const auto nbDomains = mat.nbRowDomains();
   out << fmt::format("Energy Mat:\n");
   for (auto i = 0; i < nbDomains; ++i) {
@@ -478,5 +485,5 @@ std::ostream& operator<<(std::ostream& out,
   }
   return out;
 }
-}  // namespace std
-#endif  // ENERGY_ENERGYMATRIX_H
+} // namespace std
+#endif // ENERGY_ENERGYMATRIX_H

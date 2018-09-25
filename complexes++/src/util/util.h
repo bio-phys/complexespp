@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef UTIL_H
 #define UTIL_H
 
@@ -28,15 +38,15 @@
 
 #include <iostream>
 
-#define DEBUG_ASSERT(condition, ...)                                   \
-  if (!(condition)) {                                                  \
-    fmt::print(std::cerr, "An assert has failed : {} \n", #condition); \
-    fmt::print(std::cerr, "\t In file : {}\n", __FILE__);              \
-    fmt::print(std::cerr, "\t At line : {}\n", __LINE__);              \
-    fmt::print(std::cerr, "\t Log : ");                                \
-    fmt::print(std::cerr, __VA_ARGS__);                                \
-    fmt::print(std::cerr, "\n");                                       \
-    throw std::runtime_error("Bad Assert Exit");                       \
+#define DEBUG_ASSERT(condition, ...)                                           \
+  if (!(condition)) {                                                          \
+    fmt::print(std::cerr, "An assert has failed : {} \n", #condition);         \
+    fmt::print(std::cerr, "\t In file : {}\n", __FILE__);                      \
+    fmt::print(std::cerr, "\t At line : {}\n", __LINE__);                      \
+    fmt::print(std::cerr, "\t Log : ");                                        \
+    fmt::print(std::cerr, __VA_ARGS__);                                        \
+    fmt::print(std::cerr, "\n");                                               \
+    throw std::runtime_error("Bad Assert Exit");                               \
   }
 #endif
 
@@ -84,23 +94,23 @@ extern util::EventManager GlobalEventManager;
 #define TIMEZONE_Core_Merge(x, y) x##y
 #define TIMEZONE_Core_Pre_Merge(x, y) TIMEZONE_Core_Merge(x, y)
 
-#define TIMEZONE(NAME)                                                      \
-  util::ScopeEvent TIMEZONE_Core_Pre_Merge(____TIMEZONE_AUTO_ID, __LINE__)( \
+#define TIMEZONE(NAME)                                                         \
+  util::ScopeEvent TIMEZONE_Core_Pre_Merge(____TIMEZONE_AUTO_ID, __LINE__)(    \
       NAME, GlobalEventManager, ScopeEventUniqueKey);
-#define TIMEZONE_MULTI_REF(NAME)                                            \
-  util::ScopeEvent TIMEZONE_Core_Pre_Merge(____TIMEZONE_AUTO_ID, __LINE__)( \
+#define TIMEZONE_MULTI_REF(NAME)                                               \
+  util::ScopeEvent TIMEZONE_Core_Pre_Merge(____TIMEZONE_AUTO_ID, __LINE__)(    \
       NAME, GlobalEventManager, ScopeEventMultiRefKey);
 
-#define TIMEZONE_OMP_INIT_PRETASK(VARNAME)                         \
-  auto VARNAME##core = GlobalEventManager.getCurrentThreadEvent(); \
+#define TIMEZONE_OMP_INIT_PRETASK(VARNAME)                                     \
+  auto VARNAME##core = GlobalEventManager.getCurrentThreadEvent();             \
   auto VARNAME = &VARNAME##core;
-#define TIMEZONE_OMP_TASK(NAME, VARNAME)                                    \
-  util::ScopeEvent TIMEZONE_Core_Pre_Merge(____TIMEZONE_AUTO_ID, __LINE__)( \
+#define TIMEZONE_OMP_TASK(NAME, VARNAME)                                       \
+  util::ScopeEvent TIMEZONE_Core_Pre_Merge(____TIMEZONE_AUTO_ID, __LINE__)(    \
       NAME, GlobalEventManager, ScopeEventUniqueKey, *VARNAME);
-#define TIMEZONE_OMP_PRAGMA_TASK_KEY(VARNAME) \
+#define TIMEZONE_OMP_PRAGMA_TASK_KEY(VARNAME)                                  \
   shared(GlobalEventManager) firstprivate(VARNAME)
 
-#define TIMEZONE_OMP_INIT_PREPARALLEL(NBTHREADS) \
+#define TIMEZONE_OMP_INIT_PREPARALLEL(NBTHREADS)                               \
   GlobalEventManager.startParallelRegion(NBTHREADS);
 
 #else
@@ -129,7 +139,7 @@ using isSameIteratorCond =
 template <typename Iter, typename T,
           typename = EnableIf_t<
               isSameIteratorCond<Iter, std::random_access_iterator_tag>>>
-int indexOf(const Iter& begin, const Iter& end, const T& val) {
+int indexOf(const Iter &begin, const Iter &end, const T &val) {
   const auto it = std::find(begin, end, val);
   if (end == it) {
     return -1;
@@ -137,15 +147,11 @@ int indexOf(const Iter& begin, const Iter& end, const T& val) {
   return std::distance(begin, it);
 }
 
-template <class T>
-struct is_std_vector {
-  static const int value = false;
-};
+template <class T> struct is_std_vector { static const int value = false; };
 
-template <class T>
-struct is_std_vector<std::vector<T>> {
+template <class T> struct is_std_vector<std::vector<T>> {
   static const int value = true;
 };
 
-}  // namespace util
-#endif  // UTIL_H
+} // namespace util
+#endif // UTIL_H

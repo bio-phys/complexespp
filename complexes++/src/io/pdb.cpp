@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include <fmt/format.h>
 #include <sstream>
 
@@ -14,21 +24,20 @@
 
 namespace io {
 
-void writePDBLine(std::basic_ostream<char>& out, const double x, const double y,
-                  const double z, const std::string& resName, const int atomID,
-                  const std::string& chain, const int resid) {
+void writePDBLine(std::basic_ostream<char> &out, const double x, const double y,
+                  const double z, const std::string &resName, const int atomID,
+                  const std::string &chain, const int resid) {
   // taken from http://cupnet.net/pdb-format/
-  const auto pdbFormat =
-      "{:6s}{:5d} {:4s}{:1s}{:3s} {}{:4d}{:1s}   "
-      "{:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}\n";
+  const auto pdbFormat = "{:6s}{:5d} {:4s}{:1s}{:3s} {}{:4d}{:1s}   "
+                         "{:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}\n";
   // shift atom ID by one because PDB is one indexed
   out << fmt::format(pdbFormat, "ATOM", util::truncateLeft(atomID + 1), "CA",
                      "", resName, chain, resid, "", x, y, z, 0.0, 0.0);
 }
 
-void writeDom(const std::unique_ptr<domains::AbstractDomain>& dom,
-              std::basic_ostream<char>& out,
-              const std::vector<std::string>& beadTypes,
+void writeDom(const std::unique_ptr<domains::AbstractDomain> &dom,
+              std::basic_ostream<char> &out,
+              const std::vector<std::string> &beadTypes,
               const int atom_offset) {
   const auto nAtoms = dom->nBeads();
   for (auto i = 0; i < nAtoms; ++i) {
@@ -42,7 +51,7 @@ void writeDom(const std::unique_ptr<domains::AbstractDomain>& dom,
   }
 }
 
-void writeBox(std::basic_ostream<char>& out, const util::rvec& box) {
+void writeBox(std::basic_ostream<char> &out, const util::rvec &box) {
   const auto boxFormat =
       "CRYST1{:9.3f}{:9.3f}{:9.3f}{:7.2f}{:7.2f}{:7.2f} {:14s}1\n";
   const auto angle = 90.0;
@@ -51,13 +60,13 @@ void writeBox(std::basic_ostream<char>& out, const util::rvec& box) {
                      "P 1");
 }
 
-void writePDB(std::basic_ostream<char>& out, const domains::Domains& model,
-              const util::rvec& box, const int i,
-              const std::vector<std::string>& beadTypes) {
+void writePDB(std::basic_ostream<char> &out, const domains::Domains &model,
+              const util::rvec &box, const int i,
+              const std::vector<std::string> &beadTypes) {
   writeBox(out, box);
   out << fmt::format("MODEL {}\n", i + 1);
   auto processed_beads = 0;
-  for (auto const& dom : model) {
+  for (auto const &dom : model) {
     writeDom(dom, out, beadTypes, processed_beads);
     processed_beads += dom->nBeads();
   }
@@ -65,18 +74,18 @@ void writePDB(std::basic_ostream<char>& out, const domains::Domains& model,
 }
 
 PDBReader::PDBReader(std::shared_ptr<domains::Domains> dom,
-                     const util::rvec& box, const std::string& file)
+                     const util::rvec &box, const std::string &file)
     : BaseReader(dom, box), m_frame(0), m_pdb(file) {}
 
 PDBReader::~PDBReader() {}
 
-util::rvec readAtomLine(const std::string& line) {
+util::rvec readAtomLine(const std::string &line) {
   return util::rvec(std::stod(line.substr(31, 7)),
                     std::stod(line.substr(39, 7)),
                     std::stod(line.substr(47, 7)));
 }
 
-util::rvec readNextAtom(std::ifstream& instream) {
+util::rvec readNextAtom(std::ifstream &instream) {
   std::string line;
   while (std::getline(instream, line)) {
     if (line.substr(0, 4) == "ATOM") {
@@ -95,7 +104,7 @@ util::rvec readNextAtom(std::ifstream& instream) {
 }
 
 void PDBReader::readPDBFrame() {
-  for (auto& dom : *m_dom) {
+  for (auto &dom : *m_dom) {
     auto xyz = dom->xyz();
     for (auto i = 0; i < dom->nBeads(); ++i) {
       auto atom = readNextAtom(m_pdb);
@@ -109,7 +118,7 @@ void PDBReader::readPDBFrame() {
   auto bReachedEndOfModel = false;
   try {
     readNextAtom(m_pdb);
-  } catch (std::invalid_argument& e) {
+  } catch (std::invalid_argument &e) {
     bReachedEndOfModel = true;
   }
 
@@ -138,4 +147,4 @@ std::shared_ptr<domains::Domains> PDBReader::nextFrame() {
   readPDBFrame();
   return m_dom;
 }
-}  // namespace io
+} // namespace io

@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef MPIBASICEXCHANGESIMULATION_H
 #define MPIBASICEXCHANGESIMULATION_H
 
@@ -60,8 +70,8 @@ class MpiBasicExchangeSimulation : public mc::AbstractExchangeSimulation {
   //! Nb mpi processes
   int m_nbProcesses;
 
-  void coreExchange(mc::ExchangeLogger& loger, const int idx1, const int idx2,
-                    mc::Simulation& simu1, mc::Simulation& simu2) {
+  void coreExchange(mc::ExchangeLogger &loger, const int idx1, const int idx2,
+                    mc::Simulation &simu1, mc::Simulation &simu2) {
     // Ask if we need to exchange
     auto resExchange = m_accepter.accept(simu1, simu2, simu1.getRandEngine());
     const bool doExchange = std::get<0>(resExchange);
@@ -99,7 +109,7 @@ class MpiBasicExchangeSimulation : public mc::AbstractExchangeSimulation {
     return deserializer.restore<mc::Simulation>("simulation");
   }
 
-  void sendSimulation(const mc::Simulation& simuToSend,
+  void sendSimulation(const mc::Simulation &simuToSend,
                       const int idxProcessDest) const {
     TIMEZONE("sendSimulation")
     io::Serializer serializer;
@@ -110,36 +120,32 @@ class MpiBasicExchangeSimulation : public mc::AbstractExchangeSimulation {
                  "Invalid size of buffer");
 
     TIMEZONE("MPI_Send")
-    MPI_ASSERT(MPI_Send(const_cast<unsigned char*>(buffer.data()),
+    MPI_ASSERT(MPI_Send(const_cast<unsigned char *>(buffer.data()),
                         static_cast<int>(buffer.size()), MPI_UNSIGNED_CHAR,
                         idxProcessDest, 1, MPI_COMM_WORLD));
   }
 
- public:
+public:
   MpiBasicExchangeSimulation(
-      const std::vector<std::string>& configDirNames,
-      const std::vector<std::string>& configDirNamesGlobal,
-      const std::string& configFilename, const int inExchangeRate,
+      const std::vector<std::string> &configDirNames,
+      const std::vector<std::string> &configDirNamesGlobal,
+      const std::string &configFilename, const int inExchangeRate,
       const int inStatsRate,
       const mc::SimulationChecking::ComparisonFlag inComparisonMask,
       const bool inEnableExchangeLog, const bool restart,
-      const std::string& restartValue, const bool backupOutput,
+      const std::string &restartValue, const bool backupOutput,
       const io::MoveStatRecorder::Verbosity inMoveStatsVerbosity,
-      const int inNbThreads, const std::vector<int>& inPartitions,
-      const std::vector<int>& inPartitionsOffset)
+      const int inNbThreads, const std::vector<int> &inPartitions,
+      const std::vector<int> &inPartitionsOffset)
       : m_nbSimu(static_cast<int>(configDirNames.size())),
-        m_exchangeRate(inExchangeRate),
-        m_statisticRate(inStatsRate),
+        m_exchangeRate(inExchangeRate), m_statisticRate(inStatsRate),
         m_configDirNames(configDirNames),
         m_configDirNamesGlobal(configDirNamesGlobal),
         m_configFilename(configFilename),
         m_defaultComparisonMask(inComparisonMask),
-        m_enableExchangeLog(inEnableExchangeLog),
-        m_nbThreads(inNbThreads),
-        m_partitions(inPartitions),
-        m_partitionsOffset(inPartitionsOffset),
-        m_nbSimuGlobal(m_partitionsOffset.back()),
-        m_myRank(-1) {
+        m_enableExchangeLog(inEnableExchangeLog), m_nbThreads(inNbThreads),
+        m_partitions(inPartitions), m_partitionsOffset(inPartitionsOffset),
+        m_nbSimuGlobal(m_partitionsOffset.back()), m_myRank(-1) {
     TIMEZONE("MpiBasicExchangeSimulation");
     MPI_ASSERT(MPI_Comm_rank(MPI_COMM_WORLD, &m_myRank));
     MPI_ASSERT(MPI_Comm_size(MPI_COMM_WORLD, &m_nbProcesses));
@@ -263,12 +269,12 @@ class MpiBasicExchangeSimulation : public mc::AbstractExchangeSimulation {
             // Both simulation are mine, proceed as usual
             coreExchange(
                 loger, idx1, idx2,
-                m_simus[idx1 - m_partitionsOffset[m_myRank]],   // by reference
-                                                                // but will be
-                                                                // modified
-                m_simus[idx2 - m_partitionsOffset[m_myRank]]);  // by reference
-                                                                // but will be
-                                                                // modified
+                m_simus[idx1 - m_partitionsOffset[m_myRank]],  // by reference
+                                                               // but will be
+                                                               // modified
+                m_simus[idx2 - m_partitionsOffset[m_myRank]]); // by reference
+                                                               // but will be
+                                                               // modified
           } else if (simulationIsMine(idx1)) {
             sendSimulation(m_simus[idx1 - m_partitionsOffset[m_myRank]],
                            simulationOwner(idx2));
@@ -278,10 +284,10 @@ class MpiBasicExchangeSimulation : public mc::AbstractExchangeSimulation {
             // Only one of them is mine
             coreExchange(
                 loger, idx1, idx2,
-                m_simus[idx1 - m_partitionsOffset[m_myRank]],  // by reference
-                                                               // but will be
-                                                               // modified
-                receivedSimulation);  // by reference but will be modified
+                m_simus[idx1 - m_partitionsOffset[m_myRank]], // by reference
+                                                              // but will be
+                                                              // modified
+                receivedSimulation); // by reference but will be modified
           } else if (simulationIsMine(idx2)) {
             mc::Simulation receivedSimulation =
                 receiveSimulation(simulationOwner(idx1));
@@ -290,10 +296,10 @@ class MpiBasicExchangeSimulation : public mc::AbstractExchangeSimulation {
             // Only one of them is mine
             coreExchange(
                 loger, idx1, idx2,
-                receivedSimulation,  // by reference but will be modified
-                m_simus[idx2 - m_partitionsOffset[m_myRank]]);  // by reference
-                                                                // but will be
-                                                                // modified
+                receivedSimulation, // by reference but will be modified
+                m_simus[idx2 - m_partitionsOffset[m_myRank]]); // by reference
+                                                               // but will be
+                                                               // modified
           }
         }
 
@@ -319,6 +325,6 @@ class MpiBasicExchangeSimulation : public mc::AbstractExchangeSimulation {
     return 0;
   }
 };
-}  // namespace mpi
+} // namespace mpi
 
-#endif  // MPI_BASICEXCHANGEALGORITHM_h
+#endif // MPI_BASICEXCHANGEALGORITHM_h

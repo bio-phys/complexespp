@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include "gtest/gtest.h"
 
 #include "cutoffgrid/cosparsegridcontainer.h"
@@ -44,13 +54,15 @@ TEST(CUTOFF_TEST, testInteractionAlgorithms) {
       current_xyz(idxAtom, 2) = randZ(randEngine);
     }
 
-    (*allDomains)[idxDom].reset(new TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>(
-        nbBeads, idxDom, grid));
+    (*allDomains)[idxDom].reset(
+        new TestingDomain<
+            cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>(
+            nbBeads, idxDom, grid));
     (*allDomains)[idxDom]->setXyz(current_xyz);
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->setCoMode(false);
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->setCoMode(false);
   }
 
   const energy::ForceField forcefield = dummy_forcefield(1, -1, 1, 1, 1);
@@ -76,16 +88,18 @@ TEST(CUTOFF_TEST, testInteractionAlgorithms) {
   fullalgo.computeAll(boxSize, forcefield, kernels, fullRes);
   std::vector<int> fullInteractionsCounter(nbDomains);
   for (int idxDom = 0; idxDom < nbDomains; ++idxDom) {
-    fullInteractionsCounter[idxDom] =
-        reinterpret_cast<TestingDomain<
-            cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-            (*allDomains)[idxDom].get())->getNbInteractions();
+    fullInteractionsCounter[idxDom] = reinterpret_cast<TestingDomain<
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+                                          (*allDomains)[idxDom].get())
+                                          ->getNbInteractions();
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->resetNbInteractions();
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->resetNbInteractions();
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->setCoMode(true);
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->setCoMode(true);
   }
 
   energy::rEnergyMatrix coRes(nbDomains, nbDomains,
@@ -95,15 +109,18 @@ TEST(CUTOFF_TEST, testInteractionAlgorithms) {
   for (int idxDom = 0; idxDom < nbDomains; ++idxDom) {
     EXPECT_EQ(
         (reinterpret_cast<TestingDomain<
-            cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-             (*allDomains)[idxDom].get())->getNbInteractions()),
+             cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+             (*allDomains)[idxDom].get())
+             ->getNbInteractions()),
         fullInteractionsCounter[idxDom]);
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->resetNbInteractions();
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->resetNbInteractions();
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->setCoMode(false);
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->setCoMode(false);
   }
 
   for (int idxDomTgt = 0; idxDomTgt < nbDomains; ++idxDomTgt) {
@@ -119,16 +136,18 @@ TEST(CUTOFF_TEST, testInteractionAlgorithms) {
   fullalgo.computeForOneDomain((*allDomains)[0]->id(), boxSize, forcefield,
                                kernels, fullCODres);
   for (int idxDom = 0; idxDom < nbDomains; ++idxDom) {
-    fullInteractionsCounter[idxDom] =
-        reinterpret_cast<TestingDomain<
-            cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-            (*allDomains)[idxDom].get())->getNbInteractions();
+    fullInteractionsCounter[idxDom] = reinterpret_cast<TestingDomain<
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+                                          (*allDomains)[idxDom].get())
+                                          ->getNbInteractions();
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->resetNbInteractions();
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->resetNbInteractions();
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->setCoMode(true);
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->setCoMode(true);
   }
 
   energy::rEnergyMatrix coCODres(1, nbDomains, kernels.getNbContributions());
@@ -137,12 +156,14 @@ TEST(CUTOFF_TEST, testInteractionAlgorithms) {
   for (int idxDom = 0; idxDom < nbDomains; ++idxDom) {
     EXPECT_EQ(
         (reinterpret_cast<TestingDomain<
-            cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-             (*allDomains)[idxDom].get())->getNbInteractions()),
+             cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+             (*allDomains)[idxDom].get())
+             ->getNbInteractions()),
         fullInteractionsCounter[idxDom]);
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->resetNbInteractions();
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->resetNbInteractions();
   }
 
   for (int idxDomTgt = 0; idxDomTgt < nbDomains; ++idxDomTgt) {
@@ -179,13 +200,15 @@ TEST(CUTOFF_TEST, testInteractionAlgorithmsOneCell) {
       current_xyz(idxAtom, 2) = randZ(randEngine);
     }
 
-    (*allDomains)[idxDom].reset(new TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>(
-        nbBeads, idxDom, grid));
+    (*allDomains)[idxDom].reset(
+        new TestingDomain<
+            cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>(
+            nbBeads, idxDom, grid));
     (*allDomains)[idxDom]->setXyz(current_xyz);
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->setCoMode(false);
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->setCoMode(false);
   }
 
   const energy::ForceField forcefield = dummy_forcefield(1, -1, 1, 1, 1);
@@ -210,17 +233,19 @@ TEST(CUTOFF_TEST, testInteractionAlgorithmsOneCell) {
                                 kernels.getNbContributions());
   fullalgo.computeAll(boxSize, forcefield, kernels, fullRes);
   for (int idxDom = 0; idxDom < nbDomains; ++idxDom) {
-    const int nbInteractionsForDom =
-        reinterpret_cast<TestingDomain<
-            cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-            (*allDomains)[idxDom].get())->getNbInteractions();
+    const int nbInteractionsForDom = reinterpret_cast<TestingDomain<
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+                                         (*allDomains)[idxDom].get())
+                                         ->getNbInteractions();
     EXPECT_EQ(nbBeads * (nbBeads * (nbDomains - 1)), nbInteractionsForDom);
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->resetNbInteractions();
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->resetNbInteractions();
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->setCoMode(true);
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->setCoMode(true);
   }
 
   energy::rEnergyMatrix coRes(nbDomains, nbDomains,
@@ -228,17 +253,19 @@ TEST(CUTOFF_TEST, testInteractionAlgorithmsOneCell) {
 
   coalgo.computeAll(boxSize, forcefield, kernels, coRes);
   for (int idxDom = 0; idxDom < nbDomains; ++idxDom) {
-    const int nbInteractionsForDom =
-        reinterpret_cast<TestingDomain<
-            cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-            (*allDomains)[idxDom].get())->getNbInteractions();
+    const int nbInteractionsForDom = reinterpret_cast<TestingDomain<
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+                                         (*allDomains)[idxDom].get())
+                                         ->getNbInteractions();
     EXPECT_EQ(nbBeads * (nbBeads * (nbDomains - 1)), nbInteractionsForDom);
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->resetNbInteractions();
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->resetNbInteractions();
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->setCoMode(false);
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->setCoMode(false);
   }
 
   for (int idxDomTgt = 0; idxDomTgt < nbDomains; ++idxDomTgt) {
@@ -255,39 +282,42 @@ TEST(CUTOFF_TEST, testInteractionAlgorithmsOneCell) {
   fullalgo.computeForOneDomain((*allDomains)[0]->id(), boxSize, forcefield,
                                kernels, fullCODres);
   for (int idxDom = 0; idxDom < nbDomains; ++idxDom) {
-    const int nbInteractionsForDom =
-        reinterpret_cast<TestingDomain<
-            cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-            (*allDomains)[idxDom].get())->getNbInteractions();
+    const int nbInteractionsForDom = reinterpret_cast<TestingDomain<
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+                                         (*allDomains)[idxDom].get())
+                                         ->getNbInteractions();
     if (idxDom == 0) {
       EXPECT_EQ(nbBeads * (nbBeads * (nbDomains - 1)), nbInteractionsForDom);
     } else {
       EXPECT_EQ(0, nbInteractionsForDom);
     }
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->resetNbInteractions();
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->resetNbInteractions();
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->setCoMode(true);
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->setCoMode(true);
   }
 
   energy::rEnergyMatrix coCODres(1, nbDomains, kernels.getNbContributions());
   coalgo.computeForOneDomain((*allDomains)[0]->id(), boxSize, forcefield,
                              kernels, coCODres);
   for (int idxDom = 0; idxDom < nbDomains; ++idxDom) {
-    const int nbInteractionsForDom =
-        reinterpret_cast<TestingDomain<
-            cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-            (*allDomains)[idxDom].get())->getNbInteractions();
+    const int nbInteractionsForDom = reinterpret_cast<TestingDomain<
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+                                         (*allDomains)[idxDom].get())
+                                         ->getNbInteractions();
     if (idxDom == 0) {
       EXPECT_EQ(nbBeads * (nbBeads * (nbDomains - 1)), nbInteractionsForDom);
     } else {
       EXPECT_EQ(0, nbInteractionsForDom);
     }
     reinterpret_cast<TestingDomain<
-        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>>*>(
-        (*allDomains)[idxDom].get())->resetNbInteractions();
+        cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer>> *>(
+        (*allDomains)[idxDom].get())
+        ->resetNbInteractions();
   }
 
   for (int idxDomTgt = 0; idxDomTgt < nbDomains; ++idxDomTgt) {

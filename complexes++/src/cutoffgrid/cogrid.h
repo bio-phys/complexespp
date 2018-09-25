@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef COGRID_HPP
 #define COGRID_HPP
 
@@ -30,9 +40,8 @@ namespace cutoffgrid {
  * (GridContainerClass)
  * but we use a dense m_grid by default.
  */
-template <class RealType, class GridContainerClass>
-class CoGrid {
- protected:
+template <class RealType, class GridContainerClass> class CoGrid {
+protected:
   //< To avoid to use 3
   static const int m_Dimension = 3;
   //< To avoid to use 0
@@ -59,11 +68,11 @@ class CoGrid {
   //< The CoDomainCellLink list per domain
   std::vector<std::vector<CoDomainCellLink>> m_domainsCells;
 
- public:
+public:
   using ConstIterator = typename GridContainerClass::ConstIterator;
 
   explicit CoGrid(const RealType inCoRadius,
-                  const util::vec<RealType>& inBoxSize, const int inNbDomains)
+                  const util::vec<RealType> &inBoxSize, const int inNbDomains)
       : m_coRadius(inCoRadius), m_boxSize(inBoxSize), m_nbDomains(inNbDomains) {
     for (int idxDim = 0; idxDim < m_Dimension; ++idxDim) {
       // We must find the minimum radius r' which is a factor of the simulation
@@ -87,11 +96,11 @@ class CoGrid {
     m_domainsCells = std::vector<std::vector<CoDomainCellLink>>(m_nbDomains);
   }
 
-  CoGrid(const CoGrid&) = delete;
-  CoGrid& operator=(const CoGrid&) = delete;
+  CoGrid(const CoGrid &) = delete;
+  CoGrid &operator=(const CoGrid &) = delete;
 
-  CoGrid(CoGrid&&) = default;
-  CoGrid& operator=(CoGrid&&) = default;
+  CoGrid(CoGrid &&) = default;
+  CoGrid &operator=(CoGrid &&) = default;
 
   util::vec<int> getCoordFromPosition(const RealType inX, const RealType inY,
                                       const RealType inZ) const {
@@ -104,14 +113,14 @@ class CoGrid {
         (zCoord + m_gridSize[m_IndexZ]) % m_gridSize[m_IndexZ]);
   }
 
-  void addDomain(const std::unique_ptr<domains::AbstractDomain>& inDomain) {
-    std::vector<CoDomainCellLink>& currentDomainCells =
+  void addDomain(const std::unique_ptr<domains::AbstractDomain> &inDomain) {
+    std::vector<CoDomainCellLink> &currentDomainCells =
         m_domainsCells[inDomain->id()];
     if (!currentDomainCells.empty()) {
       throw std::invalid_argument(
           "A domain with the same id has already been inserted");
     }
-    const auto& elementsPositions = inDomain->xyz();
+    const auto &elementsPositions = inDomain->xyz();
 
     long long currentCellIdx = -1;
     util::vec<int> currentCoordinate = {0};
@@ -154,11 +163,11 @@ class CoGrid {
   }
 
   void removeDomain(const int inDomainId) {
-    std::vector<CoDomainCellLink>& currentDomainCells =
+    std::vector<CoDomainCellLink> &currentDomainCells =
         m_domainsCells[inDomainId];
 
     // For each link
-    for (CoDomainCellLink& currentDomainCell : currentDomainCells) {
+    for (CoDomainCellLink &currentDomainCell : currentDomainCells) {
       // Ask the m_grid container to remove the corresponding interval
       const auto domainCellToUpdate = m_grid.removeInterval(currentDomainCell);
       // If there is something to propagate (=> a swap has modified an interval)
@@ -173,12 +182,12 @@ class CoGrid {
     currentDomainCells.clear();
   }
 
-  const std::vector<CoDomainCellLink>& getDomainCells(
-      const int inDomainId) const {
+  const std::vector<CoDomainCellLink> &
+  getDomainCells(const int inDomainId) const {
     return m_domainsCells[inDomainId];
   }
 
-  void updateDomain(const std::unique_ptr<domains::AbstractDomain>& inDomain) {
+  void updateDomain(const std::unique_ptr<domains::AbstractDomain> &inDomain) {
     // A dedicated algorithm is not guaranted to be better
     removeDomain(inDomain->id());
     addDomain(inDomain);
@@ -191,17 +200,17 @@ class CoGrid {
    * inNewInsertedPos.
    * The value inBeginingOfInterval ensure to find the correct interval
    */
-  void updateDomainCell(const RemovedInterval& inRemInter,
+  void updateDomainCell(const RemovedInterval &inRemInter,
                         const long long inCellIndex) {
-    std::vector<CoDomainCellLink>& domainToUpdate =
+    std::vector<CoDomainCellLink> &domainToUpdate =
         m_domainsCells[inRemInter.modifiedDomainID()];
-    CoDomainCellLink& currentDomainCell =
+    CoDomainCellLink &currentDomainCell =
         domainToUpdate[inRemInter.posInCellList()];
     DEBUG_ASSERT(currentDomainCell.getCellIndex() == inCellIndex,
                  "The link is not correct (cell indexes are different)");
-    DEBUG_ASSERT(
-        currentDomainCell.getInsertPosInList() == inRemInter.oldPosInList(),
-        "The link is not correct (position in list are different)");
+    DEBUG_ASSERT(currentDomainCell.getInsertPosInList() ==
+                     inRemInter.oldPosInList(),
+                 "The link is not correct (position in list are different)");
     currentDomainCell.setInsetedPosInList(inRemInter.newIntervalSize());
   }
 
@@ -219,8 +228,8 @@ class CoGrid {
    * or if we deal with a very small m_grid).
    * The empty cells are excluded.
    */
-  int getCellNeighbors(const util::vec<int>& inCellPos,
-                       std::array<const CoCell*, 26>* inNeighbors) const {
+  int getCellNeighbors(const util::vec<int> &inCellPos,
+                       std::array<const CoCell *, 26> *inNeighbors) const {
     static_assert(
         26 == m_NbNeighbors,
         "Update of the dimension imply a different number of neighbors here");
@@ -245,7 +254,7 @@ class CoGrid {
           }
 
           if (idxX || idxY || idxZ) {
-            const CoCell& aNeighbor =
+            const CoCell &aNeighbor =
                 m_grid.getCell(util::vec<int>(xIndex, yIndex, zIndex));
             // If this cell exists add it
             if (!aNeighbor.isEmpty()) {
@@ -258,8 +267,8 @@ class CoGrid {
     return cellsCounter;
   }
 
-  int getCellNeighbors(const CoCell& inCell,
-                       std::array<const CoCell*, 26>* inNeighbors) const {
+  int getCellNeighbors(const CoCell &inCell,
+                       std::array<const CoCell *, 26> *inNeighbors) const {
     return getCellNeighbors(
         util::vec<int>(inCell.getX(), inCell.getY(), inCell.getZ()),
         inNeighbors);
@@ -271,8 +280,8 @@ class CoGrid {
    * The empty cells are excluded.
    */
   int getPeriodicCellNeighbors(
-      const util::vec<int>& inCellPos,
-      std::array<const CoCell*, 26>* inNeighbors) const {
+      const util::vec<int> &inCellPos,
+      std::array<const CoCell *, 26> *inNeighbors) const {
     static_assert(
         26 == m_NbNeighbors,
         "Update of the dimension imply a different number of neighbors here");
@@ -320,7 +329,7 @@ class CoGrid {
           }
 
           if (idxX || idxY || idxZ) {
-            const CoCell& aNeighbor =
+            const CoCell &aNeighbor =
                 m_grid.getCell(util::vec<int>(xIndex, yIndex, zIndex));
             if (!aNeighbor.isEmpty()) {
               (*inNeighbors)[cellsCounter++] = &aNeighbor;
@@ -333,17 +342,17 @@ class CoGrid {
   }
 
   int getPeriodicCellNeighbors(
-      const CoCell& inCell, std::array<const CoCell*, 26>* inNeighbors) const {
+      const CoCell &inCell, std::array<const CoCell *, 26> *inNeighbors) const {
     return getPeriodicCellNeighbors(
         util::vec<int>(inCell.getX(), inCell.getY(), inCell.getZ()),
         inNeighbors);
   }
 
-  const CoCell& getCell(const long long inCellIndex) const {
+  const CoCell &getCell(const long long inCellIndex) const {
     return m_grid.getCell(inCellIndex);
   }
 
-  const CoCell& getCell(const util::vec<int>& inPos) const {
+  const CoCell &getCell(const util::vec<int> &inPos) const {
     return m_grid.getCell(inPos);
   }
 
@@ -353,9 +362,9 @@ class CoGrid {
 
   ConstIterator cend() const { return m_grid.cend(); }
 
-  const util::vec<int>& getGridSize() const { return m_gridSize; }
+  const util::vec<int> &getGridSize() const { return m_gridSize; }
 
-  const util::vec<RealType>& getRadiusPerDim() const {
+  const util::vec<RealType> &getRadiusPerDim() const {
     return m_coRadiusByDimension;
   }
 
@@ -365,5 +374,5 @@ class CoGrid {
 
   ConstIterator end() const { return m_grid.cend(); }
 };
-}  // namespace cutoffgrid
-#endif  // COGRID_HPP
+} // namespace cutoffgrid
+#endif // COGRID_HPP

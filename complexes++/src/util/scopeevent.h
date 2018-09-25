@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef SCOPEEVENT_H
 #define SCOPEEVENT_H
 
@@ -78,7 +88,7 @@ class ScopeEvent;
  *= [TIME])"
  */
 class EventManager {
- protected:
+protected:
   /**
    * The CoreEvent class represent an event.
    * It stores the duration/min/max/occurrence
@@ -86,13 +96,13 @@ class EventManager {
    * in order to distinct different call to the same event loger.
    */
   class CoreEvent {
-   protected:
+  protected:
     //< Name of the event (from the user)
     const std::string m_name;
     //< Previous events (stack of parents)
-    std::stack<CoreEvent*> m_parentStack;
+    std::stack<CoreEvent *> m_parentStack;
     //< Current event children
-    std::vector<CoreEvent*> m_children;
+    std::vector<CoreEvent *> m_children;
 
     //< Total execution time
     double m_totalTime;
@@ -109,16 +119,13 @@ class EventManager {
     //< Children lock
     omp_lock_t m_updateLock;
 
-   public:
+  public:
     /** Create a core-event from the name and the current stack */
-    CoreEvent(const std::string& inName,
-              const std::stack<CoreEvent*>& inParentStack)
-        : m_name(inName),
-          m_parentStack(inParentStack),
-          m_totalTime(0),
+    CoreEvent(const std::string &inName,
+              const std::stack<CoreEvent *> &inParentStack)
+        : m_name(inName), m_parentStack(inParentStack), m_totalTime(0),
           m_minTime(std::numeric_limits<double>::max()),
-          m_maxTime(std::numeric_limits<double>::min()),
-          m_occurrence(0),
+          m_maxTime(std::numeric_limits<double>::min()), m_occurrence(0),
           m_nbTasks(0) {
       omp_init_lock(&m_childrenLock);
       omp_init_lock(&m_updateLock);
@@ -135,7 +142,7 @@ class EventManager {
       m_totalTime += inDuration;
 #pragma omp atomic update
       m_occurrence += 1;
-#pragma omp flush  // (m_minTime, m_maxTime)
+#pragma omp flush // (m_minTime, m_maxTime)
       if (inDuration < m_minTime || m_maxTime < inDuration) {
         omp_set_lock(&m_updateLock);
         m_minTime = std::min(m_minTime, inDuration);
@@ -148,24 +155,24 @@ class EventManager {
       }
     }
 
-    const std::stack<CoreEvent*>& getParents() const { return m_parentStack; }
+    const std::stack<CoreEvent *> &getParents() const { return m_parentStack; }
 
-    std::stack<CoreEvent*>& getParents() { return m_parentStack; }
+    std::stack<CoreEvent *> &getParents() { return m_parentStack; }
 
-    void addChild(CoreEvent* inChild) {
+    void addChild(CoreEvent *inChild) {
       omp_set_lock(&m_childrenLock);
       m_children.push_back(inChild);
       omp_unset_lock(&m_childrenLock);
     }
 
     //! Must not be called during a paralle execution
-    const std::vector<CoreEvent*>& getChildren() const {
+    const std::vector<CoreEvent *> &getChildren() const {
       DEBUG_ASSERT(omp_in_parallel() == 0,
                    "getChildren cannot be called from a parrallel region");
       return m_children;
     }
 
-    const std::string& getName() const { return m_name; }
+    const std::string &getName() const { return m_name; }
 
     double getMin() const { return m_minTime; }
 
@@ -187,12 +194,13 @@ class EventManager {
   //< The main node
   std::unique_ptr<CoreEvent> m_root;
   //< Output stream to print out
-  std::ostream& m_outputStream;
+  std::ostream &m_outputStream;
 
   //< Current stack, there are one stack of stack per thread
-  std::vector<std::stack<std::stack<CoreEvent*>>> m_currentEventsStackPerThread;
+  std::vector<std::stack<std::stack<CoreEvent *>>>
+      m_currentEventsStackPerThread;
   //< All recorded events (that will then be delete at the end)
-  std::unordered_multimap<std::string, CoreEvent*> m_records;
+  std::unordered_multimap<std::string, CoreEvent *> m_records;
   //< Lock for m_records
   omp_lock_t m_recordsLock;
 
@@ -201,10 +209,10 @@ class EventManager {
    * but with a different stack, a new one is created.
    * It pushes the returned event in the stack.
    */
-  CoreEvent* getEvent(const std::string& inName,
-                      const std::string& inUniqueKey) {
+  CoreEvent *getEvent(const std::string &inName,
+                      const std::string &inUniqueKey) {
     const std::string completeName = inName + inUniqueKey;
-    CoreEvent* foundEvent = nullptr;
+    CoreEvent *foundEvent = nullptr;
 
     omp_set_lock(&m_recordsLock);
     // find all events with this name
@@ -234,15 +242,15 @@ class EventManager {
     return foundEvent;
   }
 
-  CoreEvent* getEventFromContext(const std::string& inName,
-                                 const std::string& inUniqueKey,
-                                 const std::stack<CoreEvent*>& inParentStack) {
+  CoreEvent *getEventFromContext(const std::string &inName,
+                                 const std::string &inUniqueKey,
+                                 const std::stack<CoreEvent *> &inParentStack) {
     m_currentEventsStackPerThread[omp_get_thread_num()].push(inParentStack);
     return getEvent(inName, inUniqueKey);
   }
 
   /** Pop current event */
-  void popEvent(const CoreEvent* eventToRemove) {
+  void popEvent(const CoreEvent *eventToRemove) {
     DEBUG_ASSERT(
         m_currentEventsStackPerThread[omp_get_thread_num()].top().size() > 1,
         "Poped to many events, root event cannot be poped");
@@ -257,7 +265,7 @@ class EventManager {
   }
 
   /** Pop current context */
-  void popContext(const CoreEvent* eventToRemove) {
+  void popContext(const CoreEvent *eventToRemove) {
     DEBUG_ASSERT(m_currentEventsStackPerThread[omp_get_thread_num()].size() > 1,
                  "Poped to many context");
     DEBUG_ASSERT(
@@ -273,12 +281,11 @@ class EventManager {
     m_currentEventsStackPerThread[omp_get_thread_num()].pop();
   }
 
- public:
+public:
   /** Create an event manager */
-  EventManager(const std::string& inAppName, std::ostream& inOutputStream)
-      : m_root(new CoreEvent(inAppName, std::stack<CoreEvent*>())),
-        m_outputStream(inOutputStream),
-        m_currentEventsStackPerThread(1) {
+  EventManager(const std::string &inAppName, std::ostream &inOutputStream)
+      : m_root(new CoreEvent(inAppName, std::stack<CoreEvent *>())),
+        m_outputStream(inOutputStream), m_currentEventsStackPerThread(1) {
     m_currentEventsStackPerThread[0].emplace();
     m_currentEventsStackPerThread[0].top().push(m_root.get());
     omp_init_lock(&m_recordsLock);
@@ -310,8 +317,8 @@ class EventManager {
 
   void show() { show(m_outputStream); }
 
-  void show(std::ostream& inOutputStream) const {
-    std::stack<std::pair<int, const CoreEvent*>> events;
+  void show(std::ostream &inOutputStream) const {
+    std::stack<std::pair<int, const CoreEvent *>> events;
 
     for (int idx = static_cast<int>(m_root->getChildren().size()) - 1; idx >= 0;
          --idx) {
@@ -321,7 +328,7 @@ class EventManager {
     fmt::print(inOutputStream, "[TIMING] {}:\n", m_root->getName());
 
     while (events.size()) {
-      const std::pair<int, const CoreEvent*> eventToShow = events.top();
+      const std::pair<int, const CoreEvent *> eventToShow = events.top();
       events.pop();
 
       int offsetTab = eventToShow.first;
@@ -352,7 +359,7 @@ class EventManager {
     }
   }
 
-  std::stack<CoreEvent*> getCurrentThreadEvent() const {
+  std::stack<CoreEvent *> getCurrentThreadEvent() const {
     return m_currentEventsStackPerThread[omp_get_thread_num()].top();
   }
 
@@ -370,31 +377,29 @@ class EventManager {
  * events hierarchy.
  */
 class ScopeEvent {
- protected:
+protected:
   //< The manager to refer to
-  EventManager& m_manager;
+  EventManager &m_manager;
   //< The core event
-  EventManager::CoreEvent* const m_event;
+  EventManager::CoreEvent *const m_event;
   //< Time to get elapsed time
   Timer m_timer;
   //< Is true if it has been created for task
   bool m_isTask;
 
- public:
-  ScopeEvent(const std::string& inName, EventManager& inManager,
-             const std::string& inUniqueKey)
-      : m_manager(inManager),
-        m_event(inManager.getEvent(inName, inUniqueKey)),
+public:
+  ScopeEvent(const std::string &inName, EventManager &inManager,
+             const std::string &inUniqueKey)
+      : m_manager(inManager), m_event(inManager.getEvent(inName, inUniqueKey)),
         m_isTask(false) {
     m_timer.start();
   }
 
-  ScopeEvent(const std::string& inName, EventManager& inManager,
-             const std::string& inUniqueKey,
-             const std::stack<EventManager::CoreEvent*>& inParentStack)
-      : m_manager(inManager),
-        m_event(
-            inManager.getEventFromContext(inName, inUniqueKey, inParentStack)),
+  ScopeEvent(const std::string &inName, EventManager &inManager,
+             const std::string &inUniqueKey,
+             const std::stack<EventManager::CoreEvent *> &inParentStack)
+      : m_manager(inManager), m_event(inManager.getEventFromContext(
+                                  inName, inUniqueKey, inParentStack)),
         m_isTask(true) {
     m_timer.start();
   }
@@ -408,18 +413,18 @@ class ScopeEvent {
     }
   }
 
-  ScopeEvent(const ScopeEvent&) = delete;
-  ScopeEvent& operator=(const ScopeEvent&) = delete;
-  ScopeEvent(ScopeEvent&&) = delete;
-  ScopeEvent& operator=(ScopeEvent&&) = delete;
+  ScopeEvent(const ScopeEvent &) = delete;
+  ScopeEvent &operator=(const ScopeEvent &) = delete;
+  ScopeEvent(ScopeEvent &&) = delete;
+  ScopeEvent &operator=(ScopeEvent &&) = delete;
 };
 
 #define ScopeEventUniqueKey_Core_To_Str_Ext(X) #X
-#define ScopeEventUniqueKey_Core_To_Str(X) \
+#define ScopeEventUniqueKey_Core_To_Str(X)                                     \
   ScopeEventUniqueKey_Core_To_Str_Ext(X)
 #define ScopeEventUniqueKey __FILE__ ScopeEventUniqueKey_Core_To_Str(__LINE__)
 
 #define ScopeEventMultiRefKey std::string("-- multiref event --")
-}
+} // namespace util
 
 #endif

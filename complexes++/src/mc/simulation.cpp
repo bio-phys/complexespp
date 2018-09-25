@@ -1,36 +1,43 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 
 #include "mc/simulation.h"
 #include "util/timer.h"
 
 namespace mc {
 
-Simulation::Simulation(const std::string& inConfigPath,
-                       const std::string& inConfigFilename,
+Simulation::Simulation(const std::string &inConfigPath,
+                       const std::string &inConfigFilename,
                        const io::MoveStatRecorder::Verbosity inMoveStatsChoice)
-    : m_configPath(inConfigPath),
-      m_configFilename(inConfigFilename),
+    : m_configPath(inConfigPath), m_configFilename(inConfigFilename),
       m_configParameters(
           util::appendPathsIfSubRelative(inConfigPath, m_configFilename)),
       m_shortName(inConfigPath + inConfigFilename),
       m_logFile(util::appendPathsIfSubRelative(
           m_configPath, m_configParameters.value<std::string>("output.log"))),
-      m_simuLog(m_logFile),
-      m_registerLog(RegisterMyLog(m_simuLog)),
+      m_simuLog(m_logFile), m_registerLog(RegisterMyLog(m_simuLog)),
       m_sweepTimeCounter(0),
       m_box(io::readBox(util::appendPathsIfSubRelative(
           m_configPath, m_configParameters.value<std::string>("structure")))),
       m_forcefield(io::readForceField(m_configPath, m_configParameters)),
       m_seed(util::fullEntropySeed(
           m_configParameters.value<std::uint32_t>("montecarlo.seed"))),
-      isInitialized(false),
-      m_rng(util::RNGEngine(m_seed)),
+      isInitialized(false), m_rng(util::RNGEngine(m_seed)),
       m_moveStatsChoice(inMoveStatsChoice) {
   // Print log
   util::Log(util::buildInformation());
@@ -41,7 +48,7 @@ Simulation::Simulation(const std::string& inConfigPath,
   util::Log("program seed: {}\n", m_seed);
 }
 
-Simulation::Simulation(io::Deserializer& deserializer)
+Simulation::Simulation(io::Deserializer &deserializer)
     : m_configPath(
           deserializer.restore<decltype(m_configPath)>("m_configPath")),
       m_configFilename(
@@ -69,7 +76,7 @@ Simulation::Simulation(io::Deserializer& deserializer)
   m_mcAlgo = RebuildMcAlgo(deserializer, m_forcefield, m_kernels, m_rng);
 }
 
-void Simulation::serialize(io::Serializer& serializer) const {
+void Simulation::serialize(io::Serializer &serializer) const {
   serializer.append(m_configPath, "m_configPath");
   serializer.append(m_configFilename, "m_configFilename");
   serializer.append(m_configParameters, "m_configParameters");
@@ -133,7 +140,7 @@ int Simulation::run(const int nbSweepToProceed) {
 
 //! Init based on a restart file (restartValue)
 //! The currentSweepIdx will be shifted accordingly
-void Simulation::initFromRestart(const std::string& restartValue) {
+void Simulation::initFromRestart(const std::string &restartValue) {
   util::GlobalLog::setGlobalLog(&m_simuLog);
   // reset performance counter
   m_sweepTimeCounter = 0;
@@ -227,13 +234,9 @@ void Simulation::init(const bool backupOutput) {
   isInitialized = true;
 }
 
-const std::string& Simulation::getShortName() const {
-  return m_shortName;
-}
+const std::string &Simulation::getShortName() const { return m_shortName; }
 
-util::Logger& Simulation::getLogger() {
-  return m_simuLog;
-}
+util::Logger &Simulation::getLogger() { return m_simuLog; }
 
 //! Return the number of domains for this simulation
 //! The topology is temporarly loaded if not already in
@@ -253,14 +256,10 @@ size_t Simulation::getNbDomains() const {
 
 //! The energy of the system (from the latest run)
 //! if no run has been executed DOUBLE_MAX is returned
-double Simulation::getEnergy() const {
-  return m_mcAlgo->getEnergy();
-}
+double Simulation::getEnergy() const { return m_mcAlgo->getEnergy(); }
 
 //! The number of sweeps that the simulation will run
-int Simulation::getNbSweep() const {
-  return m_mcAlgo->getNbSweeps();
-}
+int Simulation::getNbSweep() const { return m_mcAlgo->getNbSweeps(); }
 
 //! Return the number of sweeps in the simulation minus the ones
 //! already done if based on a "restart"
@@ -269,20 +268,20 @@ int Simulation::getRemainingNbSweep() const {
 }
 
 //! Current forcefield
-const energy::ForceField& Simulation::getForceField() const {
+const energy::ForceField &Simulation::getForceField() const {
   return m_mcAlgo->getForceField();
 }
 
 //! Compute the energy for the current topology but another
 //! force field
-energy::rEnergyMatrix Simulation::computeEnergyForFF(
-    const energy::ForceField& inForceField) const {
+energy::rEnergyMatrix
+Simulation::computeEnergyForFF(const energy::ForceField &inForceField) const {
   return m_mcAlgo->computeEnergyForFF(inForceField);
 }
 
 //! Exchange coordinates (and other needed attributes)
-void Simulation::swapCoordinates(Simulation& other,
-                                 std::tuple<bool, double>&& isAccepted) {
+void Simulation::swapCoordinates(Simulation &other,
+                                 std::tuple<bool, double> &&isAccepted) {
   std::swap(m_kernels, other.m_kernels);
   m_mcAlgo->swapCoordinates(*other.m_mcAlgo, std::move(isAccepted));
 }
@@ -291,30 +290,20 @@ void Simulation::swapCoordinates(Simulation& other,
 //! but also provide the energy matrices for each other force field to
 //! avoid recomputation
 void Simulation::swapCoordinates(
-    Simulation& other,
-    std::tuple<bool, double, energy::rEnergyMatrix, energy::rEnergyMatrix>&&
-        isAcceptedWithEnergy) {
+    Simulation &other,
+    std::tuple<bool, double, energy::rEnergyMatrix, energy::rEnergyMatrix>
+        &&isAcceptedWithEnergy) {
   std::swap(m_kernels, other.m_kernels);
   m_mcAlgo->swapCoordinates(*other.m_mcAlgo, std::move(isAcceptedWithEnergy));
 }
 
 //! Get the inverse temperature in reduced units from mc algo (beta)
-double Simulation::getBeta() const {
-  return m_mcAlgo->getBeta();
-}
-util::rvec Simulation::getBox() const {
-  return m_mcAlgo->getBox();
-}
-double Simulation::getPressure() const {
-  return m_mcAlgo->getPressure();
-}
+double Simulation::getBeta() const { return m_mcAlgo->getBeta(); }
+util::rvec Simulation::getBox() const { return m_mcAlgo->getBox(); }
+double Simulation::getPressure() const { return m_mcAlgo->getPressure(); }
 
 //! Get current random engine
-util::RNGEngine& Simulation::getRandEngine() {
-  return m_rng;
-}
+util::RNGEngine &Simulation::getRandEngine() { return m_rng; }
 //! Print inStr to current simu log
-void Simulation::printToLog(const std::string& inStr) {
-  m_simuLog(inStr);
-}
-}  // namespace mc
+void Simulation::printToLog(const std::string &inStr) { m_simuLog(inStr); }
+} // namespace mc

@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef ABSTRACTMCALGO_H
 #define ABSTRACTMCALGO_H
 
@@ -50,11 +60,11 @@ namespace mc {
 //! we restart a simulation and so no headers are written in the stat file
 //! because it should have been already the case.
 class AbstractMcAlgo
-    : public io::RebuilderCore<AbstractMcAlgo, const energy::ForceField&,
-                               const pairkernels::PairKernelManager&,
-                               util::RNGEngine&>,
+    : public io::RebuilderCore<AbstractMcAlgo, const energy::ForceField &,
+                               const pairkernels::PairKernelManager &,
+                               util::RNGEngine &>,
       public io::AbstractSerializable {
- protected:
+protected:
   //! The current topology
   std::shared_ptr<domains::Domains> m_doms;
   std::vector<domains::Topology> m_topologies;
@@ -64,9 +74,9 @@ class AbstractMcAlgo
   //! The simulation box
   util::rvec m_box;
   //! The current force field
-  const energy::ForceField& m_forcefield;
+  const energy::ForceField &m_forcefield;
   //! The random engine
-  util::RNGEngine& m_rng;
+  util::RNGEngine &m_rng;
   //! The interaction computer for the given topology
   std::unique_ptr<AbstractInteractionAlgorithm<double>> m_interactionComputer;
 
@@ -98,7 +108,7 @@ class AbstractMcAlgo
   double m_time;
 
   //! All kernels
-  const pairkernels::PairKernelManager& m_kernels;
+  const pairkernels::PairKernelManager &m_kernels;
 
   //! The stat recorder for the move
   io::MoveStatRecorder m_moveStat;
@@ -123,11 +133,11 @@ class AbstractMcAlgo
     m_needComputeAll = false;
   }
 
-  void serializeCore(io::Serializer& serializer) const {
+  void serializeCore(io::Serializer &serializer) const {
     serializer.append(type(), "type");
     // One by one instead of serializer.append(*m_doms, "m_doms");
     serializer.append(static_cast<size_t>(m_doms->size()), "m_doms->size");
-    for (const auto& dom : *m_doms) {
+    for (const auto &dom : *m_doms) {
       serializer.append(*dom, "dom");
     }
     serializer.append(m_topologies, "m_topologies");
@@ -150,9 +160,9 @@ class AbstractMcAlgo
     serializer.append(m_time, "m_time");
   }
 
- public:
-  static std::shared_ptr<domains::Domains> RebuildDomains(
-      io::Deserializer& deserializer) {
+public:
+  static std::shared_ptr<domains::Domains>
+  RebuildDomains(io::Deserializer &deserializer) {
     const size_t nbDoms = deserializer.restore<size_t>("m_doms->size");
     auto topo = std::make_shared<domains::Domains>(nbDoms);
 
@@ -166,24 +176,23 @@ class AbstractMcAlgo
 
   static std::unique_ptr<AbstractInteractionAlgorithm<double>>
   RebuildInteractionComputer(
-      io::Deserializer& deserializer,
-      const std::shared_ptr<domains::Domains>& inAllDomains) {
+      io::Deserializer &deserializer,
+      const std::shared_ptr<domains::Domains> &inAllDomains) {
     deserializer.access("m_interactionComputer");
     return AbstractInteractionAlgorithm<double>::Rebuild(deserializer,
                                                          inAllDomains);
   }
 
-  AbstractMcAlgo(io::Deserializer& deserializer,
-                 const energy::ForceField& inForcefield,
-                 const pairkernels::PairKernelManager& inKernels,
-                 util::RNGEngine& inRng)
+  AbstractMcAlgo(io::Deserializer &deserializer,
+                 const energy::ForceField &inForcefield,
+                 const pairkernels::PairKernelManager &inKernels,
+                 util::RNGEngine &inRng)
       : m_doms(RebuildDomains(deserializer)),
         m_topologies(
             deserializer.restore<decltype(m_topologies)>("m_topologies")),
         m_energy(deserializer.restore<decltype(m_energy)>("m_energy")),
         m_box(deserializer.restore<decltype(m_box)>("m_box")),
-        m_forcefield(inForcefield),
-        m_rng(inRng),
+        m_forcefield(inForcefield), m_rng(inRng),
         m_interactionComputer(RebuildInteractionComputer(deserializer, m_doms)),
         m_needComputeAll(deserializer.restore<decltype(m_needComputeAll)>(
             "m_needComputeAll")),
@@ -211,20 +220,17 @@ class AbstractMcAlgo
   /// Constructor
   ////////////////////////////////////////////////////////////////////////////
 
-  AbstractMcAlgo(const std::string& inConfigPath, domains::System system,
-                 util::RNGEngine& inRng, const util::rvec& inBox,
-                 const setup::Config& inConf,
-                 const energy::ForceField& inForcefield,
-                 const pairkernels::PairKernelManager& inKernels,
-                 std::unique_ptr<AbstractInteractionAlgorithm<double>>&&
-                     inInteractionComputer)
-      : m_doms(system.domains()),
-        m_topologies(system.topologies()),
+  AbstractMcAlgo(const std::string &inConfigPath, domains::System system,
+                 util::RNGEngine &inRng, const util::rvec &inBox,
+                 const setup::Config &inConf,
+                 const energy::ForceField &inForcefield,
+                 const pairkernels::PairKernelManager &inKernels,
+                 std::unique_ptr<AbstractInteractionAlgorithm<double>>
+                     &&inInteractionComputer)
+      : m_doms(system.domains()), m_topologies(system.topologies()),
         m_energy(m_doms->size(), m_doms->size(),
                  inKernels.getNbContributions()),
-        m_box(inBox),
-        m_forcefield(inForcefield),
-        m_rng(inRng),
+        m_box(inBox), m_forcefield(inForcefield), m_rng(inRng),
         m_interactionComputer(std::move(inInteractionComputer)),
         m_needComputeAll(true),
         m_nstructures(inConf.value<int>("output.nstructures")),
@@ -240,9 +246,7 @@ class AbstractMcAlgo
         m_beta(constants::natural::refT /
                inConf.value<double>("montecarlo.algorithm-params.temperatur")),
         m_restartFreq(inConf.value<int>("output.restart-freq")),
-        m_currentSweepIdx(0),
-        m_sessionCounter(0),
-        m_time(0),
+        m_currentSweepIdx(0), m_sessionCounter(0), m_time(0),
         m_kernels(inKernels) {
     // A restart file must exist it restartFreq >= 0
     if (m_restartFreq >= 0) {
@@ -255,7 +259,7 @@ class AbstractMcAlgo
 
     if (m_currentSweepIdx == 0) {
       // It is a new simulation, writte headers to files
-      computeAll();  // will fill m_energy
+      computeAll(); // will fill m_energy
       io::writeModel(m_output, (*m_doms), m_box, 0, 0,
                      m_forcefield.beadTypes());
       writeStatHeader();
@@ -283,7 +287,7 @@ class AbstractMcAlgo
     return m_energy.getTotalContributions();
   }
 
-  const energy::ForceField& getForceField() const { return m_forcefield; }
+  const energy::ForceField &getForceField() const { return m_forcefield; }
 
   double getBeta() const { return m_beta; }
 
@@ -297,25 +301,25 @@ class AbstractMcAlgo
 
   size_t getNbDomains() const { return m_doms->size(); }
 
-  const io::MoveStatRecorder& getMoveStats() const { return m_moveStat; }
+  const io::MoveStatRecorder &getMoveStats() const { return m_moveStat; }
 
-  const pairkernels::PairKernelManager& getKernels() const { return m_kernels; }
+  const pairkernels::PairKernelManager &getKernels() const { return m_kernels; }
 
-  const std::string& getTrajName() const { return m_output.fname(); }
-  const std::string& getStatName() const { return m_outStatsFile.fname(); }
+  const std::string &getTrajName() const { return m_output.fname(); }
+  const std::string &getStatName() const { return m_outStatsFile.fname(); }
 
-  void setTraj(const std::string& fname) {
+  void setTraj(const std::string &fname) {
     m_output = io::TrajectoryFile(fname);
   }
-  void setStat(const std::string& fname) {
+  void setStat(const std::string &fname) {
     m_outStatsFile = io::StatFile(fname);
     writeStatHeader();
   }
 
   //! Compute the energy for the current topology but the
   //! force field inForceField
-  energy::rEnergyMatrix computeEnergyForFF(
-      const energy::ForceField& inForceField) const {
+  energy::rEnergyMatrix
+  computeEnergyForFF(const energy::ForceField &inForceField) const {
     // Trick, we compute if not the same forcefield!
     if (m_forcefield != inForceField) {
       energy::rEnergyMatrix energyForFF(m_doms->size(), m_doms->size(),
@@ -332,8 +336,8 @@ class AbstractMcAlgo
   //! Here isAccepted will be always true
   //! This will turn m_needComputeAll to true
   //! and cost a computeAll in the call to run method.
-  void swapCoordinates(AbstractMcAlgo& other,
-                       const std::tuple<bool, double>&& /*isAccepted*/) {
+  void swapCoordinates(AbstractMcAlgo &other,
+                       const std::tuple<bool, double> && /*isAccepted*/) {
     std::swap(m_doms, other.m_doms);
     if (m_energy.sameDimension(other.m_energy)) {
       // Energy matrix follows the domains if possible (to avoid reallocation)
@@ -361,9 +365,9 @@ class AbstractMcAlgo
   //! - other.forcefield(this)
   //! - this.forcefield(other)
   void swapCoordinates(
-      AbstractMcAlgo& other,
-      std::tuple<bool, double, energy::rEnergyMatrix, energy::rEnergyMatrix>&&
-          isAcceptedWithEnergy) {
+      AbstractMcAlgo &other,
+      std::tuple<bool, double, energy::rEnergyMatrix, energy::rEnergyMatrix>
+          &&isAcceptedWithEnergy) {
     std::swap(m_doms, other.m_doms);
     // Use the matrices that has been computed in the accept function
     m_energy = std::move(std::get<3>(isAcceptedWithEnergy));
@@ -437,7 +441,7 @@ class AbstractMcAlgo
 //! under the AbstractMcAlgo class.
 template <class ParentMcAlgo, double Acceptor(double, double)>
 class McAlgoWithAcceptFunc : public ParentMcAlgo {
- public:
+public:
   using ParentMcAlgo::ParentMcAlgo;
 
   double accept(const double deltaE) override {
@@ -449,6 +453,6 @@ class McAlgoWithAcceptFunc : public ParentMcAlgo {
   static std::string Type() { return __PRETTY_FUNCTION__; }
 };
 
-}  // namespace mc
+} // namespace mc
 
 #endif

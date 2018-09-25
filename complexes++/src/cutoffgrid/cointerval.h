@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef COINTERVAL_HPP
 #define COINTERVAL_HPP
 
@@ -18,7 +28,7 @@ namespace cutoffgrid {
  * and 3 the number of elements.
  */
 class CoInterval {
- protected:
+protected:
   //< The domain related to the current interval
   int m_domainId;
   //< The position of the first element of the element-list
@@ -28,20 +38,19 @@ class CoInterval {
   //< The position of the corresponding interval in the cell list
   int m_posInCellList;
 
- public:
+public:
   explicit CoInterval(const int inDomainId, const int inBeginingOfInterval,
                       const int inNbElementsInInterval,
                       const int inPosInCellList)
-      : m_domainId(inDomainId),
-        m_beginingOfInterval(inBeginingOfInterval),
+      : m_domainId(inDomainId), m_beginingOfInterval(inBeginingOfInterval),
         m_nbElementsInInterval(inNbElementsInInterval),
         m_posInCellList(inPosInCellList) {}
 
-  CoInterval(const CoInterval&) = default;
-  CoInterval& operator=(const CoInterval&) = default;
+  CoInterval(const CoInterval &) = default;
+  CoInterval &operator=(const CoInterval &) = default;
 
-  CoInterval(CoInterval&&) = default;
-  CoInterval& operator=(CoInterval&&) = default;
+  CoInterval(CoInterval &&) = default;
+  CoInterval &operator=(CoInterval &&) = default;
 
   int getDomainId() const { return m_domainId; }
 
@@ -72,5 +81,5 @@ class CoInterval {
             m_beginingOfInterval + m_nbElementsInInterval};
   }
 };
-}  // namespace cutoffgrid
-#endif  // COINTERVAL_HPP
+} // namespace cutoffgrid
+#endif // COINTERVAL_HPP

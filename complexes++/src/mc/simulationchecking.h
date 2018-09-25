@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef MC_SIMULATIONCHECKING_H
 #define MC_SIMULATIONCHECKING_H
 
@@ -14,8 +24,7 @@ namespace mc {
 namespace SimulationChecking {
 
 // easy access to enum type
-template <typename E>
-constexpr auto toUType(E enumerator) noexcept {
+template <typename E> constexpr auto toUType(E enumerator) noexcept {
   return static_cast<std::underlying_type_t<E>>(enumerator);
 }
 
@@ -40,17 +49,17 @@ inline bool operator!=(ComparisonFlag lhs, int rhs) {
 
 //! This function should be used to ensure that the given configurations
 //! are compatible with the multidir exchange mode
-inline bool compareSimulations(const std::vector<Simulation>& simus,
+inline bool compareSimulations(const std::vector<Simulation> &simus,
                                const ComparisonFlag comparisonMask,
                                const bool assertOnFailure) {
   if (simus.size() == 0) {
     return true;
   }
 
-  const Simulation& firstSimu = simus[0];
+  const Simulation &firstSimu = simus[0];
 
   // Compare first with all others
-  for (const Simulation& currentSimu : simus) {
+  for (const Simulation &currentSimu : simus) {
     if ((comparisonMask & ComparisonFlag::NB_DOMS) != 0) {
       const size_t nbDomains0 = firstSimu.getNbDomains();
       const size_t nbDomainsCurrent = currentSimu.getNbDomains();
@@ -67,8 +76,8 @@ inline bool compareSimulations(const std::vector<Simulation>& simus,
       }
     }
     if ((comparisonMask & ComparisonFlag::FORCEFIELD) != 0) {
-      const auto& forceField0 = firstSimu.getForceField();
-      const auto& forceFieldCurrent = currentSimu.getForceField();
+      const auto &forceField0 = firstSimu.getForceField();
+      const auto &forceFieldCurrent = currentSimu.getForceField();
       if (forceField0 != forceFieldCurrent) {
         if (assertOnFailure) {
           throw std::runtime_error(fmt::format(
@@ -98,14 +107,12 @@ inline bool compareSimulations(const std::vector<Simulation>& simus,
   return true;
 }
 
-inline ComparisonFlag MultiDirMask() {
-  return ComparisonFlag::NONE;
-}
+inline ComparisonFlag MultiDirMask() { return ComparisonFlag::NONE; }
 
 inline ComparisonFlag ExchangeMask() {
   return ComparisonFlag::NB_SWEEP | ComparisonFlag::NB_DOMS;
 }
-}  // namespace SimulationChecking
-}  // namespace mc
+} // namespace SimulationChecking
+} // namespace mc
 
-#endif  // MC_SIMULATIONCHECKING_H
+#endif // MC_SIMULATIONCHECKING_H

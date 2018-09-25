@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef UTIL_QUATERNIONS_QUAT_H
 #define UTIL_QUATERNIONS_QUAT_H
 
@@ -16,14 +26,14 @@ namespace quaternions {
 template <typename Real,
           typename = std::enable_if<std::is_floating_point<Real>::value>>
 class Quaternion : public io::AbstractSerializable {
- public:
+public:
   Quaternion() : m_s(0), m_i(0), m_j(0), m_k(0) {}
   explicit Quaternion(const Real s, const Real i, const Real j, const Real k)
       : m_s(s), m_i(i), m_j(j), m_k(k) {
     DEBUG_ASSERT(std::abs(norm() - 1) < 1E-8,
                  "Quaternion is not normalized to 1, it is {}\n", norm());
   }
-  explicit Quaternion(const util::vec<Real>& axis, const Real angle) {
+  explicit Quaternion(const util::vec<Real> &axis, const Real angle) {
     const auto r = std::sqrt(dot(axis, axis));
     m_s = cos(angle / 2);
     m_i = sin(angle / 2) * axis[0] / r;
@@ -31,11 +41,11 @@ class Quaternion : public io::AbstractSerializable {
     m_k = sin(angle / 2) * axis[2] / r;
   }
   // support moving
-  Quaternion(Quaternion&& rhs) = default;
-  Quaternion& operator=(Quaternion&& rhs) = default;
+  Quaternion(Quaternion &&rhs) = default;
+  Quaternion &operator=(Quaternion &&rhs) = default;
   // support copying
-  Quaternion(const Quaternion& rhs) = default;
-  Quaternion& operator=(const Quaternion& rhs) = default;
+  Quaternion(const Quaternion &rhs) = default;
+  Quaternion &operator=(const Quaternion &rhs) = default;
 
   double norm() const noexcept {
     return std::sqrt(m_s * m_s + m_i * m_i + m_j * m_j + m_k * m_k);
@@ -66,7 +76,7 @@ class Quaternion : public io::AbstractSerializable {
     return mat;
   }
 
-  Quaternion<Real>& operator*=(const Quaternion<Real>& rhs) noexcept {
+  Quaternion<Real> &operator*=(const Quaternion<Real> &rhs) noexcept {
     const auto s =
         m_s * rhs.m_s - m_i * rhs.m_i - m_j * rhs.m_j - m_k * rhs.m_k;
     const auto i =
@@ -82,7 +92,7 @@ class Quaternion : public io::AbstractSerializable {
     return *this;
   }
 
-  Quaternion<Real>& operator*=(const util::vec<Real>& v) noexcept {
+  Quaternion<Real> &operator*=(const util::vec<Real> &v) noexcept {
     // when multiplying a vector and a Quaternion just treat the vector as a
     // Quaternion with a scalar value of 0.
     // NOTE: BE REALLY CAREFUL changing this!!
@@ -97,7 +107,7 @@ class Quaternion : public io::AbstractSerializable {
     return *this;
   }
 
-  Quaternion<Real>& operator/=(const Real v) noexcept {
+  Quaternion<Real> &operator/=(const Real v) noexcept {
     m_s /= v;
     m_i /= v;
     m_j /= v;
@@ -105,12 +115,12 @@ class Quaternion : public io::AbstractSerializable {
     return *this;
   }
 
-  bool operator==(const Quaternion<Real>& other) const noexcept {
+  bool operator==(const Quaternion<Real> &other) const noexcept {
     return m_s == other.m_s || m_i == other.m_i || m_j == other.m_j ||
            m_k == other.m_k;
   }
 
-  friend std::ostream& operator<<(std::ostream& out, const Quaternion& q) {
+  friend std::ostream &operator<<(std::ostream &out, const Quaternion &q) {
     auto constexpr format = "{:12.8f}{:12.8f}{:12.8f}{:12.8f}";
     out << fmt::format(format, q.m_s, q.m_i, q.m_j, q.m_k);
     return out;
@@ -118,20 +128,20 @@ class Quaternion : public io::AbstractSerializable {
 
   std::array<Real, 4> rawValues() const { return {m_s, m_i, m_j, m_k}; }
 
-  void serialize(io::Serializer& serializer) const final {
+  void serialize(io::Serializer &serializer) const final {
     serializer.append(m_s, "m_s");
     serializer.append(m_i, "m_i");
     serializer.append(m_j, "m_j");
     serializer.append(m_k, "m_k");
   }
 
-  Quaternion(io::Deserializer& deserializer)
+  Quaternion(io::Deserializer &deserializer)
       : m_s(deserializer.restore<decltype(m_s)>("m_s")),
         m_i(deserializer.restore<decltype(m_i)>("m_i")),
         m_j(deserializer.restore<decltype(m_j)>("m_j")),
         m_k(deserializer.restore<decltype(m_s)>("m_k")) {}
 
- private:
+private:
   Real m_s;
   Real m_i;
   Real m_j;
@@ -146,16 +156,16 @@ constexpr Quaternion<Real> unity() noexcept {
 
 template <typename Real,
           typename = std::enable_if<std::is_floating_point<Real>::value>>
-Quaternion<Real> operator*(const Quaternion<Real>& lhs,
-                           const Quaternion<Real>& rhs) {
+Quaternion<Real> operator*(const Quaternion<Real> &lhs,
+                           const Quaternion<Real> &rhs) {
   auto tmp = Quaternion<Real>(lhs);
   return tmp *= rhs;
 }
 
 template <typename Real,
           typename = std::enable_if<std::is_floating_point<Real>::value>>
-Quaternion<Real> operator*(const Quaternion<Real>& lhs,
-                           const vec<Real>& rhs) noexcept {
+Quaternion<Real> operator*(const Quaternion<Real> &lhs,
+                           const vec<Real> &rhs) noexcept {
   auto tmp = Quaternion<Real>(lhs);
   return tmp *= rhs;
 }
@@ -168,7 +178,7 @@ vec<Real> rotateVector(const Quaternion<Real> q, const vec<Real> v) noexcept {
   return res.vec();
 }
 
-}  // namespace quaternions
-}  // namespace util
+} // namespace quaternions
+} // namespace util
 
-#endif  // UTIL_QUATERNIONS_QUAT_H
+#endif // UTIL_QUATERNIONS_QUAT_H

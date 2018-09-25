@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef MC_SIMULATION_H
 #define MC_SIMULATION_H
 
@@ -45,7 +55,7 @@ namespace mc {
  * directory change if needed (with a rollback).
  */
 class Simulation : public io::AbstractSerializable {
- protected:
+protected:
   //! Where the config files are located
   const std::string m_configPath;
   //! The name of the config file
@@ -86,34 +96,34 @@ class Simulation : public io::AbstractSerializable {
   //! The move stats to print
   const io::MoveStatRecorder::Verbosity m_moveStatsChoice;
 
-  static bool RegisterMyLog(util::Logger& currentLog) {
+  static bool RegisterMyLog(util::Logger &currentLog) {
     util::GlobalLog::setGlobalLog(&currentLog);
     return true;
   }
 
- public:
+public:
   //! Pre-load the config file inConfigFilename
   //! If inChangeLog is true (default) then the log is redirected to
   //! config.output.log
-  Simulation(const std::string& inConfigPath,
-             const std::string& inConfigFilename,
+  Simulation(const std::string &inConfigPath,
+             const std::string &inConfigFilename,
              const io::MoveStatRecorder::Verbosity inMoveStatsChoice);
   ~Simulation();
 
   //! Forbid copy
-  Simulation(const Simulation&) = delete;
-  Simulation& operator=(const Simulation&) = delete;
+  Simulation(const Simulation &) = delete;
+  Simulation &operator=(const Simulation &) = delete;
   //! Agree to move
-  Simulation(Simulation&&) = default;
-  Simulation& operator=(Simulation&&) = default;
+  Simulation(Simulation &&) = default;
+  Simulation &operator=(Simulation &&) = default;
 
   /////////////////////////////////////////////////////////////////
   /// Getter/setter
   /////////////////////////////////////////////////////////////////
 
-  const std::string& getShortName() const;
+  const std::string &getShortName() const;
 
-  util::Logger& getLogger();
+  util::Logger &getLogger();
 
   //! Return the number of domains for this simulation
   //! The topology is temporarly loaded if not already in
@@ -132,24 +142,24 @@ class Simulation : public io::AbstractSerializable {
   int getRemainingNbSweep() const;
 
   //! Current forcefield
-  const energy::ForceField& getForceField() const;
+  const energy::ForceField &getForceField() const;
 
   //! Compute the energy for the current topology but another
   //! force field
-  energy::rEnergyMatrix computeEnergyForFF(
-      const energy::ForceField& inForceField) const;
+  energy::rEnergyMatrix
+  computeEnergyForFF(const energy::ForceField &inForceField) const;
 
   //! Exchange coordinates (and other needed attributes)
-  void swapCoordinates(Simulation& other,
-                       std::tuple<bool, double>&& isAccepted);
+  void swapCoordinates(Simulation &other,
+                       std::tuple<bool, double> &&isAccepted);
 
   //! Exchange coordinates (and other needed attributes)
   //! but also provide the energy matrices for each other force field to
   //! avoid recomputation
   void swapCoordinates(
-      Simulation& other,
-      std::tuple<bool, double, energy::rEnergyMatrix, energy::rEnergyMatrix>&&
-          isAcceptedWithEnergy);
+      Simulation &other,
+      std::tuple<bool, double, energy::rEnergyMatrix, energy::rEnergyMatrix>
+          &&isAcceptedWithEnergy);
 
   //! Get the inverse temperature in reduced units from mc algo (beta)
   double getBeta() const;
@@ -157,9 +167,9 @@ class Simulation : public io::AbstractSerializable {
   double getPressure() const;
 
   //! Get current random engine
-  util::RNGEngine& getRandEngine();
+  util::RNGEngine &getRandEngine();
   //! Print inStr to current simu log
-  void printToLog(const std::string& inStr);
+  void printToLog(const std::string &inStr);
 
   /////////////////////////////////////////////////////////////////
   /// Init
@@ -167,7 +177,7 @@ class Simulation : public io::AbstractSerializable {
 
   //! Init based on a restart file (restartValue)
   //! The currentSweepIdx will be shifted accordingly
-  void initFromRestart(const std::string& restartValue);
+  void initFromRestart(const std::string &restartValue);
   void init(const bool backupOutput);
 
   /////////////////////////////////////////////////////////////////
@@ -180,18 +190,18 @@ class Simulation : public io::AbstractSerializable {
   /////////////////////////////////////////////////////////////////
   /// Serialize
   /////////////////////////////////////////////////////////////////
-  void serialize(io::Serializer& serializer) const final;
-  Simulation(io::Deserializer& deserializer);
+  void serialize(io::Serializer &serializer) const final;
+  Simulation(io::Deserializer &deserializer);
 
   static std::unique_ptr<mc::AbstractMcAlgo> RebuildMcAlgo(
-      io::Deserializer& deserializer, const energy::ForceField& inForcefield,
-      const pairkernels::PairKernelManager& inKernels, util::RNGEngine& inRng) {
+      io::Deserializer &deserializer, const energy::ForceField &inForcefield,
+      const pairkernels::PairKernelManager &inKernels, util::RNGEngine &inRng) {
     deserializer.access("m_mcAlgo");
     return mc::AbstractMcAlgo::Rebuild(deserializer, inForcefield, inKernels,
                                        inRng);
   }
 };
 
-}  // namespace mc
+} // namespace mc
 
-#endif  // MC_SIMULATION
+#endif // MC_SIMULATION

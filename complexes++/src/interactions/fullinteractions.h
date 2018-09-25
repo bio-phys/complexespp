@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef FULLINTERACTIONS_HPP
 #define FULLINTERACTIONS_HPP
 
@@ -28,37 +38,37 @@
  */
 template <class RealType>
 class FullInteractions : public AbstractInteractionAlgorithm<RealType> {
- protected:
+protected:
   static const int m_NbNeighbors = 26;
 
   const util::rvec m_boxSize;
 
   const std::shared_ptr<domains::Domains> m_allDomains;
 
- public:
-  void serialize(io::Serializer& serializer) const final {
+public:
+  void serialize(io::Serializer &serializer) const final {
     AbstractInteractionAlgorithm<RealType>::serializeCore(serializer);
     serializer.append(m_boxSize, "m_boxSize");
   }
 
-  FullInteractions(io::Deserializer& deserializer,
+  FullInteractions(io::Deserializer &deserializer,
                    const std::shared_ptr<domains::Domains> inAllDomains)
       : AbstractInteractionAlgorithm<RealType>(deserializer),
         m_boxSize(deserializer.restore<decltype(m_boxSize)>("m_boxSize")),
         m_allDomains(inAllDomains) {}
 
   explicit FullInteractions(
-      const util::rvec& inBoxSize,
+      const util::rvec &inBoxSize,
       const std::shared_ptr<domains::Domains> inAllDomains)
       : m_boxSize(inBoxSize), m_allDomains(inAllDomains) {}
 
   void updateDomain(const int inDomainId) final { UNUSED(inDomainId); }
 
-  void resetAllDomains(const util::rvec& newBox) final { UNUSED(newBox); }
+  void resetAllDomains(const util::rvec &newBox) final { UNUSED(newBox); }
 
-  void computeAll(const util::rvec& box, const energy::ForceField& forcefield,
-                  const pairkernels::PairKernelManager& inKernels,
-                  energy::EnergyMatrix<RealType>& outRes) const final {
+  void computeAll(const util::rvec &box, const energy::ForceField &forcefield,
+                  const pairkernels::PairKernelManager &inKernels,
+                  energy::EnergyMatrix<RealType> &outRes) const final {
     TIMEZONE_OMP_INIT_PRETASK(timeZoneTaskKey);
     const int idxThreadInserted = omp_get_thread_num();
 
@@ -87,7 +97,7 @@ class FullInteractions : public AbstractInteractionAlgorithm<RealType> {
           }
 
           if (idxDomTarget != idxDomSource) {
-#pragma omp task default(shared) firstprivate( \
+#pragma omp task default(shared) firstprivate(                                 \
     idxDomTarget, idxDomSource, idxThreadInserted) if (shouldCreateTask)
             {
               energy::EnergyMatrixBuffer<> bufferOutRes(outRes,
@@ -122,7 +132,7 @@ class FullInteractions : public AbstractInteractionAlgorithm<RealType> {
             connectionsBufferForThreads[omp_get_thread_num()] =
                 energy::EnergyMatrix<RealType>(1UL, m_allDomains->size(), 1);
           }
-          energy::EnergyMatrix<RealType>& connectionsBuffer =
+          energy::EnergyMatrix<RealType> &connectionsBuffer =
               (connectionsBufferForThreads[omp_get_thread_num()]);
           connectionsBuffer.reset();
           (*m_allDomains)[idxDomTarget]->energyForAllConnections(
@@ -145,10 +155,10 @@ class FullInteractions : public AbstractInteractionAlgorithm<RealType> {
 #endif
   }
 
-  void computeForOneDomain(const int inDomainId, const util::rvec& box,
-                           const energy::ForceField& forcefield,
-                           const pairkernels::PairKernelManager& inKernels,
-                           energy::EnergyMatrix<RealType>& outRes) const final {
+  void computeForOneDomain(const int inDomainId, const util::rvec &box,
+                           const energy::ForceField &forcefield,
+                           const pairkernels::PairKernelManager &inKernels,
+                           energy::EnergyMatrix<RealType> &outRes) const final {
     DEBUG_ASSERT(inDomainId == (*m_allDomains)[inDomainId]->id(),
                  "The domain at position inDomainId has not an id equal to "
                  "inDomainId");
@@ -181,7 +191,7 @@ class FullInteractions : public AbstractInteractionAlgorithm<RealType> {
         }
 
         if (inDomainId != idxDomSource) {
-#pragma omp task default(shared) \
+#pragma omp task default(shared)                                               \
     firstprivate(idxDomSource, idxThreadInserted) if (shouldCreateTask)
           {
             util::GlobalLog::redirectLog(idxThreadInserted);

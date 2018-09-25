@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include <vector>
 
 #include "gtest/gtest.h"
@@ -35,8 +45,8 @@ std::unique_ptr<domains::Rigid> dummyRigid(const int id, const int nbeads,
   return dom;
 }
 
-void testGridGridSize(const double inCoRadius, const util::rvec& inBoxSize,
-                      const util::vec<int>& inExpectedGridSize) {
+void testGridGridSize(const double inCoRadius, const util::rvec &inBoxSize,
+                      const util::vec<int> &inExpectedGridSize) {
   cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer> grid(
       inCoRadius, inBoxSize, 1);
   EXPECT_EQ(grid.getGridSize()[0], inExpectedGridSize[0]);
@@ -100,8 +110,8 @@ TEST(CUTOFF_COGRIDDRAW, testGridParticlesHard) {
   cutoffgrid::CoGrid<double, cutoffgrid::CoSparseGridContainer> grid(
       coRadius, boxSize, nbDomains);
 
-  auto checkCoordFromPos = [&](const std::array<double, 3>& pos,
-                               const std::array<int, 3>& coord) {
+  auto checkCoordFromPos = [&](const std::array<double, 3> &pos,
+                               const std::array<int, 3> &coord) {
     const auto partCoord = grid.getCoordFromPosition(pos[0], pos[1], pos[2]);
     EXPECT_EQ(coord[0], partCoord[0]);
     EXPECT_EQ(coord[1], partCoord[1]);
@@ -152,25 +162,25 @@ TEST(CUTOFF_COGRIDDRAW, testGridListParticles) {
   aDomain->setXyz(m_xyz);
   grid.addDomain(aDomain);
 
-  const std::vector<cutoffgrid::CoDomainCellLink>& links =
+  const std::vector<cutoffgrid::CoDomainCellLink> &links =
       grid.getDomainCells(0);
   EXPECT_EQ(links.size(), totalBoxes);
 }
 
 template <typename Grid>
-void checkGridCoherency(Grid& grid, domains::Domains& domains,
+void checkGridCoherency(Grid &grid, domains::Domains &domains,
                         const int fromDomainIdx, const int toDomainIdx,
                         const int nbCellsInDomains = -1) {
   for (int idxDom = fromDomainIdx; idxDom < toDomainIdx; ++idxDom) {
-    const std::vector<cutoffgrid::CoDomainCellLink>& links =
+    const std::vector<cutoffgrid::CoDomainCellLink> &links =
         grid.getDomainCells(domains[idxDom]->id());
     if (nbCellsInDomains != -1) {
       EXPECT_EQ(links.size(), nbCellsInDomains);
     }
 
     for (int idxLk = 0; idxLk < static_cast<int>(links.size()); ++idxLk) {
-      const cutoffgrid::CoDomainCellLink& lk = links[idxLk];
-      const cutoffgrid::CoInterval& interval =
+      const cutoffgrid::CoDomainCellLink &lk = links[idxLk];
+      const cutoffgrid::CoInterval &interval =
           grid.getCell(lk.getCellIndex()).getInterval(lk.getInsertPosInList());
       EXPECT_EQ(interval.getBeginingOfInterval(), idxLk);
       EXPECT_EQ(interval.getEndOfInterval(), idxLk + 1);
@@ -180,47 +190,46 @@ void checkGridCoherency(Grid& grid, domains::Domains& domains,
 }
 
 template <typename Grid>
-void checkDomainsInOrder(Grid& grid, domains::Domains& domains,
+void checkDomainsInOrder(Grid &grid, domains::Domains &domains,
                          const int fromDomainIdx, const int toDomainIdx,
                          const int nbCellsInDomains = -1) {
   for (int idxDom = fromDomainIdx; idxDom < toDomainIdx; ++idxDom) {
-    const auto& links = grid.getDomainCells(domains[idxDom]->id());
+    const auto &links = grid.getDomainCells(domains[idxDom]->id());
     if (nbCellsInDomains != -1) {
       EXPECT_EQ(links.size(), nbCellsInDomains);
     }
-    for (const auto& lk : links) {
+    for (const auto &lk : links) {
       EXPECT_EQ(lk.getInsertPosInList(), idxDom);
     }
   }
 }
 
 template <typename Grid>
-void checkDomainsGeneral(Grid& grid, domains::Domains& domains,
+void checkDomainsGeneral(Grid &grid, domains::Domains &domains,
                          const int fromDomainIdx, const int toDomainIdx) {
   for (int idxDom = fromDomainIdx; idxDom < toDomainIdx; ++idxDom) {
     EXPECT_EQ(domains[idxDom]->id(), idxDom);
-    const auto& links = grid.getDomainCells(domains[idxDom]->id());
+    const auto &links = grid.getDomainCells(domains[idxDom]->id());
 
-    for (const auto& lk : links) {
-      const auto& cell = grid.getCell(lk.getCellIndex());
+    for (const auto &lk : links) {
+      const auto &cell = grid.getCell(lk.getCellIndex());
       EXPECT_FALSE(cell.isEmpty());
-      const auto& interval = cell.getInterval(lk.getInsertPosInList());
+      const auto &interval = cell.getInterval(lk.getInsertPosInList());
       EXPECT_EQ(interval.getDomainId(), domains[idxDom]->id());
     }
   }
 }
 
-template <typename Grid>
-void checkGridGeneral(Grid& grid) {
-  for (const auto& currentCell : grid) {
+template <typename Grid> void checkGridGeneral(Grid &grid) {
+  for (const auto &currentCell : grid) {
     for (int idxInterval = 0; idxInterval < currentCell.getNbDomains();
          ++idxInterval) {
-      const auto& inter = currentCell.getInterval(idxInterval);
-      const auto& links = grid.getDomainCells(inter.getDomainId());
+      const auto &inter = currentCell.getInterval(idxInterval);
+      const auto &links = grid.getDomainCells(inter.getDomainId());
 
       EXPECT_NE(links.size(), 0);
       bool validLkFound = false;
-      for (const auto& lk : links) {
+      for (const auto &lk : links) {
         if (lk.getCellIndex() == currentCell.getIndex() &&
             lk.getInsertPosInList() == idxInterval) {
           EXPECT_FALSE(validLkFound);
@@ -289,7 +298,7 @@ TEST(CUTOFF_COGRIDDRAW, testGridDomains) {
   checkGridGeneral(grid);
 
   // Test the update
-  {  // Make all the particles in the first leaf
+  { // Make all the particles in the first leaf
     util::rArray pos = domains[1]->xyz();
     for (int idxPart = 1; idxPart < pos.rows(); ++idxPart) {
       pos(idxPart, 0) = pos(0, 0);
@@ -302,7 +311,7 @@ TEST(CUTOFF_COGRIDDRAW, testGridDomains) {
   checkDomainsGeneral(grid, domains, 1, nbDomains - 1);
   checkGridGeneral(grid);
 
-  {  // Merge particles two by two
+  { // Merge particles two by two
     util::rArray pos = domains[2]->xyz();
     for (int idxPart = 1; idxPart < pos.rows(); idxPart += 2) {
       pos(idxPart, 0) = pos(idxPart - 1, 0);
@@ -444,8 +453,8 @@ TEST(CUTOFF_COGRIDDRAW, testGridDomainsNeighbors) {
   }
 
   int counterCells = 0;
-  for (const auto& currentCell : grid) {
-    std::array<const cutoffgrid::CoCell*, 26> neighbors;
+  for (const auto &currentCell : grid) {
+    std::array<const cutoffgrid::CoCell *, 26> neighbors;
     const int nbNeighbors =
         grid.getPeriodicCellNeighbors(currentCell, &neighbors);
     EXPECT_EQ(nbNeighbors, 26);
@@ -534,8 +543,8 @@ TEST(CUTOFF_COGRIDDRAW, testGridDomainsNeighborsNonPer) {
   }
 
   int counterCells = 0;
-  for (const auto& currentCell : grid) {
-    std::array<const cutoffgrid::CoCell*, 26> neighbors;
+  for (const auto &currentCell : grid) {
+    std::array<const cutoffgrid::CoCell *, 26> neighbors;
     const int nbNeighbors = grid.getCellNeighbors(currentCell, &neighbors);
     int nbBoundarySide = 0;
     if (currentCell.getX() == 0 ||
@@ -551,18 +560,18 @@ TEST(CUTOFF_COGRIDDRAW, testGridDomainsNeighborsNonPer) {
       nbBoundarySide += 1;
     }
     switch (nbBoundarySide) {
-      case 3:
-        EXPECT_EQ(nbNeighbors, 26 - 9 - 6 - 4);
-        break;
-      case 2:
-        EXPECT_EQ(nbNeighbors, 26 - 9 - 6);
-        break;
-      case 1:
-        EXPECT_EQ(nbNeighbors, 26 - 9);
-        break;
-      default:
-        EXPECT_EQ(nbBoundarySide, 0);
-        EXPECT_EQ(nbNeighbors, 26);
+    case 3:
+      EXPECT_EQ(nbNeighbors, 26 - 9 - 6 - 4);
+      break;
+    case 2:
+      EXPECT_EQ(nbNeighbors, 26 - 9 - 6);
+      break;
+    case 1:
+      EXPECT_EQ(nbNeighbors, 26 - 9);
+      break;
+    default:
+      EXPECT_EQ(nbBoundarySide, 0);
+      EXPECT_EQ(nbNeighbors, 26);
     }
 
     int neighExists[27] = {0};

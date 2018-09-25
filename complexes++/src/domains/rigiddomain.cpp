@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include <array>
 #include <cmath>
 #include <fmt/format.h>
@@ -23,16 +33,15 @@ namespace q = util::quaternions;
 
 namespace domains {
 
-Rigid::Rigid(const std::string& inTypename, int typeId_, int id_,
+Rigid::Rigid(const std::string &inTypename, int typeId_, int id_,
              std::vector<Bead> beads_, std::vector<double> charges_,
              std::vector<BeadChainID> beadChainIDs_,
-             const Connections& connections_, util::rvec trans_, double phi)
+             const Connections &connections_, util::rvec trans_, double phi)
     : AbstractDomain(inTypename, typeId_, id_, beads_, charges_, beadChainIDs_,
                      connections_),
-      m_phi(phi),
-      m_trans(trans_) {}
+      m_phi(phi), m_trans(trans_) {}
 
-MovedDomain Rigid::move(const util::rvec& box, util::RNGEngine& rng) const {
+MovedDomain Rigid::move(const util::rvec &box, util::RNGEngine &rng) const {
   auto dist = std::uniform_real_distribution<>{0, 1};
   auto tmp = *this;
   auto xyz_ = tmp.xyz();
@@ -59,4 +68,4 @@ std::unique_ptr<AbstractDomain> Rigid::copy() const {
   auto tmp = *this;
   return std::make_unique<Rigid>(std::move(tmp));
 }
-}  // namespace domains
+} // namespace domains

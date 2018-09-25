@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef UTIL_RANDOM_H
 #define UTIL_RANDOM_H
 
@@ -29,7 +39,7 @@ std::uint32_t fullEntropySeed(std::uint32_t seed) noexcept;
 
 template <typename Real,
           typename = std::enable_if<std::is_floating_point<Real>::value>>
-vec<Real> randomVec(const vec<Real>& scalingFactor, RNGEngine& rng) noexcept {
+vec<Real> randomVec(const vec<Real> &scalingFactor, RNGEngine &rng) noexcept {
   auto dist = std::uniform_real_distribution<Real>{-1, 1};
   return vec<Real>(dist(rng) * scalingFactor[0], dist(rng) * scalingFactor[1],
                    dist(rng) * scalingFactor[2]);
@@ -37,7 +47,7 @@ vec<Real> randomVec(const vec<Real>& scalingFactor, RNGEngine& rng) noexcept {
 
 template <typename Real,
           typename = std::enable_if<std::is_integral<Real>::value>>
-std::vector<Real> randomOrderIndices(const Real n, RNGEngine& rng) {
+std::vector<Real> randomOrderIndices(const Real n, RNGEngine &rng) {
   auto v = arange<Real>(n);
   std::shuffle(v.begin(), v.end(), rng);
   return v;
@@ -46,8 +56,8 @@ std::vector<Real> randomOrderIndices(const Real n, RNGEngine& rng) {
 template <typename Real,
           typename = std::enable_if<std::is_floating_point<Real>::value>>
 quaternions::Quaternion<Real> randomQuat(const vec<Real> scale,
-                                         const vec<Real>& D, const Real dt,
-                                         RNGEngine& rng) {
+                                         const vec<Real> &D, const Real dt,
+                                         RNGEngine &rng) {
   DEBUG_ASSERT(.5 * dot(D, util::vec<Real>(1, 1, 1)) * dt < 1,
                "D or dt is to big for random quaternion generation");
   const auto ijk = randomVec(scale, rng);
@@ -61,15 +71,15 @@ quaternions::Quaternion<Real> randomQuat(const vec<Real> scale,
 
 template <typename Real,
           typename = std::enable_if<std::is_floating_point<Real>::value>>
-util::Matrix<Real> randomRotation(const Real maxPhi, RNGEngine& rng) {
+util::Matrix<Real> randomRotation(const Real maxPhi, RNGEngine &rng) {
   const auto axis = randomVec<Real>(vec<Real>(1, 1, 1), rng);
   const auto phi = std::uniform_real_distribution<Real>{-maxPhi, maxPhi}(rng);
   return quaternions::Quaternion<Real>(axis, phi).toMat();
 }
 
-std::string getRNGState(const RNGEngine& rng);
-void setRNGState(RNGEngine& rng, const std::string& state);
+std::string getRNGState(const RNGEngine &rng);
+void setRNGState(RNGEngine &rng, const std::string &state);
 
-}  // namespace util
+} // namespace util
 
-#endif  // UTIL_RANDOM_H
+#endif // UTIL_RANDOM_H

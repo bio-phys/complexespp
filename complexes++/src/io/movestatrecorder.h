@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef MOVESTATRECORDER_H
 #define MOVESTATRECORDER_H
 
@@ -15,14 +25,14 @@
 namespace io {
 
 class MoveStatRecorder {
- protected:
+protected:
   class Events {
-   protected:
+  protected:
     int m_nbFailMoves;
     int m_nbSucceedMoves;
     int m_nbAcceptedMoves;
 
-   public:
+  public:
     Events() : m_nbFailMoves(0), m_nbSucceedMoves(0), m_nbAcceptedMoves(0) {}
 
     void addEvent(const bool moveSucceed, const bool moveAccepted) {
@@ -61,7 +71,7 @@ class MoveStatRecorder {
   std::unordered_map<std::string, Events> m_movePerType;
   std::vector<Events> m_movePerIdx;
 
- public:
+public:
   enum Verbosity {
     TXT_NONE = 0,
     TXT_PER_DOMAIN = 1,
@@ -71,10 +81,10 @@ class MoveStatRecorder {
 
   MoveStatRecorder() {}
 
-  MoveStatRecorder(const MoveStatRecorder&) = delete;
-  MoveStatRecorder operator=(const MoveStatRecorder&) = delete;
+  MoveStatRecorder(const MoveStatRecorder &) = delete;
+  MoveStatRecorder operator=(const MoveStatRecorder &) = delete;
 
-  void addEvent(const int idxDom, const std::string& domType,
+  void addEvent(const int idxDom, const std::string &domType,
                 const bool moveSucceed, const bool moveAccepted) {
     if (int(m_movePerIdx.size()) <= idxDom) {
       m_movePerIdx.resize(idxDom + 1);
@@ -115,7 +125,7 @@ class MoveStatRecorder {
     if (inVerbosity & TXT_PER_TYPE) {
       stream << "[MOVE-STATS] Per Type:\n";
     }
-    for (const auto& iter : m_movePerType) {
+    for (const auto &iter : m_movePerType) {
       if (inVerbosity & TXT_PER_TYPE) {
         stream << "[MOVE-STATS]   type = " << iter.first << "\n";
         stream << "[MOVE-STATS]     nb-moves = "
@@ -156,6 +166,6 @@ class MoveStatRecorder {
     return stream.str();
   }
 };
-}
+} // namespace io
 
 #endif

@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef COCELL_H
 #define COCELL_H
 
@@ -18,20 +28,18 @@
 namespace cutoffgrid {
 
 class RemovedInterval {
- private:
+private:
   int m_modifiedDomainId;
   int m_posInCellList;
   int m_oldPosInList;
   int m_newIntervalSize;
 
- public:
+public:
   explicit RemovedInterval(const int modifiedDomainID_,
                            const int posInCellList_, const int newIntervalSize_,
                            const int oldPosInList_)
-      : m_modifiedDomainId(modifiedDomainID_),
-        m_posInCellList(posInCellList_),
-        m_oldPosInList(oldPosInList_),
-        m_newIntervalSize(newIntervalSize_) {}
+      : m_modifiedDomainId(modifiedDomainID_), m_posInCellList(posInCellList_),
+        m_oldPosInList(oldPosInList_), m_newIntervalSize(newIntervalSize_) {}
 
   int modifiedDomainID() const { return m_modifiedDomainId; }
   int posInCellList() const { return m_posInCellList; }
@@ -50,7 +58,7 @@ class RemovedInterval {
  * (the one that is swapped from back to the new empty place).
  */
 class CoCell {
- protected:
+protected:
   //< The global index of the current cell
   long long m_cellIndex;
   //< The box/cell coordinate
@@ -58,11 +66,11 @@ class CoCell {
   //< The list of intervals inside the current cell
   std::vector<CoInterval> m_intervals;
 
- public:
+public:
   explicit CoCell()
       : m_cellIndex(-1), m_coordinate({-1, -1, -1}), m_intervals() {}
 
-  void init(const long long inCellIndex, const util::vec<int>& inCoordinate) {
+  void init(const long long inCellIndex, const util::vec<int> &inCoordinate) {
     if (isInitialized()) {
       throw std::runtime_error(
           "You cannot init a cell that has already been initialized");
@@ -71,11 +79,11 @@ class CoCell {
     m_coordinate = inCoordinate;
   }
 
-  CoCell(const CoCell&) = default;
-  CoCell& operator=(const CoCell&) = default;
+  CoCell(const CoCell &) = default;
+  CoCell &operator=(const CoCell &) = default;
 
-  CoCell(CoCell&&) = default;
-  CoCell& operator=(CoCell&&) = default;
+  CoCell(CoCell &&) = default;
+  CoCell &operator=(CoCell &&) = default;
 
   void clear() {
     m_cellIndex = -1;
@@ -84,11 +92,11 @@ class CoCell {
 
   int getNbDomains() const { return static_cast<int>(m_intervals.size()); }
 
-  const CoInterval& getInterval(const int inInterIdx) const {
+  const CoInterval &getInterval(const int inInterIdx) const {
     return m_intervals[inInterIdx];
   }
 
-  CoInterval& getInterval(const int inInterIdx) {
+  CoInterval &getInterval(const int inInterIdx) {
     return m_intervals[inInterIdx];
   }
 
@@ -111,7 +119,7 @@ class CoCell {
    * last one)
    * and the beginning of the interval, the new position and previous position.
    */
-  RemovedInterval removeInterval(const CoDomainCellLink& intervalToRemove) {
+  RemovedInterval removeInterval(const CoDomainCellLink &intervalToRemove) {
     // FIXME: have a DEBUG_ASSERT
     if (intervalToRemove.getInsertPosInList() >=
         static_cast<int>(m_intervals.size())) {
@@ -127,7 +135,7 @@ class CoCell {
       m_intervals[intervalToRemove.getInsertPosInList()] =
           std::move(m_intervals[m_intervals.size() - 1]);
       m_intervals.pop_back();
-      const CoInterval& modifedInterval =
+      const CoInterval &modifedInterval =
           m_intervals[intervalToRemove.getInsertPosInList()];
       return RemovedInterval(modifedInterval.getDomainId(),
                              modifedInterval.getPosInCellList(),
@@ -148,5 +156,5 @@ class CoCell {
 
   int getZ() const { return m_coordinate[2]; }
 };
-}  // namespace cutoffgrid
-#endif  // COCELL_H
+} // namespace cutoffgrid
+#endif // COCELL_H

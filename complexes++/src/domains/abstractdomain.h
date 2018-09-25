@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef ABSTRACTDOMAIN_H
 #define ABSTRACTDOMAIN_H
 
@@ -28,7 +38,7 @@ class Forcefield;
 namespace energy {
 class AbstractPairKernel;
 class ComputeResult;
-}  // namespace energy
+} // namespace energy
 
 namespace domains {
 
@@ -38,28 +48,28 @@ using Domains = std::vector<std::unique_ptr<AbstractDomain>>;
 
 class AbstractDomain : public io::RebuilderCore<AbstractDomain>,
                        public io::AbstractSerializable {
- public:
-  AbstractDomain(const std::string& inTypename, int typeId_, int id_,
+public:
+  AbstractDomain(const std::string &inTypename, int typeId_, int id_,
                  std::vector<Bead> beads_, std::vector<double> charges_,
                  std::vector<BeadChainID> beadChainIDs_,
-                 const Connections& connections_);
+                 const Connections &connections_);
   virtual ~AbstractDomain() {}
 
   // support moves
-  explicit AbstractDomain(AbstractDomain&& rhs) = default;
-  AbstractDomain& operator=(AbstractDomain&& rhs) = default;
+  explicit AbstractDomain(AbstractDomain &&rhs) = default;
+  AbstractDomain &operator=(AbstractDomain &&rhs) = default;
   // support copying
-  AbstractDomain(const AbstractDomain& rhs) = default;
-  AbstractDomain& operator=(const AbstractDomain& rhs) = default;
+  AbstractDomain(const AbstractDomain &rhs) = default;
+  AbstractDomain &operator=(const AbstractDomain &rhs) = default;
 
   /** This function computes the energy for the connections
    * between the current AbstractDomain and the other AbstractDomain.
    * This function is called once. If it is called then
    * energyForAllConnections will certainly not be called.
    */
-  double energyForConnections(const AbstractDomain& other,
-                              const util::rvec& box,
-                              const energy::ForceField& forcefield) const;
+  double energyForConnections(const AbstractDomain &other,
+                              const util::rvec &box,
+                              const energy::ForceField &forcefield) const;
 
   /** This function computes the energy for the connections
    * between the current AbstractDomain and all the other domains.
@@ -70,34 +80,34 @@ class AbstractDomain : public io::RebuilderCore<AbstractDomain>,
    * @code    outRes += energyForConnections(d, box, forcefield)
    * @code endfor
    */
-  void energyForAllConnections(const domains::Domains& others,
-                               const util::rvec& box,
-                               const energy::ForceField& forcefield,
-                               energy::rEnergyMatrix& outRes) const;
+  void energyForAllConnections(const domains::Domains &others,
+                               const util::rvec &box,
+                               const energy::ForceField &forcefield,
+                               energy::rEnergyMatrix &outRes) const;
   // API to define by child
-  virtual MovedDomain move(const util::rvec& box,
-                           util::RNGEngine& rng) const = 0;
+  virtual MovedDomain move(const util::rvec &box,
+                           util::RNGEngine &rng) const = 0;
   virtual std::unique_ptr<AbstractDomain> copy() const = 0;
   virtual std::string type() const = 0;
   // Membrane stuff (refactor out of this when possible)
   virtual bool isMembrane() const { return false; }
 
   // Make getting the values easy.
-  const util::rArray& xyz() const noexcept;
-  util::rArray& xyz() noexcept;
-  const std::vector<domains::Bead>& beads() const noexcept;
-  const std::vector<BeadChainID>& BeadChainIDs() const noexcept;
-  const std::vector<double>& charges() const noexcept;
+  const util::rArray &xyz() const noexcept;
+  util::rArray &xyz() noexcept;
+  const std::vector<domains::Bead> &beads() const noexcept;
+  const std::vector<BeadChainID> &BeadChainIDs() const noexcept;
+  const std::vector<double> &charges() const noexcept;
   int id() const noexcept;
-  const Connections& connections() const noexcept;
-  const std::string& name() const noexcept;
+  const Connections &connections() const noexcept;
+  const std::string &name() const noexcept;
   int typeId() const noexcept;
   int nBeads() const noexcept;
 
   // Setter
   void setXyz(util::rArray xyz_);
 
-  static Connections RebuildConnections(io::Deserializer& deserializer) {
+  static Connections RebuildConnections(io::Deserializer &deserializer) {
     Connections connections;
     size_t m_connections_size =
         deserializer.restore<decltype(connections.size())>(
@@ -112,7 +122,7 @@ class AbstractDomain : public io::RebuilderCore<AbstractDomain>,
     return connections;
   }
 
-  AbstractDomain(io::Deserializer& deserializer)
+  AbstractDomain(io::Deserializer &deserializer)
       : m_id(deserializer.restore<decltype(m_id)>("m_id")),
         m_name(deserializer.restore<decltype(m_name)>("m_name")),
         m_typeId(deserializer.restore<decltype(m_typeId)>("m_typeId")),
@@ -123,8 +133,8 @@ class AbstractDomain : public io::RebuilderCore<AbstractDomain>,
             deserializer.restore<decltype(m_beadChainIDs)>("m_beadChainIDs")),
         m_connections(RebuildConnections(deserializer)) {}
 
- protected:
-  void serializeCore(io::Serializer& serializer) const {
+protected:
+  void serializeCore(io::Serializer &serializer) const {
     serializer.append(type(), "type");
     serializer.append(m_id, "m_id");
     serializer.append(m_name, "m_name");
@@ -140,7 +150,7 @@ class AbstractDomain : public io::RebuilderCore<AbstractDomain>,
     }
   }
 
- private:
+private:
   int m_id;
   std::string m_name;
   int m_typeId;
@@ -150,6 +160,6 @@ class AbstractDomain : public io::RebuilderCore<AbstractDomain>,
   std::vector<BeadChainID> m_beadChainIDs;
   Connections m_connections;
 };
-}  // namespace domains
+} // namespace domains
 
-#endif  // ABSTRACTDOMAIN_H
+#endif // ABSTRACTDOMAIN_H

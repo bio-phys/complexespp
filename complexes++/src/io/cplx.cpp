@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include <algorithm>
 #include <fmt/format.h>
 #include <fstream>
@@ -28,11 +38,11 @@
 
 namespace io {
 
-util::rvec readBoxCPLX(const std::string& file) {
+util::rvec readBoxCPLX(const std::string &file) {
   return parse3DVector<double>(YamlNode(file)["box"]);
 }
 
-domains::BeadChainID parseChainIDstr(const std::string& rawID) {
+domains::BeadChainID parseChainIDstr(const std::string &rawID) {
   const auto tokens = util::splitStr(rawID, " ");
   if (tokens.size() != 2) {
     throw std::invalid_argument(
@@ -40,45 +50,45 @@ domains::BeadChainID parseChainIDstr(const std::string& rawID) {
   }
   try {
     return domains::BeadChainID(tokens[0], std::stoi(tokens[1]));
-  } catch (std::invalid_argument& e) {
+  } catch (std::invalid_argument &e) {
     throw std::invalid_argument(
         fmt::format("Invalid Bead Chain ID: {}\n", rawID));
   }
 }
 
-std::vector<domains::BeadChainID> parseChainIds(const YamlNode& node) {
+std::vector<domains::BeadChainID> parseChainIds(const YamlNode &node) {
   const auto rawChainIDs = parseVector<std::string>(node);
   auto chainIDs = std::vector<domains::BeadChainID>();
   chainIDs.resize(rawChainIDs.size(), domains::BeadChainID("A", 0));
   std::transform(rawChainIDs.begin(), rawChainIDs.end(), chainIDs.begin(),
-                 [](const auto& id) { return parseChainIDstr(id); });
+                 [](const auto &id) { return parseChainIDstr(id); });
   return chainIDs;
 }
 
-std::vector<domains::Bead> parseBeads(
-    const YamlNode& node, const std::vector<std::string>& beadTypes) {
+std::vector<domains::Bead>
+parseBeads(const YamlNode &node, const std::vector<std::string> &beadTypes) {
   const auto rawBeads = parseVector<std::string>(node);
   auto beads = std::vector<domains::Bead>(rawBeads.size());
   std::transform(rawBeads.begin(), rawBeads.end(), beads.begin(),
-                 [&beadTypes](const auto& b) {
+                 [&beadTypes](const auto &b) {
                    return domains::findBeadID(b, beadTypes);
                  });
   return beads;
 }
 
-std::unique_ptr<domains::Rigid> parseRigid(
-    const std::string& inDomainTypename, const YamlNode& node,
-    const std::vector<std::string>& beadTypes,
-    const ConnectionsMap& connections, const int id,
-    const YamlNode& parametersNode, const int domainTypeID) {
+std::unique_ptr<domains::Rigid>
+parseRigid(const std::string &inDomainTypename, const YamlNode &node,
+           const std::vector<std::string> &beadTypes,
+           const ConnectionsMap &connections, const int id,
+           const YamlNode &parametersNode, const int domainTypeID) {
   const auto name = node["name"].as<std::string>();
   const auto phi = parametersNode["rotation"].as<double>();
-  const auto trans = [](const auto& n) {
+  const auto trans = [](const auto &n) {
     switch (n.Type()) {
-      case YAML::NodeType::Scalar:
-        return util::rvec(n.template as<double>());
-      default:
-        return parse3DVector<double>(n);
+    case YAML::NodeType::Scalar:
+      return util::rvec(n.template as<double>());
+    default:
+      return parse3DVector<double>(n);
     }
   }(parametersNode["translation"]);
   const auto beads = parseBeads(node["beads"], beadTypes);
@@ -96,10 +106,11 @@ std::unique_ptr<domains::Rigid> parseRigid(
   return dom;
 }
 
-std::unique_ptr<domains::Membrane> parseFlatMembrane(
-    const std::string& inDomainTypename, const YamlNode& node, const int id,
-    const YamlNode& parametersNode, const std::vector<std::string>& beadTypes,
-    const int domainTypeID) {
+std::unique_ptr<domains::Membrane>
+parseFlatMembrane(const std::string &inDomainTypename, const YamlNode &node,
+                  const int id, const YamlNode &parametersNode,
+                  const std::vector<std::string> &beadTypes,
+                  const int domainTypeID) {
   const auto zaxis = node["zaxis"].as<double>();
 
   const auto z0 = parametersNode["z0"].as<double>();
@@ -111,10 +122,11 @@ std::unique_ptr<domains::Membrane> parseFlatMembrane(
   return dom;
 }
 
-std::unique_ptr<domains::Membrane> parseTubeMembrane(
-    const std::string& inDomainTypename, const YamlNode& node, const int id,
-    const YamlNode& parametersNode, const std::vector<std::string>& beadTypes,
-    const int domainTypeID) {
+std::unique_ptr<domains::Membrane>
+parseTubeMembrane(const std::string &inDomainTypename, const YamlNode &node,
+                  const int id, const YamlNode &parametersNode,
+                  const std::vector<std::string> &beadTypes,
+                  const int domainTypeID) {
   const auto x = node["x"].as<double>();
   const auto y = node["y"].as<double>();
   const auto radius = node["radius"].as<double>();
@@ -128,10 +140,11 @@ std::unique_ptr<domains::Membrane> parseTubeMembrane(
   return dom;
 }
 
-std::unique_ptr<domains::Membrane> parseSphereMembrane(
-    const std::string& inDomainTypename, const YamlNode& node, const int id,
-    const YamlNode& parametersNode, const std::vector<std::string>& beadTypes,
-    const int domainTypeID) {
+std::unique_ptr<domains::Membrane>
+parseSphereMembrane(const std::string &inDomainTypename, const YamlNode &node,
+                    const int id, const YamlNode &parametersNode,
+                    const std::vector<std::string> &beadTypes,
+                    const int domainTypeID) {
   const auto center = parse3DVector<double>(node["center"]);
   const auto radius = node["radius"].as<double>();
 
@@ -145,11 +158,11 @@ std::unique_ptr<domains::Membrane> parseSphereMembrane(
   return dom;
 }
 
-std::unique_ptr<domains::Membrane> parseMembrane(
-    const std::string& inDomainTypename, const YamlNode& node,
-    const std::vector<std::string>& beadTypes,
-    const ConnectionsMap& connections, const int id,
-    const YamlNode& parametersNode, const int domainTypeID) {
+std::unique_ptr<domains::Membrane>
+parseMembrane(const std::string &inDomainTypename, const YamlNode &node,
+              const std::vector<std::string> &beadTypes,
+              const ConnectionsMap &connections, const int id,
+              const YamlNode &parametersNode, const int domainTypeID) {
   UNUSED(connections);
   const auto memType = parametersNode["type"].as<std::string>();
 
@@ -169,10 +182,10 @@ std::unique_ptr<domains::Membrane> parseMembrane(
 }
 
 std::unique_ptr<domains::AbstractDomain> parseAbstractDomain(
-    const YamlNode& definitionsDomainsNode, const YamlNode& node,
-    const std::vector<std::string>& beadTypes,
-    const ConnectionsMap& connections, const int id,
-    const std::unordered_map<std::string, int>& typeIdsFromName) {
+    const YamlNode &definitionsDomainsNode, const YamlNode &node,
+    const std::vector<std::string> &beadTypes,
+    const ConnectionsMap &connections, const int id,
+    const std::unordered_map<std::string, int> &typeIdsFromName) {
   // AUTO-ADD-DOMAIN START-PARSE (this comment must remain here to use "make
   // add-domain"!)
   const auto typeNode = node["type"];
@@ -181,7 +194,7 @@ std::unique_ptr<domains::AbstractDomain> parseAbstractDomain(
   auto domainTypeID = -1;
   try {
     domainTypeID = typeIdsFromName.at(domainTypename);
-  } catch (const std::out_of_range&) {
+  } catch (const std::out_of_range &) {
     throw std::runtime_error(fmt::format(
         "No domainname '{}' found in definitions.\n", domainTypename));
   }
@@ -210,7 +223,7 @@ std::unique_ptr<domains::AbstractDomain> parseAbstractDomain(
   }
 }
 
-std::string formatNode(const YamlNode& node) {
+std::string formatNode(const YamlNode &node) {
   auto str = std::string("[");
   const auto size = static_cast<int>(node.size());
   for (auto i = 0; i < size - 1; ++i) {
@@ -221,14 +234,14 @@ std::string formatNode(const YamlNode& node) {
 }
 
 std::tuple<std::string, int, int> parseConnectionDomain(
-    const YamlNode& node, const std::map<std::string, int>& names2id,
-    const std::map<std::string, std::vector<domains::BeadChainID>>&
-        names2chainIds) {
+    const YamlNode &node, const std::map<std::string, int> &names2id,
+    const std::map<std::string, std::vector<domains::BeadChainID>>
+        &names2chainIds) {
   const auto name = node[0].as<std::string>();
   auto id = -1;
   try {
     id = names2id.at(name);
-  } catch (const std::out_of_range& e) {
+  } catch (const std::out_of_range &e) {
     throw std::invalid_argument(fmt::format(
         "didn't found domain '{}' in topology when parsing connections\n",
         name));
@@ -244,11 +257,9 @@ std::tuple<std::string, int, int> parseConnectionDomain(
   return std::make_tuple(name, id, beadId);
 }
 
-std::shared_ptr<domains::Connection> parseConnection(const int bead,
-                                                     const int otherId,
-                                                     const int otherBead,
-                                                     const std::string& type,
-                                                     const YamlNode& node) {
+std::shared_ptr<domains::Connection>
+parseConnection(const int bead, const int otherId, const int otherBead,
+                const std::string &type, const YamlNode &node) {
   if (type == "flat") {
     return std::make_shared<domains::FlatConnection>(bead, otherId, otherBead);
   } else if (type == "harmonic") {
@@ -265,8 +276,8 @@ std::shared_ptr<domains::Connection> parseConnection(const int bead,
       fmt::format("Unknown connection type: {}\n", type));
 }
 
-ConnectionsMap parseConnectionsMap(const YamlNode& rawConnectionsNode,
-                                   const YamlNode& rawDomainsNode) {
+ConnectionsMap parseConnectionsMap(const YamlNode &rawConnectionsNode,
+                                   const YamlNode &rawDomainsNode) {
   if (!rawConnectionsNode.IsDefined() || rawConnectionsNode.size() == 0) {
     return ConnectionsMap();
   }
@@ -289,7 +300,7 @@ ConnectionsMap parseConnectionsMap(const YamlNode& rawConnectionsNode,
 
   auto connections_map = ConnectionsMap();
   for (auto idx = 0u; idx < rawConnectionsNode.size(); ++idx) {
-    const auto& con = rawConnectionsNode[std::to_string(idx)];
+    const auto &con = rawConnectionsNode[std::to_string(idx)];
 
     try {
       const auto firstDom =
@@ -319,7 +330,7 @@ ConnectionsMap parseConnectionsMap(const YamlNode& rawConnectionsNode,
       }
       connections_map[secondDomainName].emplace_back(
           parseConnection(secondBead, firstID, firstBead, type, con["params"]));
-    } catch (const YAML::InvalidNode& e) {
+    } catch (const YAML::InvalidNode &e) {
       throw e;
     }
   }
@@ -327,7 +338,7 @@ ConnectionsMap parseConnectionsMap(const YamlNode& rawConnectionsNode,
   return connections_map;
 }
 
-std::vector<int> parseDomainIDs(const YamlNode& node) {
+std::vector<int> parseDomainIDs(const YamlNode &node) {
   auto ids = node.keys<int>();
 
   // Sort the ids that have are only dictionary keys because I can't guarantee
@@ -341,11 +352,11 @@ std::vector<int> parseDomainIDs(const YamlNode& node) {
   return ids;
 }
 
-domains::Domains parseDomains(
-    const YamlNode& node, const YamlNode& definitionsDomainsNode,
-    const std::vector<std::string>& beadTypes,
-    const std::unordered_map<std::string, int>& typeIdsFromName) {
-  const auto& domainNode = node["domains"];
+domains::Domains
+parseDomains(const YamlNode &node, const YamlNode &definitionsDomainsNode,
+             const std::vector<std::string> &beadTypes,
+             const std::unordered_map<std::string, int> &typeIdsFromName) {
+  const auto &domainNode = node["domains"];
   const auto nDomains = node["ndomains"].as<std::size_t>();
   if (nDomains == 0) {
     throw std::invalid_argument(fmt::format("No domain defined\n"));
@@ -369,8 +380,8 @@ domains::Domains parseDomains(
   return topology;
 }
 
-std::vector<std::array<std::string, 3>> readPairInteraction(
-    const YamlNode& pairInteractionNode) {
+std::vector<std::array<std::string, 3>>
+readPairInteraction(const YamlNode &pairInteractionNode) {
   if (pairInteractionNode.Type() != YAML::NodeType::Sequence) {
     throw std::invalid_argument(fmt::format(
         "Problem when reading pair-interaction in cplx, it is not a "
@@ -418,11 +429,11 @@ std::vector<std::array<std::string, 3>> readPairInteraction(
   return allPairs;
 }
 
-domains::System readCPLX(const std::string& yamlfile,
-                         const std::vector<std::string>& beadTypes) {
+domains::System readCPLX(const std::string &yamlfile,
+                         const std::vector<std::string> &beadTypes) {
   TIMEZONE("read CPLX")
   const auto input = YamlNode(yamlfile);
-  const auto& topologiesNode = input["topologies"];
+  const auto &topologiesNode = input["topologies"];
 
   if (!topologiesNode.IsDefined()) {
     throw std::invalid_argument(fmt::format("No topology defined\n"));
@@ -431,7 +442,7 @@ domains::System readCPLX(const std::string& yamlfile,
   const auto definitionsDomainsNode = input["definitions"]["domains"];
   std::unordered_map<std::string, int> typeIdsFromName;
   auto id = 0;
-  for (const auto& name : definitionsDomainsNode.keys<std::string>()) {
+  for (const auto &name : definitionsDomainsNode.keys<std::string>()) {
     typeIdsFromName[name] = id++;
   }
 
@@ -447,9 +458,9 @@ domains::System readCPLX(const std::string& yamlfile,
 
     // append to topology
     topologies.emplace_back(
-        [](auto& t) {
+        [](auto &t) {
           auto a = std::vector<int>();
-          for (const auto& d : t) {
+          for (const auto &d : t) {
             a.push_back(d->id());
           }
           return a;
@@ -472,10 +483,10 @@ domains::System readCPLX(const std::string& yamlfile,
     std::tie(topologyIsConnected, badDomainId) =
         topologies.back().allDomainsConnected(top);
     if (topologyIsConnected == false) {
-      auto errorMessage = fmt::format(
-          "All domains inside a topology must be connected. This "
-          "is not the case for topology n° {} and domain id {}.\n",
-          i, badDomainId);
+      auto errorMessage =
+          fmt::format("All domains inside a topology must be connected. This "
+                      "is not the case for topology n° {} and domain id {}.\n",
+                      i, badDomainId);
       if (full_mode) {
         throw std::invalid_argument(errorMessage);
       } else {
@@ -497,26 +508,26 @@ domains::System readCPLX(const std::string& yamlfile,
   return domains::System(temp, topologies);
 }
 
-pairkernels::PairKernelManager readCPLXKernels(
-    const std::string& yamlfile, const domains::Domains& domains) {
+pairkernels::PairKernelManager
+readCPLXKernels(const std::string &yamlfile, const domains::Domains &domains) {
   TIMEZONE("read CPLX Kernels")
   const auto input = YamlNode(yamlfile);
 
-  const auto& pairInteractionNode = input["definitions"]["pair-interaction"];
+  const auto &pairInteractionNode = input["definitions"]["pair-interaction"];
   auto allPairs = readPairInteraction(pairInteractionNode);
 
   return pairkernels::PairKernelManager(allPairs, domains);
 }
 
-energy::PairParameter<double> readPairParameter(
-    const YamlNode& ff, const std::vector<std::string>& beadTypes,
-    const std::string& name) {
+energy::PairParameter<double>
+readPairParameter(const YamlNode &ff, const std::vector<std::string> &beadTypes,
+                  const std::string &name) {
   const auto node = ff[name];
   const auto nBeads = beadTypes.size();
   auto count = 0u;
   auto array = util::rArray(nBeads, nBeads);
-  for (const auto& a : node.keys<std::string>()) {
-    for (const auto& b : node[a].keys<std::string>()) {
+  for (const auto &a : node.keys<std::string>()) {
+    for (const auto &b : node[a].keys<std::string>()) {
       const auto value = node[a][b].as<double>();
       array(domains::findBeadID(a, beadTypes),
             domains::findBeadID(b, beadTypes)) = value;
@@ -534,8 +545,9 @@ energy::PairParameter<double> readPairParameter(
   return energy::PairParameter<double>(array);
 }
 
-std::vector<std::array<double, 8>> readMembranePotential(
-    const YamlNode& ff, const std::vector<std::string>& beadTypes) {
+std::vector<std::array<double, 8>>
+readMembranePotential(const YamlNode &ff,
+                      const std::vector<std::string> &beadTypes) {
   const auto node = ff["membrane"];
   const auto nBeads = beadTypes.size();
   if (node.size() != nBeads) {
@@ -546,7 +558,7 @@ std::vector<std::array<double, 8>> readMembranePotential(
   }
 
   auto mem = std::vector<std::array<double, 8>>(nBeads);
-  for (const auto& beadType : node.keys<std::string>()) {
+  for (const auto &beadType : node.keys<std::string>()) {
     const auto a = parseVector<double>(node[beadType]);
     std::copy(a.begin(), a.end(),
               mem[domains::findBeadID(beadType, beadTypes)].begin());
@@ -554,8 +566,8 @@ std::vector<std::array<double, 8>> readMembranePotential(
   return mem;
 }
 
-std::vector<double> readChargeRadii(const YamlNode& ff,
-                                    const std::vector<std::string>& beadTypes) {
+std::vector<double> readChargeRadii(const YamlNode &ff,
+                                    const std::vector<std::string> &beadTypes) {
   const auto node = ff["charge-radii"];
   const auto nBeads = beadTypes.size();
   if (node.size() != nBeads) {
@@ -565,14 +577,14 @@ std::vector<double> readChargeRadii(const YamlNode& ff,
                     node.size(), nBeads));
   }
   auto radii = std::vector<double>(nBeads);
-  for (const auto& beadType : node.keys<std::string>()) {
+  for (const auto &beadType : node.keys<std::string>()) {
     radii[domains::findBeadID(beadType, beadTypes)] =
         node[beadType].as<double>();
   }
   return radii;
 }
 
-energy::ForceField readForceFieldCPLX(const std::string& yamlfile) {
+energy::ForceField readForceFieldCPLX(const std::string &yamlfile) {
   const auto ff = YamlNode(yamlfile)["forcefield"];
   const auto beadTypes = parseVector<std::string>(ff["bead-types"]);
   const auto interActionEnergy = readPairParameter(ff, beadTypes, "energies");
@@ -585,4 +597,4 @@ energy::ForceField readForceFieldCPLX(const std::string& yamlfile) {
       ff["alpha"].as<double>());
 }
 
-}  // namespace io
+} // namespace io

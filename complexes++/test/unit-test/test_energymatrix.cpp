@@ -1,16 +1,25 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include "gtest/gtest.h"
 
 #include "energy/energymatrix.h"
 
-template <int BlockingSize>
-void testallCoreLarge() {
+template <int BlockingSize> void testallCoreLarge() {
   for (int nbRows = 1; nbRows < 1000; nbRows *= 10) {
     for (int nbCols = 1; nbCols < 1000; nbCols *= 10) {
       energy::EnergyMatrix<int, BlockingSize> array(nbRows, nbCols, 0);
@@ -24,8 +33,7 @@ void testallCoreLarge() {
   }
 }
 
-template <int BlockingSize>
-void testallCoreSmall() {
+template <int BlockingSize> void testallCoreSmall() {
   for (int nbRows = 0; nbRows < 64; nbRows += 8) {
     for (int nbCols = 0; nbCols < 64; nbCols += 32) {
       energy::EnergyMatrix<int, BlockingSize> array(nbRows, nbCols, 0);
@@ -39,8 +47,7 @@ void testallCoreSmall() {
   }
 }
 
-template <int BlockingSize>
-void testallCoreValues(const int nbValues) {
+template <int BlockingSize> void testallCoreValues(const int nbValues) {
   for (int nbRows = 0; nbRows < 64; nbRows += 8) {
     for (int nbCols = 0; nbCols < 64; nbCols += 32) {
       energy::EnergyMatrix<int, BlockingSize> array(nbRows, nbCols, nbValues);
@@ -88,8 +95,7 @@ void testallCoreValues(const int nbValues) {
   }
 }
 
-template <int BlockingSize>
-void testallCoreReplace(const int nbValues) {
+template <int BlockingSize> void testallCoreReplace(const int nbValues) {
   for (int nbRows = 0; nbRows < 64; nbRows += 8) {
     const int nbCols = nbRows;
     energy::EnergyMatrix<int, BlockingSize> array(nbRows, nbCols, nbValues);

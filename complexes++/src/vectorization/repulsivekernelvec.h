@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef REPULSIVEKERNELVEC_H
 #define REPULSIVEKERNELVEC_H
 
@@ -31,13 +41,13 @@ class RepulsiveKernelVec : public AbstractKernelVec<VecType> {
   using MaskType = typename VecType::MaskType;
 
   // Parameters needed to compute the energy
-  const energy::PairParameter<RealType>& m_diameter;
+  const energy::PairParameter<RealType> &m_diameter;
 
   // Accumulate the contribution of the current kernels
   // into these variables:
   VecType Contribution;
 
- public:
+public:
   static const int NbContributions = 1;
 
   using ContributionIdxType = RepulsiveKernelVecContributions;
@@ -45,7 +55,7 @@ class RepulsiveKernelVec : public AbstractKernelVec<VecType> {
   // Keep references to the needed information to compute the energy
   inline RepulsiveKernelVec(const RealType inDebyeLength,
                             const RealType inDielectricConstant,
-                            const energy::ForceField& inForcefield)
+                            const energy::ForceField &inForcefield)
       : m_diameter(inForcefield.diameter()), Contribution(RealType(0)) {
     UNUSED(inDebyeLength);
     UNUSED(inDielectricConstant);
@@ -72,6 +82,6 @@ class RepulsiveKernelVec : public AbstractKernelVec<VecType> {
     }
   }
 };
-}  // namespace simd
+} // namespace simd
 
-#endif  // REPULSIVEKERNELVEC_H
+#endif // REPULSIVEKERNELVEC_H

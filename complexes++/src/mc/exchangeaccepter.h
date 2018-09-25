@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef EXCHANGEACCEPTER_H
 #define EXCHANGEACCEPTER_H
 
@@ -44,12 +54,12 @@ namespace mc {
  * for more details.
  */
 class HREXAccept {
- public:
+public:
   bool needSameForceField() const { return false; }
 
-  std::tuple<bool, double, energy::rEnergyMatrix, energy::rEnergyMatrix> accept(
-      const Simulation& inS1, const Simulation& inS2,
-      util::RNGEngine& inOutRng) {
+  std::tuple<bool, double, energy::rEnergyMatrix, energy::rEnergyMatrix>
+  accept(const Simulation &inS1, const Simulation &inS2,
+         util::RNGEngine &inOutRng) {
     const double Ui_ri = inS1.getEnergy();
     energy::rEnergyMatrix Ui_rj_array =
         inS2.computeEnergyForFF(inS1.getForceField());
@@ -78,12 +88,12 @@ class HREXAccept {
  * for more details.
  */
 class REMCAccept {
- public:
+public:
   bool needSameForceField() const { return true; }
 
-  std::tuple<bool, double> accept(const Simulation& inS1,
-                                  const Simulation& inS2,
-                                  util::RNGEngine& inOutRng) {
+  std::tuple<bool, double> accept(const Simulation &inS1,
+                                  const Simulation &inS2,
+                                  util::RNGEngine &inOutRng) {
     const double deltaE = inS2.getEnergy() - inS1.getEnergy();
     const double B = inS2.getBeta() - inS1.getBeta();
     const double coef = std::min(1., exp(B * deltaE));
@@ -100,12 +110,12 @@ class REMCAccept {
  * for more details.
  */
 class NPTAccept {
- public:
+public:
   bool needSameForceField() const { return true; }
 
-  std::tuple<bool, double> accept(const Simulation& inS1,
-                                  const Simulation& inS2,
-                                  util::RNGEngine& inOutRng) {
+  std::tuple<bool, double> accept(const Simulation &inS1,
+                                  const Simulation &inS2,
+                                  util::RNGEngine &inOutRng) {
     const double deltaE = inS1.getEnergy() - inS2.getEnergy();
     const double B = inS1.getBeta() - inS2.getBeta();
     const auto dV = util::volume(inS1.getBox()) - util::volume(inS2.getBox());
@@ -118,26 +128,26 @@ class NPTAccept {
 };
 
 class TrueAccept {
- public:
+public:
   bool needSameForceField() const { return false; }
 
-  std::tuple<bool, double> accept(const Simulation& /*inS1*/,
-                                  const Simulation& /*inS2*/,
-                                  util::RNGEngine& /*inOutRng*/) {
+  std::tuple<bool, double> accept(const Simulation & /*inS1*/,
+                                  const Simulation & /*inS2*/,
+                                  util::RNGEngine & /*inOutRng*/) {
     return std::make_tuple(true, 1);
   }
 };
 
 class FalseAccept {
- public:
+public:
   bool needSameForceField() const { return false; }
 
-  std::tuple<bool, double> accept(const Simulation& /*inS1*/,
-                                  const Simulation& /*inS2*/,
-                                  util::RNGEngine& /*inOutRng*/) {
+  std::tuple<bool, double> accept(const Simulation & /*inS1*/,
+                                  const Simulation & /*inS2*/,
+                                  util::RNGEngine & /*inOutRng*/) {
     return std::make_tuple(false, 0);
   }
 };
-}  // namespace mc
+} // namespace mc
 
 #endif

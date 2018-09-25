@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef ENERGYCOMPUTERVEC_H
 #define ENERGYCOMPUTERVEC_H
 
@@ -41,28 +51,28 @@ class EnergyComputerVec {
       "Scalar and vector kernels must have the same number of contributions");
 
   // Forbid allocation in the heap (stack only)
-  static void* operator new(std::size_t) = delete;
-  static void* operator new[](std::size_t) = delete;
+  static void *operator new(std::size_t) = delete;
+  static void *operator new[](std::size_t) = delete;
 
- public:
+public:
   EnergyComputerVec(const RealType inDebyeLength,
                     const RealType inDielectricConstant,
-                    const energy::ForceField& inForcefield)
+                    const energy::ForceField &inForcefield)
       : kernelv(inDebyeLength, inDielectricConstant, inForcefield),
         kernel(inDebyeLength, inDielectricConstant, inForcefield) {}
 
   /** Compute the energy between two domains for the given itervals */
-  inline void disctinctDomainsIntervals(const domains::AbstractDomain& domain1,
-                                        const domains::AbstractDomain& domain2,
-                                        const ::util::rvec& box,
-                                        const std::pair<int, int>& interval1,
-                                        const std::pair<int, int>& interval2) {
-    const auto& positions1 = domain1.xyz();
-    const auto& positions2 = domain2.xyz();
-    const auto& charges1 = domain1.charges();
-    const auto& charges2 = domain2.charges();
-    const auto& beads1 = domain1.beads();
-    const auto& beads2 = domain2.beads();
+  inline void disctinctDomainsIntervals(const domains::AbstractDomain &domain1,
+                                        const domains::AbstractDomain &domain2,
+                                        const ::util::rvec &box,
+                                        const std::pair<int, int> &interval1,
+                                        const std::pair<int, int> &interval2) {
+    const auto &positions1 = domain1.xyz();
+    const auto &positions2 = domain2.xyz();
+    const auto &charges1 = domain1.charges();
+    const auto &charges2 = domain2.charges();
+    const auto &beads1 = domain1.beads();
+    const auto &beads2 = domain2.beads();
 
     const int lastVecIdx2 =
         interval2.first +
@@ -88,7 +98,7 @@ class EnergyComputerVec {
 
         kernelv.compute(r2v, charge1v, VecType(&charges2[idx2]),
                         static_cast<int>(beads1[idx1]),
-                        reinterpret_cast<const int*>(&beads2[idx2]));
+                        reinterpret_cast<const int *>(&beads2[idx2]));
       }
 
       for (auto idx2 = lastVecIdx2; idx2 < interval2.second; ++idx2) {
@@ -101,18 +111,18 @@ class EnergyComputerVec {
 
         static_cast<RealType>(kernel.compute(
             r2, charges1[idx1], charges2[idx2], static_cast<int>(beads1[idx1]),
-            reinterpret_cast<const int*>(&beads2[idx2])));
+            reinterpret_cast<const int *>(&beads2[idx2])));
       }
     }
   }
 
   /** Compute the energy inside a domain for the given itervals */
-  inline void selfDomainIntervals(const domains::AbstractDomain& domain,
-                                  const std::pair<int, int>& interval1,
-                                  const std::pair<int, int>& interval2) {
-    const auto& positions = domain.xyz();
-    const auto& beads = domain.beads();
-    const auto& charges = domain.charges();
+  inline void selfDomainIntervals(const domains::AbstractDomain &domain,
+                                  const std::pair<int, int> &interval1,
+                                  const std::pair<int, int> &interval2) {
+    const auto &positions = domain.xyz();
+    const auto &beads = domain.beads();
+    const auto &charges = domain.charges();
 
     for (auto idx1 = interval1.first; idx1 < interval1.second; ++idx1) {
       const VecType x1v = positions(idx1, 0);
@@ -137,7 +147,7 @@ class EnergyComputerVec {
 
         kernelv.compute(r2v, charge1v, VecType(&charges[idx2]),
                         static_cast<int>(beads[idx1]),
-                        reinterpret_cast<const int*>(&beads[idx2]));
+                        reinterpret_cast<const int *>(&beads[idx2]));
       }
 
       for (auto idx2 = lastVecIdx2; idx2 < idx2Ending; ++idx2) {
@@ -149,7 +159,7 @@ class EnergyComputerVec {
 
         static_cast<RealType>(kernel.compute(
             r2, charges[idx1], charges[idx2], static_cast<int>(beads[idx1]),
-            reinterpret_cast<const int*>(&beads[idx2])));
+            reinterpret_cast<const int *>(&beads[idx2])));
       }
     }
   }
@@ -171,6 +181,6 @@ class EnergyComputerVec {
 template <template <class KVecType> class KernelClass, class RealType>
 using EnergyComputerVecBest =
     class EnergyComputerVec<KernelClass, InaVecBestType<RealType>>;
-}  // namespace simd
+} // namespace simd
 
 #endif

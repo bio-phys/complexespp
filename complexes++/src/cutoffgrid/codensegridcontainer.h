@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef CODENSEGRIDCONTAINER_H
 #define CODENSEGRIDCONTAINER_H
 
@@ -25,7 +35,7 @@ namespace cutoffgrid {
  * The access time is guarantee to be constant.
  */
 class CoDenseGridContainer : public CoAbstractGridContainer {
- protected:
+protected:
   //< The size of the grid (number of cells in each dimension)
   util::vec<int> m_gridSize;
   //< The number of cells that have domains
@@ -33,16 +43,16 @@ class CoDenseGridContainer : public CoAbstractGridContainer {
   //< The grid as an array
   std::vector<CoCell> m_grid;
 
- public:
+public:
   explicit CoDenseGridContainer()
       : m_gridSize({0, 0, 0}), m_nbExistingCells(0) {}
 
-  CoDenseGridContainer(const CoDenseGridContainer&) = delete;
-  CoDenseGridContainer& operator=(const CoDenseGridContainer&) = delete;
-  CoDenseGridContainer(CoDenseGridContainer&&) = default;
-  CoDenseGridContainer& operator=(CoDenseGridContainer&&) = default;
+  CoDenseGridContainer(const CoDenseGridContainer &) = delete;
+  CoDenseGridContainer &operator=(const CoDenseGridContainer &) = delete;
+  CoDenseGridContainer(CoDenseGridContainer &&) = default;
+  CoDenseGridContainer &operator=(CoDenseGridContainer &&) = default;
 
-  void reset(const util::vec<int>& inGridSize) final {
+  void reset(const util::vec<int> &inGridSize) final {
     m_nbExistingCells = 0;
     m_gridSize = inGridSize;
     const auto allocatedCells = m_gridSize[0] * m_gridSize[1] * m_gridSize[2];
@@ -61,7 +71,7 @@ class CoDenseGridContainer : public CoAbstractGridContainer {
   size_t getNbCells() const final { return m_nbExistingCells; }
 
   /** This function return the storage index from the box coordinate */
-  long long getIndex(const util::vec<int>& inPos) const final {
+  long long getIndex(const util::vec<int> &inPos) const final {
     const int IndexX = 0;
     const int IndexY = 1;
     const int IndexZ = 2;
@@ -72,11 +82,11 @@ class CoDenseGridContainer : public CoAbstractGridContainer {
            inPos[IndexZ];
   }
 
-  int addInterval(const long long inCellIdx, const util::vec<int>& coordinate,
+  int addInterval(const long long inCellIdx, const util::vec<int> &coordinate,
                   const int inDomainId, const int inBeginingOfInterval,
                   const int inNbElementsInInterval,
                   const int inPosInCellList) final {
-    CoCell& cell = m_grid[inCellIdx];
+    CoCell &cell = m_grid[inCellIdx];
     if (cell.isEmpty()) {
       m_nbExistingCells += 1;
     }
@@ -86,9 +96,9 @@ class CoDenseGridContainer : public CoAbstractGridContainer {
     return insertedPos;
   }
 
-  RemovedInterval removeInterval(
-      const CoDomainCellLink& intervalToRemove) final {
-    CoCell& cell = m_grid[intervalToRemove.getCellIndex()];
+  RemovedInterval
+  removeInterval(const CoDomainCellLink &intervalToRemove) final {
+    CoCell &cell = m_grid[intervalToRemove.getCellIndex()];
     // The cell manages the deletion of the interval
     const auto resultingUpdate = cell.removeInterval(intervalToRemove);
     if (cell.isEmpty()) {
@@ -98,11 +108,11 @@ class CoDenseGridContainer : public CoAbstractGridContainer {
     return resultingUpdate;
   }
 
-  const CoCell& getCell(const long long inCellIdx) const final {
+  const CoCell &getCell(const long long inCellIdx) const final {
     return m_grid[inCellIdx];
   }
 
-  const CoCell& getCell(const util::vec<int>& inPos) const final {
+  const CoCell &getCell(const util::vec<int> &inPos) const final {
     return getCell(getIndex(inPos));
   }
 
@@ -111,22 +121,22 @@ class CoDenseGridContainer : public CoAbstractGridContainer {
   /////////////////////////////////////////////////////////////////
 
   class ConstIterator {
-    const CoCell* currentCell;
-    const CoCell* const endCell;
+    const CoCell *currentCell;
+    const CoCell *const endCell;
 
-    explicit ConstIterator(const CoCell* inCurrentCell, const CoCell* inEndCell)
+    explicit ConstIterator(const CoCell *inCurrentCell, const CoCell *inEndCell)
         : currentCell(inCurrentCell), endCell(inEndCell) {
       while (currentCell != endCell && currentCell->isEmpty()) {
         ++currentCell;
       }
     }
 
-   public:
-    const CoCell& operator*() const { return *currentCell; }
+  public:
+    const CoCell &operator*() const { return *currentCell; }
 
-    const CoCell* operator->() const { return currentCell; }
+    const CoCell *operator->() const { return currentCell; }
 
-    ConstIterator& operator++() {
+    ConstIterator &operator++() {
       DEBUG_ASSERT(currentCell != endCell,
                    "Cannot inc an iterator equal to end()");
       do {
@@ -143,11 +153,11 @@ class CoDenseGridContainer : public CoAbstractGridContainer {
       return cpIter;
     }
 
-    bool operator!=(const ConstIterator& other) const {
+    bool operator!=(const ConstIterator &other) const {
       return currentCell != other.currentCell;
     }
 
-    bool operator==(const ConstIterator& other) const {
+    bool operator==(const ConstIterator &other) const {
       return currentCell == other.currentCell;
     }
 
@@ -162,5 +172,5 @@ class CoDenseGridContainer : public CoAbstractGridContainer {
     return ConstIterator(&m_grid[m_grid.size()], &m_grid[m_grid.size()]);
   }
 };
-}  // namespace cutoffgrid
-#endif  // CODENSEGRIDCONTAINER_H
+} // namespace cutoffgrid
+#endif // CODENSEGRIDCONTAINER_H

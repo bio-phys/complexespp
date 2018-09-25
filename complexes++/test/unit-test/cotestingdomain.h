@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef COTESTINGDOMAIN_H
 #define COTESTINGDOMAIN_H
 
@@ -20,17 +30,17 @@ template <class GirdClass>
 class TestingDomain : public domains::AbstractDomain {
   //< It should be be put in a real class! since it is managed by the cutoff
   // algo.
-  const GirdClass& m_grid;
+  const GirdClass &m_grid;
   double m_maxDistanceBetweenBeads;
   mutable int m_nbInteractions;
   bool m_ensureAreCoInteractions;
 
- public:
-  void serialize(io::Serializer& serializer) const final {
+public:
+  void serialize(io::Serializer &serializer) const final {
     domains::AbstractDomain::serializeCore(serializer);
   }
 
-  TestingDomain(const int inNbAtoms, const int inId, const GirdClass& inGrid)
+  TestingDomain(const int inNbAtoms, const int inId, const GirdClass &inGrid)
       : domains::AbstractDomain(
             "TestingDomain", 0, inId,
             std::vector<domains::Bead>(inNbAtoms, domains::Bead(0)),
@@ -44,8 +54,7 @@ class TestingDomain : public domains::AbstractDomain {
             sqrt(m_grid.getRadiusPerDim()[0] * m_grid.getRadiusPerDim()[0] +
                  m_grid.getRadiusPerDim()[1] * m_grid.getRadiusPerDim()[1] +
                  m_grid.getRadiusPerDim()[2] * m_grid.getRadiusPerDim()[2])),
-        m_nbInteractions(0),
-        m_ensureAreCoInteractions(false) {}
+        m_nbInteractions(0), m_ensureAreCoInteractions(false) {}
 
   virtual std::string type() const override { return "TestingDomain"; }
 
@@ -56,11 +65,11 @@ class TestingDomain : public domains::AbstractDomain {
   void resetNbInteractions() { m_nbInteractions = 0; }
 
   template <class ViewType>
-  void energyForIntervals(ViewType inView, const domains::AbstractDomain& other,
-                          const util::rvec& box,
-                          const energy::ForceField& forcefield,
-                          const std::pair<int, int>& myInterval,
-                          const std::pair<int, int>& otherInterval,
+  void energyForIntervals(ViewType inView, const domains::AbstractDomain &other,
+                          const util::rvec &box,
+                          const energy::ForceField &forcefield,
+                          const std::pair<int, int> &myInterval,
+                          const std::pair<int, int> &otherInterval,
                           const int offsetContributions) const {
     UNUSED(forcefield);
     UNUSED(inView);
@@ -69,8 +78,8 @@ class TestingDomain : public domains::AbstractDomain {
       return;
     }
 
-    const auto& xyzOther = other.xyz();
-    const auto& xyzThis = xyz();
+    const auto &xyzOther = other.xyz();
+    const auto &xyzThis = xyz();
     auto d = util::rvec();
 
     for (auto i = myInterval.first; i < myInterval.second; ++i) {
@@ -110,27 +119,27 @@ class TestingDomain : public domains::AbstractDomain {
     }
   }
 
-  double energyForConnections(const AbstractDomain& other,
-                              const util::rvec& box,
-                              const energy::ForceField& forcefield) const {
+  double energyForConnections(const AbstractDomain &other,
+                              const util::rvec &box,
+                              const energy::ForceField &forcefield) const {
     UNUSED(other);
     UNUSED(box);
     UNUSED(forcefield);
     return 0;
   }
 
-  void energyForAllConnections(const domains::Domains& other,
-                               const util::rvec& box,
-                               const energy::ForceField& forcefield,
-                               std::vector<double>& res) const {
+  void energyForAllConnections(const domains::Domains &other,
+                               const util::rvec &box,
+                               const energy::ForceField &forcefield,
+                               std::vector<double> &res) const {
     UNUSED(other);
     UNUSED(box);
     UNUSED(forcefield);
     UNUSED(res);
   }
 
-  domains::MovedDomain move(const util::rvec& box,
-                            util::RNGEngine& rng) const final {
+  domains::MovedDomain move(const util::rvec &box,
+                            util::RNGEngine &rng) const final {
     UNUSED(box);
     UNUSED(rng);
     return domains::MovedDomain::Fail();
@@ -145,7 +154,7 @@ class TestingDomain : public domains::AbstractDomain {
 
 template <class GirdClass>
 class TestingPairKernel : public pairkernels::AbstractPairKernel {
- public:
+public:
   static std::unique_ptr<TestingPairKernel> BuildTestingPairKernel() {
     return std::make_unique<TestingPairKernel>();
   }
@@ -153,12 +162,12 @@ class TestingPairKernel : public pairkernels::AbstractPairKernel {
   explicit TestingPairKernel() : pairkernels::AbstractPairKernel(1) {}
 
   void compute(energy::EnergyMatrixBuffer<>::Accesser inView,
-               const domains::AbstractDomain& inDom1,
-               const domains::AbstractDomain& inDom2, const util::rvec& box,
-               const energy::ForceField& forceField,
-               const std::pair<int, int>& inInterval1,
-               const std::pair<int, int>& inInterval2) const final {
-    reinterpret_cast<const TestingDomain<GirdClass>*>(&inDom1)
+               const domains::AbstractDomain &inDom1,
+               const domains::AbstractDomain &inDom2, const util::rvec &box,
+               const energy::ForceField &forceField,
+               const std::pair<int, int> &inInterval1,
+               const std::pair<int, int> &inInterval2) const final {
+    reinterpret_cast<const TestingDomain<GirdClass> *>(&inDom1)
         ->energyForIntervals(inView, inDom2, box, forceField, inInterval1,
                              inInterval2, getOffsetContributions());
   }

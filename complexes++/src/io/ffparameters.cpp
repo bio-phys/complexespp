@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include <fmt/format.h>
 #include <fstream>
 #include <sstream>
@@ -15,8 +25,9 @@
 
 namespace io {
 
-energy::PairParameter<double> readPairParameter(
-    const std::string& file, const std::vector<std::string>& beadTypes) {
+energy::PairParameter<double>
+readPairParameter(const std::string &file,
+                  const std::vector<std::string> &beadTypes) {
   const auto nResidues = beadTypes.size();
   auto array = util::rArray(nResidues, nResidues);
   auto lineCount = 0u;
@@ -46,8 +57,9 @@ energy::PairParameter<double> readPairParameter(
   return energy::PairParameter<double>(array);
 }
 
-std::vector<std::array<double, 8>> readMembranePotential(
-    const std::string& file, const std::vector<std::string>& beadTypes) {
+std::vector<std::array<double, 8>>
+readMembranePotential(const std::string &file,
+                      const std::vector<std::string> &beadTypes) {
   const auto nBeads = beadTypes.size();
   auto mem = std::vector<std::array<double, 8>>(nBeads);
   auto lineCount = 0u;
@@ -70,7 +82,7 @@ std::vector<std::array<double, 8>> readMembranePotential(
   return mem;
 }
 
-std::vector<std::string> readBeadTypes(const std::string& file) {
+std::vector<std::string> readBeadTypes(const std::string &file) {
   std::ifstream input(file);
   auto beadTypes = std::vector<std::string>();
   std::string line, beadCode;
@@ -86,4 +98,4 @@ std::vector<std::string> readBeadTypes(const std::string& file) {
   }
   return beadTypes;
 }
-}  // namespace io
+} // namespace io

@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include "gtest/gtest.h"
 
 #include "complexes_test.h"
@@ -14,9 +24,9 @@
 #include "domains/topologymoves.h"
 #include "util/linalg.h"
 
-double getCentroidScore(const domains::Domains& domains, util::rvec center) {
+double getCentroidScore(const domains::Domains &domains, util::rvec center) {
   double score = 0;
-  for (auto& dom : domains) {
+  for (auto &dom : domains) {
     const util::rvec domCentroid = util::centroid(dom->xyz());
     score += (center[0] - domCentroid[0]) * (center[0] - domCentroid[0]) +
              (center[1] - domCentroid[1]) * (center[1] - domCentroid[1]) +
@@ -25,9 +35,9 @@ double getCentroidScore(const domains::Domains& domains, util::rvec center) {
   return score;
 }
 
-util::rvec getCentroidOfDomains(const domains::Domains& domains) {
+util::rvec getCentroidOfDomains(const domains::Domains &domains) {
   util::rvec centroid;
-  for (auto& dom : domains) {
+  for (auto &dom : domains) {
     centroid += util::centroid(dom->xyz());
   }
   for (int idxDim = 0; idxDim < 3; ++idxDim) {
@@ -38,8 +48,8 @@ util::rvec getCentroidOfDomains(const domains::Domains& domains) {
 
 domains::Domains generateDomainsWithConnections(
     const int nbDomains, const util::rvec boxSize, const int nbBeads,
-    const std::vector<std::vector<int>>& connectionsMapping,
-    util::RNGEngine& inRng) {
+    const std::vector<std::vector<int>> &connectionsMapping,
+    util::RNGEngine &inRng) {
   auto dist = std::uniform_real_distribution<double>{0, 1};
 
   domains::Domains domains(nbDomains);
@@ -79,13 +89,13 @@ domains::Domains generateDomainsWithConnections(
 }
 
 domains::Domains generateDomains(const int nbDomains, const util::rvec boxSize,
-                                 const int nbBeads, util::RNGEngine& inRng) {
+                                 const int nbBeads, util::RNGEngine &inRng) {
   return generateDomainsWithConnections(
       nbDomains, boxSize, nbBeads, std::vector<std::vector<int>>(nbDomains),
       inRng);
 }
 
-domains::Domains cloneAllDomains(const domains::Domains& inDomains) {
+domains::Domains cloneAllDomains(const domains::Domains &inDomains) {
   domains::Domains copy;
   copy.reserve(inDomains.size());
   for (int idxDom = 0; idxDom < static_cast<int>(inDomains.size()); ++idxDom) {
@@ -95,13 +105,13 @@ domains::Domains cloneAllDomains(const domains::Domains& inDomains) {
 }
 
 template <class FuncType>
-void testTwoDomains(const domains::Domains& inDomains1,
-                    const domains::Domains& inDomains2, FuncType func) {
+void testTwoDomains(const domains::Domains &inDomains1,
+                    const domains::Domains &inDomains2, FuncType func) {
   ASSERT_EQ(inDomains1.size(), inDomains2.size());
 
   for (int idxDom = 0; idxDom < static_cast<int>(inDomains1.size()); ++idxDom) {
-    const auto& xyz1 = inDomains1[idxDom]->xyz();
-    const auto& xyz2 = inDomains2[idxDom]->xyz();
+    const auto &xyz1 = inDomains1[idxDom]->xyz();
+    const auto &xyz2 = inDomains2[idxDom]->xyz();
     ASSERT_EQ(xyz1.rows(), xyz2.rows());
 
     for (int idxRow = 0; idxRow < xyz1.rows(); ++idxRow) {
@@ -126,7 +136,7 @@ TEST(TOPOLOGYMOVES_TEST, testCopy) {
     domains::Domains domainsCopy = cloneAllDomains(domains);
 
     testTwoDomains(domains, domainsCopy,
-                   [](const util::rvec& v1, const util::rvec& v2) {
+                   [](const util::rvec &v1, const util::rvec &v2) {
                      for (int idxDim = 0; idxDim < 3; ++idxDim) {
                        EXPECT_EQ(v1[idxDim], v2[idxDim]);
                      }
@@ -149,7 +159,7 @@ TEST(TOPOLOGYMOVES_TEST, testTranslation) {
 
     testTwoDomains(
         domains, domainsCopy,
-        [translationCoef](const util::rvec& v1, const util::rvec& v2) {
+        [translationCoef](const util::rvec &v1, const util::rvec &v2) {
           for (int idxDim = 0; idxDim < 3; ++idxDim) {
             EXPECT_TRUE(v1[idxDim] - translationCoef <= v2[idxDim]);
             EXPECT_TRUE(v2[idxDim] <= v1[idxDim] + translationCoef);
@@ -164,7 +174,7 @@ TEST(TOPOLOGYMOVES_TEST, testTranslation) {
 
     testTwoDomains(
         domains, domainsCopy,
-        [translationCoef](const util::rvec& v1, const util::rvec& v2) {
+        [translationCoef](const util::rvec &v1, const util::rvec &v2) {
           for (int idxDim = 0; idxDim < 3; ++idxDim) {
             EXPECT_TRUE(v1[idxDim] - translationCoef <= v2[idxDim]);
             EXPECT_TRUE(v2[idxDim] <= v1[idxDim] + translationCoef);
@@ -178,7 +188,7 @@ TEST(TOPOLOGYMOVES_TEST, testTranslation) {
                                         &domainsCopy, &rng);
 
     testTwoDomains(domains, domainsCopy,
-                   [](const util::rvec& v1, const util::rvec& v2) {
+                   [](const util::rvec &v1, const util::rvec &v2) {
                      for (int idxDim = 0; idxDim < 3; ++idxDim) {
                        EXPECT_EQ(v1[idxDim], v2[idxDim]);
                      }
@@ -222,7 +232,7 @@ TEST(TOPOLOGYMOVES_TEST, testCompactSame) {
     }
 
     testTwoDomains(domains, domainsCopy,
-                   [](const util::rvec& v1, const util::rvec& v2) {
+                   [](const util::rvec &v1, const util::rvec &v2) {
                      for (int idxDim = 0; idxDim < 3; ++idxDim) {
                        MY_EXPECT_DOUBLE_EQ(v1[idxDim], v2[idxDim], 1E-13);
                      }
@@ -255,14 +265,16 @@ TEST(TOPOLOGYMOVES_TEST, testCompactPbc) {
       MY_EXPECT_DOUBLE_EQ(comCopy[idxDim], computedCentroid[idxDim], 1E-13);
     }
 
-    testTwoDomains(domains, domainsCopy, [&boxSize](const util::rvec& v1,
-                                                    const util::rvec& v2) {
-      for (int idxDim = 0; idxDim < 3; ++idxDim) {
-        const double v1tobox = util::pbc::ToBox(v1[idxDim], boxSize[idxDim]);
-        const double v2tobox = util::pbc::ToBox(v2[idxDim], boxSize[idxDim]);
-        MY_EXPECT_DOUBLE_EQ(v1tobox, v2tobox, 1E-11);
-      }
-    });
+    testTwoDomains(domains, domainsCopy,
+                   [&boxSize](const util::rvec &v1, const util::rvec &v2) {
+                     for (int idxDim = 0; idxDim < 3; ++idxDim) {
+                       const double v1tobox =
+                           util::pbc::ToBox(v1[idxDim], boxSize[idxDim]);
+                       const double v2tobox =
+                           util::pbc::ToBox(v2[idxDim], boxSize[idxDim]);
+                       MY_EXPECT_DOUBLE_EQ(v1tobox, v2tobox, 1E-11);
+                     }
+                   });
   }
 }
 
@@ -285,7 +297,7 @@ TEST(TOPOLOGYMOVES_TEST, testCompactSameQuality) {
   {
     domains::Domains domainsCopy = cloneAllDomains(domains);
 
-    for (auto& dom : domains) {
+    for (auto &dom : domains) {
       util::translateByConstantInPlace(boxSize[0] * 10, &dom->xyz());
     }
 
@@ -305,14 +317,16 @@ TEST(TOPOLOGYMOVES_TEST, testCompactSameQuality) {
       MY_EXPECT_DOUBLE_EQ(com1tobox, com2tobox, 1E-11);
     }
 
-    testTwoDomains(domains, domainsCopy, [&boxSize](const util::rvec& v1,
-                                                    const util::rvec& v2) {
-      for (int idxDim = 0; idxDim < 3; ++idxDim) {
-        const double v1tobox = util::pbc::ToBox(v1[idxDim], boxSize[idxDim]);
-        const double v2tobox = util::pbc::ToBox(v2[idxDim], boxSize[idxDim]);
-        MY_EXPECT_DOUBLE_EQ(v1tobox, v2tobox, 1E-11);
-      }
-    });
+    testTwoDomains(domains, domainsCopy,
+                   [&boxSize](const util::rvec &v1, const util::rvec &v2) {
+                     for (int idxDim = 0; idxDim < 3; ++idxDim) {
+                       const double v1tobox =
+                           util::pbc::ToBox(v1[idxDim], boxSize[idxDim]);
+                       const double v2tobox =
+                           util::pbc::ToBox(v2[idxDim], boxSize[idxDim]);
+                       MY_EXPECT_DOUBLE_EQ(v1tobox, v2tobox, 1E-11);
+                     }
+                   });
   }
 }
 
@@ -333,13 +347,13 @@ TEST(TOPOLOGYMOVES_TEST, testCompactKnown) {
 
   const util::rvec boxSize(1, 1, 1);
   domains::Domains domainsCopy = cloneAllDomains(domains);
-  for (auto& dom : domainsCopy) {
+  for (auto &dom : domainsCopy) {
     util::translateByConstantInPlace(boxSize[0] * (dom->id() + 1), &dom->xyz());
   }
 
   testTwoDomains(
       domains, domainsCopy,
-      [&subBoxSize, &boxSize](const util::rvec& v1, const util::rvec& v2) {
+      [&subBoxSize, &boxSize](const util::rvec &v1, const util::rvec &v2) {
         for (int idxDim = 0; idxDim < 3; ++idxDim) {
           EXPECT_TRUE(v1[idxDim] < subBoxSize[idxDim]);
           const double v2tobox = util::pbc::ToBox(v2[idxDim], boxSize[idxDim]);
@@ -366,7 +380,7 @@ TEST(TOPOLOGYMOVES_TEST, testCompactKnown) {
 
   testTwoDomains(
       domains, domainsCopy,
-      [&shift, &subBoxSize](const util::rvec& v1, const util::rvec& v2) {
+      [&shift, &subBoxSize](const util::rvec &v1, const util::rvec &v2) {
         for (int idxDim = 0; idxDim < 3; ++idxDim) {
           EXPECT_TRUE(v1[idxDim] < subBoxSize[idxDim]);
           EXPECT_TRUE(v2[idxDim] + shift[idxDim] < subBoxSize[idxDim]);
@@ -402,7 +416,7 @@ TEST(TOPOLOGYMOVES_TEST, testRotation0) {
     }
 
     testTwoDomains(domains, domainsCopy,
-                   [](const util::rvec& v1, const util::rvec& v2) {
+                   [](const util::rvec &v1, const util::rvec &v2) {
                      for (int idxDim = 0; idxDim < 3; ++idxDim) {
                        EXPECT_EQ(v1[idxDim], v2[idxDim]);
                      }
@@ -416,7 +430,7 @@ TEST(TOPOLOGYMOVES_TEST, testRotation0) {
 
     testTwoDomains(
         domains, domainsCopy,
-        [&computedCentroid](const util::rvec& v1, const util::rvec& v2) {
+        [&computedCentroid](const util::rvec &v1, const util::rvec &v2) {
           double dist1 = 0;
           double dist2 = 0;
           for (int idxDim = 0; idxDim < 3; ++idxDim) {
@@ -429,7 +443,7 @@ TEST(TOPOLOGYMOVES_TEST, testRotation0) {
         });
 
     testTwoDomains(domains, domainsCopy,
-                   [](const util::rvec& v1, const util::rvec& v2) {
+                   [](const util::rvec &v1, const util::rvec &v2) {
                      for (int idxDim = 0; idxDim < 3; ++idxDim) {
                        EXPECT_EQ(v1[idxDim], v2[idxDim]);
                      }
@@ -443,7 +457,7 @@ TEST(TOPOLOGYMOVES_TEST, testRotation0) {
 
     testTwoDomains(
         domains, domainsCopy,
-        [&computedCentroid](const util::rvec& v1, const util::rvec& v2) {
+        [&computedCentroid](const util::rvec &v1, const util::rvec &v2) {
           double dist1 = 0;
           double dist2 = 0;
           for (int idxDim = 0; idxDim < 3; ++idxDim) {
@@ -456,7 +470,7 @@ TEST(TOPOLOGYMOVES_TEST, testRotation0) {
         });
 
     testTwoDomains(domains, domainsCopy,
-                   [](const util::rvec& v1, const util::rvec& v2) {
+                   [](const util::rvec &v1, const util::rvec &v2) {
                      for (int idxDim = 0; idxDim < 3; ++idxDim) {
                        MY_EXPECT_DOUBLE_EQ(v1[idxDim], v2[idxDim], 1E-13);
                      }
@@ -492,7 +506,7 @@ TEST(TOPOLOGYMOVES_TEST, testRotation) {
     }
 
     testTwoDomains(domains, domainsCopy,
-                   [](const util::rvec& v1, const util::rvec& v2) {
+                   [](const util::rvec &v1, const util::rvec &v2) {
                      for (int idxDim = 0; idxDim < 3; ++idxDim) {
                        EXPECT_EQ(v1[idxDim], v2[idxDim]);
                      }
@@ -506,7 +520,7 @@ TEST(TOPOLOGYMOVES_TEST, testRotation) {
 
     testTwoDomains(
         domains, domainsCopy,
-        [&computedCentroid](const util::rvec& v1, const util::rvec& v2) {
+        [&computedCentroid](const util::rvec &v1, const util::rvec &v2) {
           double dist1 = 0;
           double dist2 = 0;
           for (int idxDim = 0; idxDim < 3; ++idxDim) {

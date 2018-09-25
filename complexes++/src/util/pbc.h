@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef PBC_H
 #define PBC_H
 
@@ -49,8 +59,8 @@ inline RealType ToClosest(RealType inPosition, const RealType inBoxSize) {
  */
 template <class RealType,
           typename = std::enable_if<std::is_floating_point<RealType>::value>>
-vec<RealType> ToClosest(const vec<RealType>& inPosition,
-                        const vec<RealType>& inBoxSize) {
+vec<RealType> ToClosest(const vec<RealType> &inPosition,
+                        const vec<RealType> &inBoxSize) {
   return vec<RealType>(ToClosest<RealType>(inPosition[0], inBoxSize[0]),
                        ToClosest<RealType>(inPosition[1], inBoxSize[1]),
                        ToClosest<RealType>(inPosition[2], inBoxSize[2]));
@@ -64,8 +74,8 @@ vec<RealType> ToClosest(const vec<RealType>& inPosition,
  */
 template <class RealType,
           typename = std::enable_if<std::is_floating_point<RealType>::value>>
-inline void ToClosest(vec<RealType>* const outPosition,
-                      const vec<RealType>& inBoxSize) {
+inline void ToClosest(vec<RealType> *const outPosition,
+                      const vec<RealType> &inBoxSize) {
   (*outPosition)[0] = ToClosest<RealType>((*outPosition)[0], inBoxSize[0]);
   (*outPosition)[1] = ToClosest<RealType>((*outPosition)[1], inBoxSize[1]);
   (*outPosition)[2] = ToClosest<RealType>((*outPosition)[2], inBoxSize[2]);
@@ -98,8 +108,8 @@ inline RealType ToBox(RealType position, const RealType boxWidth) {
  */
 template <class RealType,
           typename = std::enable_if<std::is_floating_point<RealType>::value>>
-vec<RealType> ToBox(const vec<RealType>& inPosition,
-                    const vec<RealType>& inBoxSize) {
+vec<RealType> ToBox(const vec<RealType> &inPosition,
+                    const vec<RealType> &inBoxSize) {
   return util::vec<RealType>(ToBox<RealType>(inPosition[0], inBoxSize[0]),
                              ToBox<RealType>(inPosition[1], inBoxSize[1]),
                              ToBox<RealType>(inPosition[2], inBoxSize[2]));
@@ -112,8 +122,8 @@ vec<RealType> ToBox(const vec<RealType>& inPosition,
  */
 template <class RealType,
           typename = std::enable_if<std::is_floating_point<RealType>::value>>
-inline void ToCBox(vec<RealType>* const outPosition,
-                   const vec<RealType>& inBoxSize) {
+inline void ToCBox(vec<RealType> *const outPosition,
+                   const vec<RealType> &inBoxSize) {
   (*outPosition)[0] = ToBox<double>((*outPosition)[0], inBoxSize[0]);
   (*outPosition)[1] = ToBox<double>((*outPosition)[1], inBoxSize[1]);
   (*outPosition)[2] = ToBox<double>((*outPosition)[2], inBoxSize[2]);
@@ -127,14 +137,14 @@ inline void ToCBox(vec<RealType>* const outPosition,
  */
 template <class RealType,
           typename = std::enable_if<std::is_floating_point<RealType>::value>>
-inline RealType DistSquare(const util::vec<RealType>& inDistanceVec,
-                           const util::vec<RealType>& inBoxSize) {
+inline RealType DistSquare(const util::vec<RealType> &inDistanceVec,
+                           const util::vec<RealType> &inBoxSize) {
   const auto closestDistance = ToClosest(inDistanceVec, inBoxSize);
 
-  const RealType distancePow2 =
-      closestDistance[0] * closestDistance[0]     // x^2
-      + closestDistance[1] * closestDistance[1]   // y^2
-      + closestDistance[2] * closestDistance[2];  // z^2
+  const RealType distancePow2 = closestDistance[0] * closestDistance[0]   // x^2
+                                + closestDistance[1] * closestDistance[1] // y^2
+                                +
+                                closestDistance[2] * closestDistance[2]; // z^2
   return distancePow2;
 }
 
@@ -147,10 +157,10 @@ inline RealType DistSquare(const util::vec<RealType>& inDistanceVec,
  * inPosition1
  * @return ToClosest(inDistanceVec).^2
  */
-inline double DistSquareBetweenPoints(const util::rvec& inPosition1,
-                                      const util::rvec& inPosition2,
+inline double DistSquareBetweenPoints(const util::rvec &inPosition1,
+                                      const util::rvec &inPosition2,
                                       const util::rvec inSimulationBoxSize,
-                                      util::rvec* outShiftDom2) {
+                                      util::rvec *outShiftDom2) {
   util::rvec shiftPosition2 = inPosition2;
   for (int idx = 0; idx < 3; ++idx) {
     while (shiftPosition2[idx] - inPosition1[idx] >
@@ -183,7 +193,7 @@ inline double DistSquareBetweenPoints(const util::rvec& inPosition1,
  */
 template <class RealType,
           typename = std::enable_if<std::is_floating_point<RealType>::value>>
-void applyPBCInPlace(const vec<RealType>& box, Array<RealType>* xyz) {
+void applyPBCInPlace(const vec<RealType> &box, Array<RealType> *xyz) {
   auto com = util::centroid(*xyz);
   auto diff = vec<RealType>();
   // This assumes that we are always in a neighboring image.
@@ -205,7 +215,7 @@ void applyPBCInPlace(const vec<RealType>& box, Array<RealType>* xyz) {
 
 template <class RealType,
           typename = std::enable_if<std::is_floating_point<RealType>::value>>
-Array<RealType> applyPBC(const Array<RealType>& xyz, const vec<RealType>& box) {
+Array<RealType> applyPBC(const Array<RealType> &xyz, const vec<RealType> &box) {
   auto res = xyz;
   applyPBCInPlace(box, &res);
   return res;
@@ -217,8 +227,8 @@ Array<RealType> applyPBC(const Array<RealType>& xyz, const vec<RealType>& box) {
  *
  */
 template <typename RealType>
-vec<RealType> closestImage(const vec<RealType>& a, const vec<RealType>& b,
-                           const vec<RealType>& box) {
+vec<RealType> closestImage(const vec<RealType> &a, const vec<RealType> &b,
+                           const vec<RealType> &box) {
   const auto box2 = vec<RealType>(0.5 * box[0], .5 * box[1], .5 * box[2]);
   auto res = b;
   for (auto i = 0; i < 3; ++i) {
@@ -232,7 +242,7 @@ vec<RealType> closestImage(const vec<RealType>& a, const vec<RealType>& b,
   return res;
 }
 
-}  // namespace pbc
-}  // namespace util
+} // namespace pbc
+} // namespace util
 
-#endif  // MOVES_H
+#endif // MOVES_H

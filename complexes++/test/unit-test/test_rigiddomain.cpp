@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include "complexes_test.h"
 #include "domains/rigiddomain.h"
 #include "io/ffparameters.h"
@@ -12,7 +22,7 @@
 #include "gtest/gtest.h"
 
 domains::Rigid singleAtomRigid(const int id, const domains::Bead bead,
-                               const double charge, const util::rvec& pos) {
+                               const double charge, const util::rvec &pos) {
   const auto Dtrans = util::rvec(.2, .2, .2);
   const auto phi = 2.0;
   auto dom = domains::Rigid(
@@ -30,11 +40,11 @@ domains::Rigid singleAtomRigid(const int id, const domains::Bead bead,
 }
 
 class RigidTest : public testing::Test {
- public:
+public:
   RigidTest() {}
   virtual ~RigidTest() {}
 
- protected:
+protected:
   virtual void SetUp() {
     const auto beadTypes = io::readBeadTypes(dataDir + "bead-types");
     // r0 is 2^(1/6) minimum of energy function
@@ -46,7 +56,7 @@ class RigidTest : public testing::Test {
   }
   virtual void TearDown() {}
 
-  double calc_energy(const domains::Rigid& a, const domains::Rigid& b) {
+  double calc_energy(const domains::Rigid &a, const domains::Rigid &b) {
     if (a.id() != b.id()) {
       energy::rEnergyMatrix array(
           1, 1, pairkernels::LJHPairKernel::LJHNbContributions);
@@ -70,7 +80,7 @@ class RigidTest : public testing::Test {
   domains::Rigid dom2 =
       singleAtomRigid(2, domains::Bead(0), 0, util::rvec(0, 0, 0));
 
- private:
+private:
   const energy::ForceField forcefield = dummy_forcefield(1, -1, 1, 1, 1);
   util::rvec box = util::rvec(10, 10, 10);
 };
@@ -82,6 +92,4 @@ TEST_F(RigidTest, energy_symmetric) {
   EXPECT_DOUBLE_EQ(-1, en);
 }
 
-TEST_F(RigidTest, energySelf) {
-  EXPECT_DOUBLE_EQ(0, calc_energy(dom1, dom1));
-}
+TEST_F(RigidTest, energySelf) { EXPECT_DOUBLE_EQ(0, calc_energy(dom1, dom1)); }

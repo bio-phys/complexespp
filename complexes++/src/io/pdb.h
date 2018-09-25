@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef IO_PDB_H
 #define IO_PDB_H
 
@@ -14,9 +24,9 @@
 
 namespace io {
 
-void writePDB(std::basic_ostream<char>& out, const domains::Domains& model,
-              const util::rvec& box, const int i,
-              const std::vector<std::string>& beadTypes);
+void writePDB(std::basic_ostream<char> &out, const domains::Domains &model,
+              const util::rvec &box, const int i,
+              const std::vector<std::string> &beadTypes);
 
 // This implementation is not very smart. It doesn't do a lot of error
 // checking.
@@ -27,20 +37,20 @@ void writePDB(std::basic_ostream<char>& out, const domains::Domains& model,
 // the
 // chains correspond the to correct domain.
 class PDBReader : public BaseReader {
- public:
+public:
   explicit PDBReader(std::shared_ptr<domains::Domains> dom,
-                     const util::rvec& box, const std::string& file);
+                     const util::rvec &box, const std::string &file);
   ~PDBReader();
 
   std::shared_ptr<domains::Domains> nextFrame() final;
   bool hasNextFrame() const final;
 
- private:
+private:
   void readPDBFrame();
 
   int m_frame;
   mutable std::ifstream m_pdb;
 };
-}  // namespace io
+} // namespace io
 
-#endif  // IO_PDB_H
+#endif // IO_PDB_H

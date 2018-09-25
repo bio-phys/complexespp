@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef LJHKERNELVEC_H
 #define LJHKERNELVEC_H
 
@@ -35,15 +45,15 @@ class LJHKernelVec : public AbstractKernelVec<VecType> {
   const VecType m_dielectricConstant;
   const VecType m_debyeHueckelC;
 
-  const energy::PairParameter<RealType>& m_interActionEnergy;
-  const energy::PairParameter<RealType>& m_diameter;
+  const energy::PairParameter<RealType> &m_interActionEnergy;
+  const energy::PairParameter<RealType> &m_diameter;
 
   // Accumulate the contribution of the current kernels
   // into these variables:
   VecType ljContribution;
   VecType dhContribution;
 
- public:
+public:
   static const int NbContributions = 2;
 
   using ContributionIdxType = LJHKernelVecContributions;
@@ -51,7 +61,7 @@ class LJHKernelVec : public AbstractKernelVec<VecType> {
   //< Keep references to the needed information to compute the energy
   inline LJHKernelVec(const RealType inDebyeLength,
                       const RealType inDielectricConstant,
-                      const energy::ForceField& inForcefield)
+                      const energy::ForceField &inForcefield)
       : m_debyeLength(inDebyeLength),
         m_dielectricConstant(inDielectricConstant),
         m_debyeHueckelC(constants::natural::elementaryCharge *
@@ -59,8 +69,7 @@ class LJHKernelVec : public AbstractKernelVec<VecType> {
                         (4 * M_PI * constants::natural::epsilon_0) /
                         constants::units::angstrom / constants::units::energy),
         m_interActionEnergy(inForcefield.interActionEnergy()),
-        m_diameter(inForcefield.diameter()),
-        ljContribution(RealType(0)),
+        m_diameter(inForcefield.diameter()), ljContribution(RealType(0)),
         dhContribution(RealType(0)) {}
 
   /** Return the energy using Lennard Jones and Hueckel formulation */
@@ -97,6 +106,6 @@ class LJHKernelVec : public AbstractKernelVec<VecType> {
     }
   }
 };
-}  // namespace simd
+} // namespace simd
 
-#endif  // LJHKERNELVEC_H
+#endif // LJHKERNELVEC_H

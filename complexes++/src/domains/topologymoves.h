@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef TOPOLOGYMOVES_H
 #define TOPOLOGYMOVES_H
 
@@ -23,9 +33,9 @@ namespace domains {
 
 namespace topologyMoves {
 
-inline bool Translation(const std::vector<int>& inDomainIds,
+inline bool Translation(const std::vector<int> &inDomainIds,
                         const double inTranslationCoef,
-                        domains::Domains* outDomains, util::RNGEngine* inRng) {
+                        domains::Domains *outDomains, util::RNGEngine *inRng) {
   if (inTranslationCoef == 0 || inDomainIds.size() == 0) {
     return false;
   }
@@ -42,8 +52,8 @@ inline bool Translation(const std::vector<int>& inDomainIds,
 }
 
 inline util::rvec CompactTopology(const util::rvec inSimulationBoxSize,
-                                  const std::vector<int>& inDomainIds,
-                                  domains::Domains* outDomains) {
+                                  const std::vector<int> &inDomainIds,
+                                  domains::Domains *outDomains) {
   const long int nbDomainsInTopology =
       static_cast<long int>(inDomainIds.size());
   if (nbDomainsInTopology == 1) {
@@ -82,9 +92,9 @@ inline util::rvec CompactTopology(const util::rvec inSimulationBoxSize,
     const auto currentDomainLocalId = globalToLocalId[currentDomainGlobalId];
     toProcessDomainIds.pop();
 
-    const auto& connectionsForDomain =
+    const auto &connectionsForDomain =
         (*outDomains)[currentDomainGlobalId]->connections();
-    for (const auto& connection : connectionsForDomain) {
+    for (const auto &connection : connectionsForDomain) {
       const auto connectionDomainGlobalId = connection->domainId();
       if (visitedDomainIds.find(connectionDomainGlobalId) ==
           visitedDomainIds.end()) {
@@ -107,7 +117,7 @@ inline util::rvec CompactTopology(const util::rvec inSimulationBoxSize,
 
   util::rvec currentCentroid(0, 0, 0);
 
-  for (const auto& domainInfo : domainInfos) {
+  for (const auto &domainInfo : domainInfos) {
     util::translateByConstantInPlace(
         domainInfo.shift, &(*outDomains)[domainInfo.globalId]->xyz());
     currentCentroid += domainInfo.centroid;
@@ -121,9 +131,9 @@ inline util::rvec CompactTopology(const util::rvec inSimulationBoxSize,
 }
 
 inline bool Rotation(const util::rvec inSimulationBoxSize,
-                     const std::vector<int>& inDomainIds,
-                     const double inRotationCoef, domains::Domains* outDomains,
-                     util::RNGEngine* inRng) {
+                     const std::vector<int> &inDomainIds,
+                     const double inRotationCoef, domains::Domains *outDomains,
+                     util::RNGEngine *inRng) {
   if (inRotationCoef == 0 || inDomainIds.size() == 0) {
     return false;
   }
@@ -140,7 +150,7 @@ inline bool Rotation(const util::rvec inSimulationBoxSize,
   return true;
 }
 
-}  // namespace topologyMoves
+} // namespace topologyMoves
 
-}  // namespace domains
-#endif  // TOPOLOGY_H
+} // namespace domains
+#endif // TOPOLOGY_H

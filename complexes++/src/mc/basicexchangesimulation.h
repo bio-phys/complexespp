@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef BASICEXCHANGEALGORITHM_H
 #define BASICEXCHANGEALGORITHM_H
 
@@ -23,7 +33,7 @@ namespace mc {
 
 enum class ExchangeLogVerbosity { all, stats, none };
 
-ExchangeLogVerbosity determineVerbosity(const std::string& val) {
+ExchangeLogVerbosity determineVerbosity(const std::string &val) {
   if (val == "stats") {
     return ExchangeLogVerbosity::stats;
   } else if (val == "all") {
@@ -61,21 +71,19 @@ class BasicExchangeSimulation : public AbstractExchangeSimulation {
   //! The number of threads we can create
   const int m_nbThreads;
 
- public:
+public:
   BasicExchangeSimulation(
-      const std::vector<std::string>& configDirNames,
-      const std::string& configFilename, const int inExchangeRate,
+      const std::vector<std::string> &configDirNames,
+      const std::string &configFilename, const int inExchangeRate,
       const int inStatsRate,
       const SimulationChecking::ComparisonFlag inComparisonMask,
       const std::string inEnableExchangeLog, const bool restart,
-      const std::string& restartValue, const bool backupOutput,
+      const std::string &restartValue, const bool backupOutput,
       const io::MoveStatRecorder::Verbosity inMoveStatsVerbosity,
       const int inNbThreads)
       : m_nbSimu(static_cast<int>(configDirNames.size())),
-        m_exchangeRate(inExchangeRate),
-        m_statisticRate(inStatsRate),
-        m_configDirNames(configDirNames),
-        m_configFilename(configFilename),
+        m_exchangeRate(inExchangeRate), m_statisticRate(inStatsRate),
+        m_configDirNames(configDirNames), m_configFilename(configFilename),
         m_defaultComparisonMask(inComparisonMask),
         m_enableExchangeLog(determineVerbosity(inEnableExchangeLog)),
         m_nbThreads(inNbThreads) {
@@ -133,7 +141,7 @@ class BasicExchangeSimulation : public AbstractExchangeSimulation {
     if (m_enableExchangeLog != ExchangeLogVerbosity::none) {
       // Print out the log header
       logger.printHeader(m_configDirNames, m_configFilename, m_exchangeRate,
-                        m_statisticRate, nbSweeps);
+                         m_statisticRate, nbSweeps);
     }
 
     // Compute nbSweeps sweeps by step m_exchangeRate
@@ -179,8 +187,8 @@ class BasicExchangeSimulation : public AbstractExchangeSimulation {
           if (m_enableExchangeLog != ExchangeLogVerbosity::none) {
             // Print the result in the log
             logger.addAttempt(idx1, idx2, m_simus[idx1].getEnergy(),
-                             m_simus[idx2].getEnergy(), probability,
-                             doExchange);
+                              m_simus[idx2].getEnergy(), probability,
+                              doExchange);
           }
           // Perform the exchange if needed
           if (doExchange) {
@@ -215,6 +223,6 @@ class BasicExchangeSimulation : public AbstractExchangeSimulation {
     return 0;
   }
 };
-}  // namespace mc
+} // namespace mc
 
 #endif

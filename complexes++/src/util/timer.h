@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef TIMER_H
 #define TIMER_H
 
@@ -36,22 +46,22 @@ class Timer {
   using double_second_time = std::chrono::duration<double, std::ratio<1, 1>>;
 
   std::chrono::high_resolution_clock::time_point
-      m_start;  ///< m_start time (start)
-  std::chrono::high_resolution_clock::time_point m_end;  ///< stop time (stop)
-  std::chrono::nanoseconds m_cumulate;  ///< the m_cumulate time
+      m_start; ///< m_start time (start)
+  std::chrono::high_resolution_clock::time_point m_end; ///< stop time (stop)
+  std::chrono::nanoseconds m_cumulate;                  ///< the m_cumulate time
 
- public:
+public:
   /// Constructor
   Timer() { start(); }
 
   /// Copy constructor
-  Timer(const Timer& other) = delete;
+  Timer(const Timer &other) = delete;
   /// Copies an other timer
-  Timer& operator=(const Timer& other) = delete;
+  Timer &operator=(const Timer &other) = delete;
   /// Move constructor
-  Timer(Timer&& other) = default;
+  Timer(Timer &&other) = default;
   /// Copies an other timer
-  Timer& operator=(Timer&& other) = default;
+  Timer &operator=(Timer &&other) = default;
 
   /** Rest all the values, and apply start */
   void reset() {
@@ -90,6 +100,6 @@ class Timer {
     return getElapsed();
   }
 };
-}  // namespace util
+} // namespace util
 
 #endif

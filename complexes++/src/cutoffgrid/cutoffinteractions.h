@@ -1,10 +1,20 @@
-// -------------------------------------------------------------------------
-// Copyright (C) Max Planck Institute of Biophysics - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// The code comes without warranty of any kind
-// Please refer to Kim and Hummer J.Mol.Biol. 2008
-// -------------------------------------------------------------------------
+// Copyright (c) 2018 the complexes++ development team and contributors
+// (see the file AUTHORS for the full list of names)
+//
+// This file is part of complexes++.
+//
+// complexes++ is free software: you can redistribute it and/or modify
+// it under the terms of the Lesser GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// complexes++ is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef CUTOFFINTERACTIONS_HPP
 #define CUTOFFINTERACTIONS_HPP
 
@@ -28,7 +38,7 @@ namespace cutoffgrid {
  */
 template <class RealType, class GridContainerClass>
 class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
- protected:
+protected:
   static const int m_NbNeighbors = 26;
 
   const RealType m_coRadius;
@@ -42,21 +52,20 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
   int m_countNbLoops;
   int m_nbTasksForOne;
 
- public:
-  virtual void serialize(io::Serializer& serializer) const final {
+public:
+  virtual void serialize(io::Serializer &serializer) const final {
     AbstractInteractionAlgorithm<RealType>::serializeCore(serializer);
     serializer.append(m_coRadius, "m_coRadius");
     serializer.append(m_boxSize, "m_boxSize");
   }
 
-  CutoffInteractions(io::Deserializer& deserializer,
-                     const std::shared_ptr<domains::Domains>& inAllDomains)
+  CutoffInteractions(io::Deserializer &deserializer,
+                     const std::shared_ptr<domains::Domains> &inAllDomains)
       : AbstractInteractionAlgorithm<RealType>(deserializer),
         m_coRadius(deserializer.restore<decltype(m_coRadius)>("m_coRadius")),
         m_boxSize(deserializer.restore<decltype(m_boxSize)>("m_boxSize")),
         m_grid(m_coRadius, m_boxSize, inAllDomains->size()),
-        m_allDomains(inAllDomains),
-        m_nbTasksForOne(omp_get_max_threads()) {
+        m_allDomains(inAllDomains), m_nbTasksForOne(omp_get_max_threads()) {
     for (int idxDom = 0; idxDom < static_cast<int>(inAllDomains->size());
          ++idxDom) {
       m_grid.addDomain((*inAllDomains)[idxDom]);
@@ -70,13 +79,11 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
   }
 
   explicit CutoffInteractions(
-      const RealType inCoRadius, const util::rvec& inBoxSize,
+      const RealType inCoRadius, const util::rvec &inBoxSize,
       const std::shared_ptr<domains::Domains> inAllDomains)
-      : m_coRadius(inCoRadius),
-        m_boxSize(inBoxSize),
+      : m_coRadius(inCoRadius), m_boxSize(inBoxSize),
         m_grid(inCoRadius, inBoxSize, inAllDomains->size()),
-        m_allDomains(inAllDomains),
-        m_nbTasksForOne(omp_get_max_threads()) {
+        m_allDomains(inAllDomains), m_nbTasksForOne(omp_get_max_threads()) {
     for (int idxDom = 0; idxDom < static_cast<int>(inAllDomains->size());
          ++idxDom) {
       m_grid.addDomain((*inAllDomains)[idxDom]);
@@ -108,7 +115,7 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
     m_countNbLoops += 1;
   }
 
-  void resetAllDomains(const util::rvec& newBox) final {
+  void resetAllDomains(const util::rvec &newBox) final {
     m_grid = CoGrid<RealType, GridContainerClass>(m_coRadius, newBox,
                                                   m_allDomains->size());
     for (int idxDom = 0; idxDom < static_cast<int>(m_allDomains->size());
@@ -117,9 +124,9 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
     }
   }
 
-  void computeAll(const util::rvec& box, const energy::ForceField& forcefield,
-                  const pairkernels::PairKernelManager& inKernels,
-                  energy::EnergyMatrix<RealType>& outRes) const final {
+  void computeAll(const util::rvec &box, const energy::ForceField &forcefield,
+                  const pairkernels::PairKernelManager &inKernels,
+                  energy::EnergyMatrix<RealType> &outRes) const final {
     std::vector<energy::EnergyMatrix<RealType>> connectionsBufferForThreads(
         omp_get_num_threads(), energy::EnergyMatrix<RealType>(0, 0, 0));
 
@@ -134,26 +141,26 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
 #pragma omp taskgroup
     {
       // Here we iterate over all the cells of the m_grid
-      for (const CoCell& currentCellIter : m_grid) {
-        const CoCell* currentCellPtr = &currentCellIter;
+      for (const CoCell &currentCellIter : m_grid) {
+        const CoCell *currentCellPtr = &currentCellIter;
 
         if (shouldCreateTask == false) {
           shouldCreateTask =
               vectorization::TasksLimiter::Controller.shouldCreateTasks();
         }
 
-#pragma omp task default(shared) \
+#pragma omp task default(shared)                                               \
     firstprivate(currentCellPtr, idxThreadInserted) if (shouldCreateTask)
         {
           util::GlobalLog::redirectLog(idxThreadInserted);
-          const CoCell& currentCell = *currentCellPtr;
+          const CoCell &currentCell = *currentCellPtr;
 
           energy::EnergyMatrixBuffer<> bufferOutRes(outRes, energyMatrixMutex);
 
           // First we compute the interaction inside the cell with a double loop
           for (int idxDomTarget = 0; idxDomTarget < currentCell.getNbDomains();
                ++idxDomTarget) {
-            const CoInterval& domainTarget =
+            const CoInterval &domainTarget =
                 currentCell.getInterval(idxDomTarget);
 
             DEBUG_ASSERT(domainTarget.getDomainId() ==
@@ -162,7 +169,7 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
 
             for (int idxDomSource = 0;
                  idxDomSource < currentCell.getNbDomains(); ++idxDomSource) {
-              const CoInterval& domainSource =
+              const CoInterval &domainSource =
                   currentCell.getInterval(idxDomSource);
 
               DEBUG_ASSERT(
@@ -188,14 +195,14 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
           }
 
           // Then between the current cell and the neigbhors
-          std::array<const CoCell*, m_NbNeighbors> neighbors;
+          std::array<const CoCell *, m_NbNeighbors> neighbors;
           const int nbNeighbors =
               m_grid.getPeriodicCellNeighbors(currentCell, &neighbors);
 
           for (int idxNeig = 0; idxNeig < nbNeighbors; ++idxNeig) {
             for (int idxDomTarget = 0;
                  idxDomTarget < currentCell.getNbDomains(); ++idxDomTarget) {
-              const CoInterval& domainTarget =
+              const CoInterval &domainTarget =
                   currentCell.getInterval(idxDomTarget);
 
               DEBUG_ASSERT(
@@ -206,7 +213,7 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
               for (int idxDomSource = 0;
                    idxDomSource < neighbors[idxNeig]->getNbDomains();
                    ++idxDomSource) {
-                const CoInterval& domainSource =
+                const CoInterval &domainSource =
                     neighbors[idxNeig]->getInterval(idxDomSource);
 
                 DEBUG_ASSERT(
@@ -258,7 +265,7 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
             connectionsBufferForThreads[omp_get_thread_num()] =
                 energy::EnergyMatrix<RealType>(1UL, m_allDomains->size(), 1);
           }
-          energy::EnergyMatrix<RealType>& connectionsBuffer =
+          energy::EnergyMatrix<RealType> &connectionsBuffer =
               (connectionsBufferForThreads[omp_get_thread_num()]);
           connectionsBuffer.reset();
           (*m_allDomains)[idxDomTarget]->energyForAllConnections(
@@ -284,10 +291,10 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
     omp_destroy_lock(&energyMatrixMutex);
   }
 
-  void computeForOneDomain(const int inDomainId, const util::rvec& box,
-                           const energy::ForceField& forcefield,
-                           const pairkernels::PairKernelManager& inKernels,
-                           energy::EnergyMatrix<RealType>& outRes) const final {
+  void computeForOneDomain(const int inDomainId, const util::rvec &box,
+                           const energy::ForceField &forcefield,
+                           const pairkernels::PairKernelManager &inKernels,
+                           energy::EnergyMatrix<RealType> &outRes) const final {
     DEBUG_ASSERT(inDomainId == (*m_allDomains)[inDomainId]->id(),
                  "The domain at position inDomainId has not an id equal to "
                  "inDomainId");
@@ -299,7 +306,7 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
     // there is only one target
 
     // We take the list of cell of the target domain
-    const std::vector<CoDomainCellLink>& domainCells =
+    const std::vector<CoDomainCellLink> &domainCells =
         m_grid.getDomainCells(inDomainId);
 
     bool shouldCreateTask =
@@ -332,8 +339,8 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
           }
         }
 
-#pragma omp task default(shared)                                 \
-    firstprivate(idxCellLink, nbCellsPerTask, idxThreadInserted) \
+#pragma omp task default(shared)                                               \
+    firstprivate(idxCellLink, nbCellsPerTask, idxThreadInserted)               \
         TIMEZONE_OMP_PRAGMA_TASK_KEY(timeZoneTaskKey) if (shouldCreateTask)
         {
           util::GlobalLog::redirectLog(idxThreadInserted);
@@ -344,21 +351,21 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
 
           for (int idxCellTask = idxCellLink; idxCellTask < endIdxCell;
                ++idxCellTask) {
-            const CoDomainCellLink& cellLink = domainCells[idxCellTask];
+            const CoDomainCellLink &cellLink = domainCells[idxCellTask];
             const long long cellIndex = cellLink.getCellIndex();
-            const CoCell* cellPtr = &m_grid.getCell(cellIndex);
-            const CoInterval* domainTargetPtr =
+            const CoCell *cellPtr = &m_grid.getCell(cellIndex);
+            const CoInterval *domainTargetPtr =
                 &cellPtr->getInterval(cellLink.getInsertPosInList());
 
             DEBUG_ASSERT(
                 domainTargetPtr->getDomainId() == inDomainId,
                 "The domain from domainTarget should be equal to inDomainId");
             {
-              const CoCell& cell = *cellPtr;
-              const CoInterval& domainTarget = *domainTargetPtr;
+              const CoCell &cell = *cellPtr;
+              const CoInterval &domainTarget = *domainTargetPtr;
               // First the interaction inside the cell
               for (int idxDom = 0; idxDom < cell.getNbDomains(); ++idxDom) {
-                const CoInterval& domainSource = cell.getInterval(idxDom);
+                const CoInterval &domainSource = cell.getInterval(idxDom);
 
                 DEBUG_ASSERT(
                     domainSource.getDomainId() ==
@@ -380,17 +387,17 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
             }
 
             {
-              const CoCell& cell = *cellPtr;
-              const CoInterval& domainTarget = *domainTargetPtr;
+              const CoCell &cell = *cellPtr;
+              const CoInterval &domainTarget = *domainTargetPtr;
               // The the interactions with the neighbors
-              std::array<const CoCell*, m_NbNeighbors> neighbors;
+              std::array<const CoCell *, m_NbNeighbors> neighbors;
               const int nbNeighbors =
                   m_grid.getPeriodicCellNeighbors(cell, &neighbors);
 
               for (int idxNeig = 0; idxNeig < nbNeighbors; ++idxNeig) {
                 for (int idxDom = 0;
                      idxDom < neighbors[idxNeig]->getNbDomains(); ++idxDom) {
-                  const CoInterval& domainSource =
+                  const CoInterval &domainSource =
                       neighbors[idxNeig]->getInterval(idxDom);
 
                   DEBUG_ASSERT(
@@ -450,15 +457,15 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
 
     // Count the total number of cutoff interactions
     size_t totalNbCoInteractions = 0;
-    for (const CoCell& currentCell : m_grid) {
+    for (const CoCell &currentCell : m_grid) {
       // First we compute the interaction inside the cell with a double loop
       for (int idxDomTarget = 0; idxDomTarget < currentCell.getNbDomains();
            ++idxDomTarget) {
-        const CoInterval& domainTarget = currentCell.getInterval(idxDomTarget);
+        const CoInterval &domainTarget = currentCell.getInterval(idxDomTarget);
 
         for (int idxDomSource = 0; idxDomSource < currentCell.getNbDomains();
              ++idxDomSource) {
-          const CoInterval& domainSource =
+          const CoInterval &domainSource =
               currentCell.getInterval(idxDomSource);
 
           totalNbCoInteractions += domainTarget.getNbElementsInInterval() *
@@ -467,20 +474,20 @@ class CutoffInteractions : public AbstractInteractionAlgorithm<RealType> {
       }
 
       // Then between the current cell and the neigbhors
-      std::array<const CoCell*, m_NbNeighbors> neighbors;
+      std::array<const CoCell *, m_NbNeighbors> neighbors;
       const int nbNeighbors =
           m_grid.getPeriodicCellNeighbors(currentCell, &neighbors);
 
       for (int idxNeig = 0; idxNeig < nbNeighbors; ++idxNeig) {
         for (int idxDomTarget = 0; idxDomTarget < currentCell.getNbDomains();
              ++idxDomTarget) {
-          const CoInterval& domainTarget =
+          const CoInterval &domainTarget =
               currentCell.getInterval(idxDomTarget);
 
           for (int idxDomSource = 0;
                idxDomSource < neighbors[idxNeig]->getNbDomains();
                ++idxDomSource) {
-            const CoInterval& domainSource =
+            const CoInterval &domainSource =
                 neighbors[idxNeig]->getInterval(idxDomSource);
 
             totalNbCoInteractions += domainTarget.getNbElementsInInterval() *
@@ -516,5 +523,5 @@ using CutoffInteractions_double_cutoffgrid_CoSparseGridContainer =
     CutoffInteractions<double, cutoffgrid::CoSparseGridContainer>;
 REBUILDER_REGISTER(CutoffInteractions_double_cutoffgrid_CoSparseGridContainer);
 
-}  // namespace cutoffgrid
-#endif  // CUTOFFINTERACTIONS_HPP
+} // namespace cutoffgrid
+#endif // CUTOFFINTERACTIONS_HPP
