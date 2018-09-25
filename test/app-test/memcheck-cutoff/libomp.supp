@@ -201,3 +201,26 @@
    fun:_ZN5setup7CLIArgsC1ERKiPKPKc
    fun:_ZN5setup11ApplicationC2EiPPc
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Addr4
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:start_thread
+   fun:clone
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Addr8
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   obj:/usr/lib/x86_64-linux-gnu/libomp.so.5
+   fun:start_thread
+   fun:clone
+}
