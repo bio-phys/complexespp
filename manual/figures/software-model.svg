@@ -209,8 +209,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="301.59103"
-     inkscape:cy="0.85889106"
+     inkscape:cx="326.58721"
+     inkscape:cy="25.672437"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -894,14 +894,14 @@
       </g>
     </g>
     <rect
-       style="opacity:1;vector-effect:none;fill:#ccff42;fill-opacity:0.60784314;fill-rule:nonzero;stroke:#2d2d2d;stroke-width:0.32542259;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.65084525, 0.65084525;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;vector-effect:none;fill:#ccff42;fill-opacity:0.60784314;fill-rule:nonzero;stroke:#2d2d2d;stroke-width:0.29402438;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.58804882, 0.58804882;stroke-dashoffset:0;stroke-opacity:1"
        id="rect940-7-6-1-2"
-       width="27.391384"
-       height="30.59726"
-       x="157.5876"
-       y="25.027506"
-       rx="0.28517574"
-       ry="0.21838917" />
+       width="27.422783"
+       height="24.949181"
+       x="157.5719"
+       y="25.011806"
+       rx="0.28550264"
+       ry="0.17807578" />
     <g
        id="g4554"
        transform="matrix(0.24072442,0,0,0.24072442,72.009304,27.604561)">
@@ -927,58 +927,38 @@
            x="402.45322"
            sodipodi:role="line">Connection</tspan></text>
     </g>
-    <g
-       id="g4548"
-       transform="matrix(0.24072442,0,0,0.24072442,70.95097,28.944626)">
-      <path
-         inkscape:connector-curvature="0"
-         id="rect815-6-7-0-6-7-8"
-         d="m 370.75114,31.738144 h 82.26516 c 0.87368,0 1.57704,0.70906 1.57704,1.58982 v 24.37586 c 0,0.88076 -0.70336,1.58982 -1.57704,1.58982 h -82.26516 c -0.87369,0 -1.57705,-0.70906 -1.57705,-1.58982 v -24.37586 c 0,-0.88076 0.70336,-1.58982 1.57705,-1.58982 z"
-         style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#2d2d2d;stroke-width:1.10804904;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <text
-         id="text2956-7-5"
-         y="48.572361"
-         x="390.60684"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'DejaVu Math TeX Gyre';-inkscape-font-specification:'DejaVu Math TeX Gyre';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-         xml:space="preserve"><tspan
-           style="stroke-width:0.26458332"
-           y="48.572361"
-           x="390.60684"
-           id="tspan2954-1-0"
-           sodipodi:role="line">Harmonic</tspan></text>
-      <path
-         inkscape:connector-curvature="0"
-         id="rect815-6-7-0-8-5-9"
-         d="m 376.37971,52.079914 h 82.26516 c 0.87369,0 1.57704,0.70906 1.57704,1.58982 v 24.37587 c 0,0.88076 -0.70335,1.58981 -1.57704,1.58981 h -82.26516 c -0.87369,0 -1.57705,-0.70905 -1.57705,-1.58981 v -24.37587 c 0,-0.88076 0.70336,-1.58982 1.57705,-1.58982 z"
-         style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#2d2d2d;stroke-width:1.10804904;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <text
-         id="text2960-9-6"
-         y="68.939537"
-         x="397.81683"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'DejaVu Math TeX Gyre';-inkscape-font-specification:'DejaVu Math TeX Gyre';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-         xml:space="preserve"><tspan
-           style="stroke-width:0.26458332"
-           y="68.939537"
-           x="397.81683"
-           id="tspan2958-7-3"
-           sodipodi:role="line">Gaussian</tspan></text>
-      <path
-         inkscape:connector-curvature="0"
-         id="rect815-6-7-0-9-6-8"
-         d="m 382.31721,73.693504 h 82.26516 c 0.87368,0 1.57704,0.70906 1.57704,1.58982 v 24.37586 c 0,0.880756 -0.70336,1.589816 -1.57704,1.589816 h -82.26516 c -0.87369,0 -1.57705,-0.70906 -1.57705,-1.589816 v -24.37586 c 0,-0.88076 0.70336,-1.58982 1.57705,-1.58982 z"
-         style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#2d2d2d;stroke-width:1.10804904;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <text
-         id="text2964-7-5"
-         y="90.629318"
-         x="414.74426"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'DejaVu Math TeX Gyre';-inkscape-font-specification:'DejaVu Math TeX Gyre';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-         xml:space="preserve"><tspan
-           style="stroke-width:0.26458332"
-           y="90.629318"
-           x="414.74426"
-           id="tspan2962-3-6"
-           sodipodi:role="line">Flat</tspan></text>
-    </g>
+    <path
+       style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#2d2d2d;stroke-width:0.26673445;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 160.19982,36.584772 h 19.80324 c 0.21031,0 0.37963,0.170688 0.37963,0.382709 v 5.867865 c 0,0.21202 -0.16932,0.382708 -0.37963,0.382708 h -19.80324 c -0.21032,0 -0.37963,-0.170688 -0.37963,-0.382708 v -5.867865 c 0,-0.212021 0.16931,-0.382709 0.37963,-0.382709 z"
+       id="rect815-6-7-0-6-7-8"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.03813338px;line-height:1.25;font-family:'DejaVu Math TeX Gyre';-inkscape-font-specification:'DejaVu Math TeX Gyre';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.06369167"
+       x="164.97957"
+       y="40.63718"
+       id="text2956-7-5"><tspan
+         sodipodi:role="line"
+         id="tspan2954-1-0"
+         x="164.97957"
+         y="40.63718"
+         style="stroke-width:0.06369167">Harmonic</tspan></text>
+    <path
+       style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#2d2d2d;stroke-width:0.26673445;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 161.55476,41.481533 h 19.80323 c 0.21032,0 0.37963,0.170688 0.37963,0.382709 v 5.867867 c 0,0.21202 -0.16931,0.382706 -0.37963,0.382706 h -19.80323 c -0.21032,0 -0.37964,-0.170686 -0.37964,-0.382706 v -5.867867 c 0,-0.212021 0.16932,-0.382709 0.37964,-0.382709 z"
+       id="rect815-6-7-0-8-5-9"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.03813338px;line-height:1.25;font-family:'DejaVu Math TeX Gyre';-inkscape-font-specification:'DejaVu Math TeX Gyre';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.06369167"
+       x="166.71519"
+       y="45.540054"
+       id="text2960-9-6"><tspan
+         sodipodi:role="line"
+         id="tspan2958-7-3"
+         x="166.71519"
+         y="45.540054"
+         style="stroke-width:0.06369167">Gaussian</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.12930572;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker2383-8)"
        d="M 101.83838,30.6974 H 96.067044"
