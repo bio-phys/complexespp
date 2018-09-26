@@ -47,76 +47,12 @@ def get_type_ags(cplx, sim, typename):
     return ags
 
 
-class LinkEnd(object):
-    def __init__(self, name, bead):
-        self.name = name
-        self.bead = bead
-
-
-class LinkerConnection(object):
-    def __init__(self, linker_name, start_bead, stop_bead, start, stop):
-        self.linker = (linker_name, start_bead, stop_bead)
-        self.start = start
-        self.stop = stop
-
-    def __repr__(self):
-        return "LinkerCon: {}".format(self.linker[0])
-
-
-def get_linker_connections(top):
-    """parse the connections into a more suitable data structure
-    """
-    linker_connections = []
-    # collect all gaussian domains
-    connections = []
-    for con in six.itervalues(top["connections"]):
-        if con["type"] == "gaussian":
-            connections.append(con)
-    # now we look for the domains connected to those
-    for con in connections:
-
-        start_name = con["domain-a"][0]
-        end_name = con["domain-b"][0]
-        for c in six.itervalues(top["connections"]):
-            if c == con:
-                continue
-            if c["domain-a"][0] == start_name or c["domain-b"][0] == start_name:
-                start = c
-            elif c["domain-a"][0] == end_name or c["domain-b"][0] == end_name:
-                end = c
-
-        if start["domain-a"][0] == start_name:
-            linker, linker_start = start["domain-b"]
-        else:
-            linker, linker_start = start["domain-a"]
-
-        if end["domain-a"][0] == end_name:
-            linker_end = end["domain-b"][1]
-        else:
-            linker_end = end["domain-a"][1]
-
-        # yapf: disable
-        lc = LinkerConnection(linker, linker_start, linker_end,
-                              LinkEnd(start_name, con['domain-a'][1]),
-                              LinkEnd(end_name, con['domain-b'][1]))
-        # yapf: enable
-        linker_connections.append(lc)
-
-    return linker_connections
-
-
 class Link(object):
-    def __init__(self, start, stop, ag, name, lc=None):
+    def __init__(self, start, stop, ag, name):
         self.start = start
         self.stop = stop
         self.ag = ag
         self.name = name
-        self._lc = lc
-
-    @classmethod
-    def empty(cls, link_connection):
-        name = link_connection.linker[0]
-        return cls(start=None, stop=None, ag=None, name=name, lc=link_connection)
 
 
 def get_linkers(cplx, sim):
@@ -127,49 +63,21 @@ def get_linkers(cplx, sim):
     all_linkers = []
     total_beads = 0
     for top in cplx["topologies"]:
-        # get some raw linker connections parsed into a more suitable data
-        # structure
-        linker_connections = get_linker_connections(top)
-        linkers = [Link.empty(lc) for lc in linker_connections]
+        connections = top['connections']
+        linkers = []
+        for dom in six.itervalues(top["domains"]):
+            # running update of corret atom selection for current domain
+            nbeads = dom['nbeads']
+            ag = sim.atoms[total_beads: total_beads + nbeads]
+            total_beads += nbeads
 
-        # go through domains and update linker structures when we see a
-        # suitable domain. This avoid reiterating over the domains. Can be
-        # avoided in the future if we store domain id's in the linker
-        # connections
-        for dom_id, dom in six.iteritems(top["domains"]):
-            dom_name = dom["name"]
-            nbeads = dom["nbeads"]
-            ag = sim.atoms[total_beads : total_beads + nbeads]
-
-            # Do I need information of this domain
-            is_part_of_linker = False
-            found_links = []
-            for link in linkers:
-                lc = link._lc
-                possible_names = [lc.linker[0], lc.start.name, lc.stop.name]
-                if dom_name in possible_names:
-                    is_part_of_linker = True
-                    found_links.append(link)
-
-            # update Link entry if yes
-            if is_part_of_linker:
-                for link in found_links:
-                    if dom_name == link._lc.start.name:
-                        bead = link._lc.start.bead
-                        atom = ag.select_atoms(
-                            "segid {} and resid {}".format(*bead.split())
-                        )
-                        link.start = atom[0]
-                    elif dom_name == link._lc.stop.name:
-                        bead = link._lc.stop.bead
-                        atom = ag.select_atoms(
-                            "segid {} and resid {}".format(*bead.split())
-                        )
-                        link.stop = atom[0]
-                    elif dom_name == link._lc.linker[0]:
-                        link.ag = ag
-
-            total_beads += dom["nbeads"]
+            # create Link object if gaussian domain
+            if dom['type'] != 'gaussian':
+                continue
+            c = connections[dom['meta-data']['connection_id']]
+            start = sim.select_atoms('segid {} and resid {}'.format(*c['domain-a'][1].split()))[0]
+            stop = sim.select_atoms('segid {} and resid {}'.format(*c['domain-b'][1].split()))[0]
+            linkers.append(Link(start, stop, ag, dom['name']))
 
         all_linkers.extend(linkers)
 

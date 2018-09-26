@@ -236,7 +236,8 @@ std::string formatNode(const YamlNode &node) {
 std::tuple<std::string, int, int> parseConnectionDomain(
     const YamlNode &node, const std::map<std::string, int> &names2id,
     const std::map<std::string, std::vector<domains::BeadChainID>>
-        &names2chainIds) {
+        &names2chainIds,
+    const int conIdx) {
   const auto name = node[0].as<std::string>();
   auto id = -1;
   try {
@@ -252,7 +253,8 @@ std::tuple<std::string, int, int> parseConnectionDomain(
                     std::cend(names2chainIds.at(name)), beadChainId);
   if (beadId == -1) {
     throw std::invalid_argument(
-        fmt::format("Can't find bead '{}' domain {}\n", beadId, name));
+        fmt::format("Can't find bead '{}' in domain {} in connection {}\n",
+                    beadChainId, name, conIdx));
   }
   return std::make_tuple(name, id, beadId);
 }
@@ -260,9 +262,7 @@ std::tuple<std::string, int, int> parseConnectionDomain(
 std::shared_ptr<domains::Connection>
 parseConnection(const int bead, const int otherId, const int otherBead,
                 const std::string &type, const YamlNode &node) {
-  if (type == "flat") {
-    return std::make_shared<domains::FlatConnection>(bead, otherId, otherBead);
-  } else if (type == "harmonic") {
+  if (type == "harmonic") {
     return std::make_shared<domains::HarmonicConnection>(
         bead, otherId, otherBead, node["x0"].as<double>(),
         node["k"].as<double>());
@@ -303,14 +303,14 @@ ConnectionsMap parseConnectionsMap(const YamlNode &rawConnectionsNode,
     const auto &con = rawConnectionsNode[std::to_string(idx)];
 
     try {
-      const auto firstDom =
-          parseConnectionDomain(con["domain-a"], namesToId, namesToChainId);
+      const auto firstDom = parseConnectionDomain(con["domain-a"], namesToId,
+                                                  namesToChainId, idx);
       const auto firstDomainName = std::get<0>(firstDom);
       const auto firstID = std::get<1>(firstDom);
       const auto firstBead = std::get<2>(firstDom);
 
-      const auto secondDom =
-          parseConnectionDomain(con["domain-b"], namesToId, namesToChainId);
+      const auto secondDom = parseConnectionDomain(con["domain-b"], namesToId,
+                                                   namesToChainId, idx);
       const auto secondDomainName = std::get<0>(secondDom);
       const auto secondID = std::get<1>(secondDom);
       const auto secondBead = std::get<2>(secondDom);

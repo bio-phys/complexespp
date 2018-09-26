@@ -33,31 +33,11 @@ definitions:
 topologies:
 - connections:
     0:
-      domain-a: [link1, A 141]
-      domain-b: [rigid1, A 140]
-      params: {}
-      type: flat
-    1:
-      domain-a: [link1, A 156]
-      domain-b: [rigid2, A 157]
-      params: {}
-      type: flat
-    2:
       domain-a: [rigid1, A 140]
       domain-b: [rigid2, A 157]
       params: {N: 16, bond-length: 3.81}
       type: gaussian
-    3:
-      domain-a: [link2, A 173]
-      domain-b: [rigid2, A 172]
-      params: {}
-      type: flat
-    4:
-      domain-a: [link2, A 206]
-      domain-b: [rigid3, A 207]
-      params: {}
-      type: flat
-    5:
+    1:
       domain-a: [rigid2, A 172]
       domain-b: [rigid3, A 207]
       params: {N: 34, bond-length: 3.81}
@@ -88,7 +68,7 @@ topologies:
       - [40.78506088256836, 42.47847366333008, 64.55904388427734]
       - [43.810062408447266, 40.45747375488281, 65.71004486083984]
       mc-moves: {}
-      meta-data: {remark: created with pycomplexes}
+      meta-data: {remark: created with pycomplexes, 'connection_id': 0}
       name: link1
       nbeads: 16
       type: gaussian
@@ -139,7 +119,7 @@ topologies:
       - [46.8260612487793, 37.106475830078125, 36.16004180908203]
       - [43.017059326171875, 37.20147705078125, 35.84504318237305]
       mc-moves: {}
-      meta-data: {remark: created with pycomplexes}
+      meta-data: {remark: created with pycomplexes, 'connection_id': 1}
       name: link2
       nbeads: 34
       type: gaussian

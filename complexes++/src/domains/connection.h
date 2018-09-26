@@ -79,24 +79,6 @@ private:
   int m_domainId;
 };
 
-class FlatConnection : public Connection {
-public:
-  explicit FlatConnection();
-  explicit FlatConnection(const int beadSelf_, const int domainId_,
-                          const int beadOther_);
-  double energy(const double r2,
-                const energy::ForceField &forcefield) const final;
-
-  static std::string Type() { return "FlatConnection"; }
-  std::string type() const final { return Type(); }
-
-  void serialize(io::Serializer &serializer) const final {
-    Connection::serializeCore(serializer);
-  }
-  FlatConnection(io::Deserializer &deserializer) : Connection(deserializer) {}
-};
-REBUILDER_REGISTER(FlatConnection);
-
 class GaussianConnection : public Connection {
 public:
   explicit GaussianConnection();

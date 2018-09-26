@@ -184,6 +184,7 @@ class ProteinDomain(AbstractDomain):
                 raise RuntimeError("Need box info for random placement")
             point = [np.random.uniform(0, h) for h in box]
             ag.translate(-ag.centroid()).translate(point)
+        self._metadata = {'remark': 'created with pycomplexes'}
         self._populate(ag)
 
     def _populate(self, ag):
@@ -202,7 +203,7 @@ class ProteinDomain(AbstractDomain):
             "name": self.name,
             "type": self.type,
             "nbeads": self.n_beads,
-            "meta-data": {"remark": "created with pycomplexes"},
+            "meta-data": self._metadata,
             "mc-moves": self.moves,
         }
 
@@ -270,14 +271,7 @@ class ProteinTopology(AbstractTopology):
                             dom.name, n["start_connection"][1]
                         )
                     )
-                start_atom = start_atom[0]
-                start_bead = atom2beadid(start_atom)
-                con1 = {
-                    "domain-a": [dom.name, dom.chain_ids[0]],
-                    "domain-b": [n["start_connection"][0], start_bead],
-                    "type": "flat",
-                    "params": {},
-                }
+                start_bead = atom2beadid(start_atom[0])
 
                 end_atom = u.select_atoms(n["end_connection"][1])
                 if end_atom.n_atoms != 1:
@@ -286,14 +280,7 @@ class ProteinTopology(AbstractTopology):
                             dom.name, n["end_connection"][1]
                         )
                     )
-                end_atom = end_atom[0]
-                end_bead = atom2beadid(end_atom)
-                con2 = {
-                    "domain-a": [dom.name, dom.chain_ids[-1]],
-                    "domain-b": [n["end_connection"][0], end_bead],
-                    "type": "flat",
-                    "params": {},
-                }
+                end_bead = atom2beadid(end_atom[0])
 
                 con3 = {
                     "domain-a": [n["start_connection"][0], start_bead],
@@ -301,7 +288,9 @@ class ProteinTopology(AbstractTopology):
                     "type": "gaussian",
                     "params": {"N": dom.n_beads, "bond-length": 3.81},
                 }
-                guessed_connections.extend([con1, con2, con3])
+                guessed_connections.append(con3)
+                dom._metadata['connection_id'] = len(guessed_connections) - 1
+
 
         # update connections
         connections = node.get("connections", dict())
