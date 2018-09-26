@@ -269,7 +269,7 @@ def test_ProteinTopology(datafiles):
         )
     )
     ptop = convert.ProteinTopology(topology, "test", False, [100, 100, 100])
-    assert len(ptop.connections) == 6
+    assert len(ptop.connections) == 2
 
 
 def test_1000_copies(datafiles):
