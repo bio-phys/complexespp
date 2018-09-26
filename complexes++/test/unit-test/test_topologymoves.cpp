@@ -61,8 +61,8 @@ domains::Domains generateDomainsWithConnections(
   for (int idx = 0; idx < nbDomains; ++idx) {
     domains::Connections connections;
     for (const int idConnection : connectionsMapping[idx]) {
-      connections.emplace_back(
-          std::make_unique<domains::FlatConnection>(0, idConnection, 0));
+      connections.emplace_back(std::make_unique<domains::HarmonicConnection>(
+          0, idConnection, 0, 0, 0));
     }
 
     domains[idx].reset(new domains::Rigid(

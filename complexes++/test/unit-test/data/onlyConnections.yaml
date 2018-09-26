@@ -2,13 +2,13 @@ connections:
     0:
       domain-a: ['dom1', A 1]
       domain-b: ['dom2', B 1]
-      type:  flat
-      params: {}
+      type:  harmonic
+      params: {'x0': 0, 'k':0}
     1:
       domain-a: ['dom2', B 10]
       domain-b: ['dom3', C 1]
-      type:  flat
-      params: {}
+      type:  harmonic
+      params: {'x0': 0, 'k':0}
 domains:
     0:
         name: "dom1"

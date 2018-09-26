@@ -24,18 +24,6 @@
 
 namespace domains {
 
-FlatConnection::FlatConnection() : Connection() {}
-FlatConnection::FlatConnection(const int beadSelf_, const int domainId_,
-                               const int beadOther_)
-    : Connection(beadSelf_, domainId_, beadOther_) {}
-
-double FlatConnection::energy(const double r2,
-                              const energy::ForceField &forcefield) const {
-  UNUSED(r2);
-  UNUSED(forcefield);
-  return 0;
-}
-
 GaussianConnection::GaussianConnection() : Connection(), m_N(1), m_k(.5) {}
 GaussianConnection::GaussianConnection(const int beadSelf_, const int domainId_,
                                        const int beadOther_, const int N,

@@ -262,9 +262,7 @@ std::tuple<std::string, int, int> parseConnectionDomain(
 std::shared_ptr<domains::Connection>
 parseConnection(const int bead, const int otherId, const int otherBead,
                 const std::string &type, const YamlNode &node) {
-  if (type == "flat") {
-    return std::make_shared<domains::FlatConnection>(bead, otherId, otherBead);
-  } else if (type == "harmonic") {
+  if (type == "harmonic") {
     return std::make_shared<domains::HarmonicConnection>(
         bead, otherId, otherBead, node["x0"].as<double>(),
         node["k"].as<double>());

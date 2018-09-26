@@ -20,16 +20,6 @@ topologies:
 - connections:
     0:
       domain-a: [r_beginning, B 1]
-      domain-b: [deca_ala, B 2]
-      type: flat
-      params: {}
-    1:
-      domain-a: [deca_ala, B 9]
-      domain-b: [r_end, B 10]
-      type: flat
-      params: {}
-    2:
-      domain-a: [r_beginning, B 1]
       domain-b: [r_end, B 10]
       type: gaussian
       params: {N: 8, bond-length: 3.81}
