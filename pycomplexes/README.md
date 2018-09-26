@@ -14,7 +14,6 @@ For help for an individual command run:
 
 To install pycomplexes in your main python environment you can use.
 
-    cd python
     pip install .
 
 If you get warnings about file-permissions you can install pycomplexes in your
