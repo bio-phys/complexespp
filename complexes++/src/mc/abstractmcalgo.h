@@ -87,6 +87,8 @@ protected:
   int m_nstructures;
   //! Output freq (from config)
   const int m_outFreq;
+  //! acceptance counter
+  int m_accepted = 0;
   //! Output model file (from config)
   io::TrajectoryFile m_output;
   //! Output stat file (from config)
@@ -149,6 +151,7 @@ protected:
     serializer.append(m_needComputeAll, "m_needComputeAll");
     serializer.append(m_nstructures, "m_nstructures");
     serializer.append(m_outFreq, "m_outFreq");
+    serializer.append(m_accepted, "m_accepted");
     serializer.append(m_output, "m_output");
     serializer.append(m_outStatsFile, "m_outStatsFile");
     serializer.append(m_logMoveStats, "m_logMoveStats");
@@ -199,6 +202,7 @@ public:
         m_nstructures(
             deserializer.restore<decltype(m_nstructures)>("m_nstructures")),
         m_outFreq(deserializer.restore<decltype(m_outFreq)>("m_outFreq")),
+        m_accepted(deserializer.restore<decltype(m_accepted)>("m_accepted")),
         m_output(deserializer.restore<decltype(m_output)>("m_output")),
         m_outStatsFile(
             deserializer.restore<decltype(m_outStatsFile)>("m_outStatsFile")),
@@ -268,6 +272,7 @@ public:
       // Real sweep starts at 1
       m_currentSweepIdx = 1;
     }
+    m_accepted = 0;
   }
 
   virtual ~AbstractMcAlgo() {}
@@ -395,7 +400,6 @@ public:
     if (m_needComputeAll) {
       computeAll();
     }
-    auto accepted = 0;
     const int lastSweepIdx = m_currentSweepIdx + nbSweepsToProceed;
     for (; m_currentSweepIdx < lastSweepIdx;
          ++m_currentSweepIdx, ++m_sessionCounter) {
@@ -415,7 +419,7 @@ public:
         util::Log("MOVE-TYPE-STATS: sweep: {}\n", m_currentSweepIdx);
       }
       // accepted volumeMoves will also be returned as 1 here.
-      accepted += mcSweep();
+      m_accepted += mcSweep();
       // Write output if needed
       if ((m_currentSweepIdx % m_outFreq == 0)) {
         io::writeModel(m_output, (*m_doms), m_box,
@@ -424,10 +428,10 @@ public:
         io::writeStats(
             m_outStatsFile, m_currentSweepIdx / m_outFreq,
             m_energy.getTotalEnergy(),
-            accepted / static_cast<double>((m_outFreq)*m_doms->size()),
+            m_accepted / static_cast<double>((m_outFreq)*m_doms->size()),
             util::volume(m_box), m_energy.getTotalEnergyConnections(),
             m_energy.getTotalContributions());
-        accepted = 0;
+        m_accepted = 0;
       }
     }
   }
