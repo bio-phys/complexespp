@@ -25,10 +25,12 @@ class CollisionDetector(object):
         box : array_like (3)
             box dimensions
         """
-        box = np.asarray(box, dtype=np.float32)
+        fullbox = 90 * np.ones(6, dtype=np.float32)
+        fullbox[:3] = box
         coords = np.asarray(coords, dtype=np.float32)
-        self._kdt = PKDTree(box)
-        self._kdt.set_coords(coords)
+        max_cutoff = np.sum(np.sqrt(fullbox**2)) / 2
+        self._kdt = PKDTree(fullbox)
+        self._kdt.set_coords(coords, cutoff=max_cutoff)
         self._diameter = diameter
 
     def collision(self, pos):
