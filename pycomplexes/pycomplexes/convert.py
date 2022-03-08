@@ -496,7 +496,7 @@ class Convert(six.with_metaclass(_ScriptMeta)):
             raise IOError("File does not exist: {}".format(args.top))
 
         with open(args.top) as f:
-            top = yaml.load(f)
+            top = yaml.safe_load(f)
 
         cplx = convert(
             top,
