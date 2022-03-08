@@ -80,7 +80,7 @@ def argument_processing(args):
     """
     if args.complexes_config:
         with open(args.complexes_config, "r") as f:
-            config = yaml.load(f)
+            config = yaml.safe_load(f)
         equilibrate_cplx = config["structure"]
         trajectory = config["output"]["file"]
         reference_pdb = trajectory[:-4] + "_reference.pdb"
@@ -149,7 +149,7 @@ class Equilibration(six.with_metaclass(_ScriptMeta)):
         )
 
         with open(equilibrate_cplx) as f:
-            system = yaml.load(f)
+            system = yaml.safe_load(f)
 
         # update the current system-coordinates to coordinates at specified frame (parsed argument)
         eq_u = mda.Universe(reference_pdb, trajectory)

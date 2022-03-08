@@ -23,7 +23,7 @@ setup(name='pycomplexes',
       description='python helper library for complexes++',
       author='Max Linke',
       packages=find_packages(),
-      install_requires=['numpy', 'pyyaml', 'six', 'pandas', 'tqdm', 'numba',
+      install_requires=['numpy', 'pyyaml>=5.1', 'six', 'pandas', 'tqdm', 'numba',
                         'MDAnalysis>=0.19.0', 'backports.functools_lru_cache'],
       entry_points={'console_scripts':
                     ['pycomplexes=pycomplexes.scripts:main']},

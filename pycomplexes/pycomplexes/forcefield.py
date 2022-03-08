@@ -40,7 +40,7 @@ def known_forcefields():
 
 def read_forcefield(ff_file):
     with open(ff_file) as fh:
-        return yaml.load(fh)
+        return yaml.safe_load(fh)
 
 
 def scale_interaction(old_forcefield, scale, offset):

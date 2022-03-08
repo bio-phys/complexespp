@@ -95,7 +95,8 @@ _DEFAULT_DEFINITIONS = """
   - domain-type-pair: [tube, tube]
     function: None
 """
-DEFAULT_DEFINITIONS = yaml.load(_DEFAULT_DEFINITIONS)
+
+DEFAULT_DEFINITIONS = yaml.safe_load(_DEFAULT_DEFINITIONS)
 
 
 def charges(residues, charge_assignment=CHARGE_ASSIGNMENT):
