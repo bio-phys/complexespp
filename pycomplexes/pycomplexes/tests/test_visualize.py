@@ -612,7 +612,7 @@ def test_write_to_file(tmpdir):
     test_string = "This is only test-content"
     vis.write_to_file(test_string, outputfilename)
     with open(outputfilename, "r") as f:
-        read_string = yaml.load(f)
+        read_string = yaml.safe_load(f)
     assert read_string == test_string
 
 

@@ -9,7 +9,7 @@ from pycomplexes.testing import datafiles
 @pytest.fixture
 def cplx(datafiles):
     with open(datafiles["chmp3.cplx"]) as fh:
-        return yaml.load(fh)
+        return yaml.safe_load(fh)
 
 
 @pytest.fixture

@@ -628,7 +628,7 @@ def argument_processing(args):
     if args.complexes_config:
         print("Extracting Information from complexes-config: " + args.complexes_config)
         with open(args.complexes_config) as f:
-            com_config = yaml.load(f)
+            com_config = yaml.safe_load(f)
         cplx = com_config["structure"]
         xtc = com_config["output"]["file"]
         vmd_top = os.path.splitext(com_config["output"]["file"])[0] + "_reference.pdb"
@@ -651,7 +651,7 @@ def argument_processing(args):
         print("Extracting Information from visualization-config: " + args.vis_config)
         print("Note that any additional console argument will be ignored")
         with open(args.vis_config) as f:
-            vis_config = yaml.load(f)
+            vis_config = yaml.safe_load(f)
         cplx = vis_config["cplx"]
         xtc = vis_config["xtc"]
         vmd_top = vis_config["vmd_top"]
@@ -811,7 +811,7 @@ class Visualize(six.with_metaclass(_ScriptMeta)):
         )
 
         with open(cplx) as f:
-            topology = yaml.load(f)
+            topology = yaml.safe_load(f)
         print("Given topology: " + cplx)
         # check whether coloring was overwritten by unify-argument:
         if unify:

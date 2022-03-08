@@ -192,8 +192,8 @@ topologies:
   name: donald
   ndomains: 2
    """
-    expected_cplx = yaml.load(expected_cplx)
+    expected_cplx = yaml.safe_load(expected_cplx)
     with open(data["test_ph.cplx"]) as f:
-        test_cplx = yaml.load(f)
+        test_cplx = yaml.safe_load(f)
     test_cplx = ph.change_charges(test_cplx, 15.)
     assert_equal(test_cplx, expected_cplx)

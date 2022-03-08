@@ -63,12 +63,12 @@ topology:
 
 @pytest.mark.parametrize("top", [top_with_copies, top_without_copies])
 def test_parse_top_file(top, data):
-    top = yaml.load(top.format(data.folder))
+    top = yaml.safe_load(top.format(data.folder))
 
     cplx = convert.convert(top, random=False)
 
     with open(data["test_convert.cplx"], "r") as f:
-        expected_cplx = yaml.load(f)
+        expected_cplx = yaml.safe_load(f)
 
     assert_equal(cplx, expected_cplx)
 
@@ -91,7 +91,7 @@ topology:
                 type: gaussian
                 selection: 'all'
     """
-    return yaml.load(top_yaml)
+    return yaml.safe_load(top_yaml)
 
 
 def test_chain_ids(datafiles):
@@ -241,7 +241,7 @@ def test_ProteinDomain(datafiles):
 
 def test_ProteinTopology(datafiles):
     pdb_file = datafiles["chmp3_model.pdb"]
-    topology = yaml.load(
+    topology = yaml.safe_load(
         """
     coordinate-file: '{}'
     domains:

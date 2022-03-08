@@ -44,7 +44,7 @@ def test_update_coordinates(datafiles):
     """
     start_cplx = datafiles["lj-sys.cplx"]
     with open(start_cplx) as f:
-        system = yaml.load(f)
+        system = yaml.safe_load(f)
     test_reference = datafiles["test_traj_reference.pdb"]
     test_traj = datafiles["test_traj.xtc"]
     eq_u = mda.Universe(test_reference, test_traj)
@@ -52,7 +52,7 @@ def test_update_coordinates(datafiles):
     system = equ.update_coordinates(system, eq_u)
     updated_cplx = datafiles["lj-sys_updated.cplx"]
     with open(updated_cplx, "r") as f:
-        updated_reference = yaml.load(f)
+        updated_reference = yaml.safe_load(f)
     assert_equal(system, updated_reference)
 
 
