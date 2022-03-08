@@ -138,7 +138,7 @@ class Addlinker(six.with_metaclass(_ScriptMeta)):
         util.check_file_exists(args.config)
 
         with open(args.config) as f:
-            config = yaml.load(f)
+            config = yaml.safe_load(f)
 
         cplx = config["structure"]
         traj = config["output"]["file"]
@@ -148,7 +148,7 @@ class Addlinker(six.with_metaclass(_ScriptMeta)):
         util.check_file_exists(traj)
 
         with open(cplx) as fh:
-            cplx = yaml.load(fh)
+            cplx = yaml.safe_load(fh)
 
         sim = mda.Universe(top, traj)
         addlinker(cplx, sim, args.out, args.start, args.stop, args.step)
