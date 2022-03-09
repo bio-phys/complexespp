@@ -157,7 +157,7 @@ class ExchangeParser(object):
 
 def log_path_and_dt(config_file):
     with open(config_file) as fh:
-        config = yaml.load(fh)
+        config = yaml.safe_load(fh)
     log = config["output"]["log"]
     folder = os.path.split(config_file)[0]
     log = os.path.join(folder, log)
@@ -174,8 +174,8 @@ def untangle(exchanges, nreplicas):
 
     for i, ex in enumerate(exchanges):
         j = i + 1  # offset parameter
-        attemps = ex.split()
-        sims = update_sims(attemps, sims)
+        attempts = ex.split()
+        sims = update_sims(attempts, sims)
         res[j] = sims
 
     return pd.DataFrame(res, columns=["sim-{}".format(i) for i in range(nreplicas)])
