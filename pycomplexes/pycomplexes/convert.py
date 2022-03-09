@@ -15,13 +15,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with pycomplexes.  If not, see <https://www.gnu.org/licenses/>
-from __future__ import absolute_import, print_function
 from six.moves import range, zip
 
-try:
-    from functools import lru_cache
-except ImportError:
-    from backports.functools_lru_cache import lru_cache
+from functools import lru_cache
 
 import copy
 from os.path import isfile
