@@ -8,6 +8,7 @@ from . import addlinker
 from . import generate_config
 from . import ph
 from . import pycomplexes_license
+from . import strip_log
 
 __all__ = [
     "convert",
@@ -19,5 +20,6 @@ __all__ = [
     "addlinker",
     "generate_config",
     "ph",
-    "pycomplexes_license"
+    "pycomplexes_license",
+    "strip_log"
 ]

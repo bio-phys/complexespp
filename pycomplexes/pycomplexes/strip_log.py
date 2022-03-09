@@ -37,7 +37,7 @@ def process_n_hits(n_hits, log_fname, keyword="PROGRAM"):
         msg = ["Warning!\nFound keyword \"{}\" {} times in file {}".format(keyword, n_hits, log_fname),
                "Apparently you are processing an appended log file...",
                "Will extract last run within this log file. This will increase the runtime of demux. ",
-               "You should consider clearing this log file..."]
+               "You should consider clearing this log file by means of the `pycomplexes strip_log` tool..."]
         print("\n".join(msg))
         # raise RuntimeError(msg)
         flag = True
@@ -69,8 +69,8 @@ def strip_log(log, line_ndx):
 
 
 # generate a parser for this class
-class StripLog(six.with_metaclass(_ScriptMeta)):
-    description = "Generate Linker configurations"
+class Strip_Log(six.with_metaclass(_ScriptMeta)):
+    description = "Strip last simulation run from log file."
 
     @staticmethod
     def parser(p):
@@ -82,18 +82,3 @@ class StripLog(six.with_metaclass(_ScriptMeta)):
     def main(args):
         util.check_file_exists(args.log)
 
-        with open(args.config) as f:
-            config = yaml.safe_load(f)
-
-        cplx = config["structure"]
-        traj = config["output"]["file"]
-        top = "{}_reference.pdb".format(splitext(traj)[0])
-
-        util.check_file_exists(cplx)
-        util.check_file_exists(traj)
-
-        with open(cplx) as fh:
-            cplx = yaml.safe_load(fh)
-
-        sim = mda.Universe(top, traj)
-        addlinker(cplx, sim, args.out, args.start, args.stop, args.step)
