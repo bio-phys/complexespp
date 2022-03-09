@@ -1,41 +1,21 @@
-FROM debian:9
-MAINTAINER Max Linke <max.linke@biophys.mpg.de>
+FROM debian:11
+MAINTAINER Max Linke <max.linke88@gmail.com>
 
 # packages like `libiomp-dev` are not in the main repository. We also use the
 # re-director to automatically pick the fastest mirror available in the region
-RUN echo "deb http://ftp.gwdg.de/debian stretch main contrib non-free" > /etc/apt/sources.list
 RUN apt-get update -y
-# aptitude has better conflict resolution that works with the packages we install
-RUN apt-get install aptitude -y
-# for some reason the image doesn't install the stable version of libc6 and the
-# version that is installed conflicts with the compilers we want to install
-RUN aptitude install -y \
-                    clang-3.9 \
-                    clang-format-3.9 \
-                    clang-tidy-3.9 \
-                    cmake \
-                    g++ \
-                    gcc \
+RUN apt-get install -y \
+                    build-essential \
+		    cmake \
                     git \
-                    valgrind \
-                    libboost-filesystem-dev \
-                    libboost-program-options-dev \
-                    libboost-system-dev \
-                    libfmt3-dev \
-                    libnetcdf-c++4-dev \
-                    libnetcdf-cxx-legacy-dev \
-                    libnetcdf-dev \
-                    libhdf5-dev \
-                    libyaml-cpp-dev \
-                    libiomp-dev \
-                    libopenmpi-dev \
-                    openmpi-bin \
-                    python-h5py \
-                    python-pandas \
-                    python-yaml \
-                    python-scipy \
-                    python-pip \
-                    python-matplotlib
-RUN aptitude autoclean
-RUN aptitude clean
-RUN pip install MDAnalysis
+		    unzip \
+		    curl \
+                    valgrind
+COPY build_deps.sh .
+COPY deps.md5 .
+COPY build.cfg .
+RUN /bin/bash -c "bash build_deps.sh"
+RUN rm /tmp/root/complexes-pp -rf
+RUN rm build_deps.sh
+RUN rm deps.md5
+RUN rm build.cfg
