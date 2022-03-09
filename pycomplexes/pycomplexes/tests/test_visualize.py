@@ -629,7 +629,7 @@ def test_check_files_exists(tmpdir):
 
 
 def test_check_file_size(tmpdir):
-    limit = 10 / 1024  # x MB in units of GB
+    limit = 10 // 1024  # x MB in units of GB
     with tmpdir.as_cwd():
         with open("small", "w") as fh:
             pass
