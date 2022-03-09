@@ -29,6 +29,7 @@ import pandas as pd
 
 from .scripts import _ScriptMeta
 from .util import maybe_open
+from .strip_log import skim_log_file, process_n_hits, strip_log
 
 
 def parse_remc_conf(log):
@@ -195,6 +196,9 @@ def demux(config):
     dataframe with demux information
     """
     log, dt = log_path_and_dt(config)
+    multiple_hits_flag, lidxs = skim_log_file(log)
+    if multiple_hits_flag:
+        log = strip_log(log, lidxs[-1])
     nreplicas, exchange_rate = parse_remc_conf(log)
     exchanges = ExchangeParser.from_log(log)
 
