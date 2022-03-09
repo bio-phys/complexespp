@@ -139,12 +139,12 @@ class PH(six.with_metaclass(_ScriptMeta)):
             raise IOError("File does not exist: {}".format(args.cplx))
 
         with open(args.cplx) as f:
-            cplx = yaml.load(f)
+            cplx = yaml.safe_load(f)
         if args.pKs:
             if not isfile(args.pKs):
                 raise IOError("File does not exist: {}".format(args.pKs))
             with open(args.pKs, "r") as f:
-                charged_sidechains = yaml.load(f)
+                charged_sidechains = yaml.safe_load(f)
             if not isinstance(charged_sidechains, dict):
                 raise RuntimeError(
                     "Cannot parse content of file: >{}< as yaml-dictionary.".format(
