@@ -15,9 +15,10 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
-#include <boost/algorithm/string.hpp>
 #include <string>
 #include <vector>
+#include <regex>
+#include <sstream>
 
 #include "util/log.h"
 #include "util/string.h"
@@ -26,11 +27,9 @@ namespace util {
 
 std::vector<std::string> splitStr(const std::string &str,
                                   const std::string &delimiter) {
-  std::vector<std::string> tokens;
-  const auto trimmed = boost::trim_copy(str);
-  boost::split(tokens, trimmed, boost::is_any_of(delimiter),
-               boost::algorithm::token_compress_on);
-  return tokens;
+	std::regex rgx(delimiter);
+	std::sregex_token_iterator first{begin(str), end(str), rgx, -1}, last;
+	return {first, last};
 }
 
 int truncateLeft(const int val, const int ndigits) {
