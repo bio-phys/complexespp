@@ -30,6 +30,7 @@ set(SOURCES
   "util/random.cpp"
   "util/string.cpp"
   "util/util.cpp"
+  "util/demangle.cpp"
   )
 
 set(LIBRARIES

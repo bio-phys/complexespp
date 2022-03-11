@@ -18,13 +18,13 @@
 #ifndef SETUP_CONFIG_H
 #define SETUP_CONFIG_H
 
-#include <boost/core/demangle.hpp>
 #include <fmt/format.h>
 #include <yaml-cpp/yaml.h>
 
 #include "io/serializer.h"
 #include "util/log.h"
 #include "util/string.h"
+#include "util/demangle.h"
 
 namespace setup {
 
@@ -53,7 +53,7 @@ public:
     } catch (YAML::TypedBadConversion<T> &e) {
       throw std::invalid_argument(
           fmt::format("key ({}) is not of type: {}", key,
-                      boost::core::demangle(typeid(T).name())));
+                      util::demangle(typeid(T).name())));
     }
 
     return val;
@@ -80,7 +80,7 @@ public:
     } catch (YAML::TypedBadConversion<T> &e) {
       throw std::invalid_argument(
           fmt::format("Experimental key ({}) is not of type: {}", key,
-                      boost::core::demangle(typeid(T).name())));
+                      util::demangle(typeid(T).name())));
     }
     util::Log("Using experimental key: {}={}\n", key, val);
 
