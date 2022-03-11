@@ -14,7 +14,7 @@ option(USE_TIMINGOUTPUT "Enable output time of important sections." OFF)
 option(USE_DEBUGINFO "Attach source code to binary to use debuger/profiler even in release." OFF)
 
 # check if the compiler supports c++14
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -36,7 +36,7 @@ endif(CCACHE_FOUND)
 
 # look for external dependencies that we require
 find_package(fmt REQUIRED)
-find_package(Boost 1.55 REQUIRED COMPONENTS program_options filesystem system)
+find_package(Boost 1.55 REQUIRED COMPONENTS program_options system)
 find_package(yaml-cpp REQUIRED)
 find_package(OpenMP)
 

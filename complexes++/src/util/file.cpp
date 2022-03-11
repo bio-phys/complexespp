@@ -15,14 +15,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <fmt/format.h>
-#include <fmt/time.h>
+#include <fmt/chrono.h>
 #include <string>
 
 #include "util/file.h"
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 namespace util {
 
@@ -47,7 +47,7 @@ void deleteFileIfExists(const std::string &file) {
   }
 }
 
-std::string basename(const std::string &file) { return fs::basename(file); }
+std::string basename(const std::string &file) { return fs::path(file).stem().string(); }
 
 void throwIfFileDoesNotExists(const std::string &file) {
   if (!fs::exists(file)) {
@@ -60,7 +60,7 @@ std::string fileSuffix(const std::string &file) {
 }
 
 std::string absolutePath(const std::string &path) {
-  return fs::canonical(fs::path(path), fs::current_path()).string();
+  return fs::absolute(fs::path(path)).string();
 }
 
 std::string appendPaths(const std::string &basePath,

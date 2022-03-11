@@ -69,7 +69,7 @@ const auto BOX = util::rvec(10, 10, 10);
 const auto TESTCASES = testCases();
 
 TEST(PBC, alternative_impl) {
-  for (const auto test : TESTCASES) {
+  for (const auto& test : TESTCASES) {
     const auto close = closestImageExhaustive(test[0], test[1], BOX);
     for (auto i = 0u; i < 3; ++i) {
       EXPECT_EQ(close[i], test[2][i]);
@@ -78,7 +78,7 @@ TEST(PBC, alternative_impl) {
 }
 
 TEST(PBC, closest_image) {
-  for (const auto test : TESTCASES) {
+  for (const auto& test : TESTCASES) {
     const auto close = util::pbc::closestImage(test[0], test[1], BOX);
     for (auto i = 0u; i < 3; ++i) {
       EXPECT_EQ(close[i], test[2][i]);
@@ -92,7 +92,7 @@ TEST(PBC, closest_image_random_placements) {
   const auto boxes = std::vector<util::rvec>{
       util::rvec(10, 10, 10), util::rvec(10, 20, 20), util::rvec(10, 20, 30)};
 
-  for (const auto box : boxes) {
+  for (const auto& box : boxes) {
     for (auto i = 0; i < n; ++i) {
       const auto a = util::randomVec(box, rng);
       const auto b = util::randomVec(box, rng);
