@@ -36,7 +36,6 @@ endif(CCACHE_FOUND)
 
 # look for external dependencies that we require
 find_package(fmt REQUIRED)
-find_package(Boost 1.55 REQUIRED COMPONENTS program_options system)
 find_package(yaml-cpp REQUIRED)
 find_package(OpenMP)
 
@@ -102,9 +101,10 @@ add_subdirectory(ext/xdrfile-1.1.4)
 include_directories(SYSTEM
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${XDRFILE_INCLUDE_DIR}
-  ${Boost_INCLUDE_DIRS}
   ${yaml-cpp_INCLUDE_DIR}
-  ${fmt_INCLUDE_DIR})
+  ${fmt_INCLUDE_DIR}
+  ext/CLI11
+  )
 
 # inastemp
 set(INASTEMP_JUST_LIB TRUE)

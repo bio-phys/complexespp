@@ -153,11 +153,6 @@ int Application::run() {
     return 0;
   }
 
-  if (m_args.hasKey("help") || !m_args.hasKey("config")) {
-    printHelp(m_args);
-    return 0;
-  }
-
   if (m_args.hasKey("multidir")) {
     return multiDirExecution();
   } else {
