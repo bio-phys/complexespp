@@ -18,6 +18,7 @@
 #ifndef SETUP_CLIARGS_H
 #define SETUP_CLIARGS_H
 
+#define FMT_HEADER_ONLY
 #include <any>
 #include <fmt/format.h>
 #include <initializer_list>

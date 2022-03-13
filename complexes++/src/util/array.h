@@ -18,6 +18,7 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <initializer_list>

@@ -17,6 +17,7 @@
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef IO_SERIALIZER_H
 #define IO_SERIALIZER_H
+#define FMT_HEADER_ONLY
 
 #include <array>
 #include <fmt/format.h>

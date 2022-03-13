@@ -17,7 +17,7 @@
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef SCOPEEVENT_H
 #define SCOPEEVENT_H
-
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <iostream>

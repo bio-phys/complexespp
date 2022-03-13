@@ -18,6 +18,7 @@
 #ifndef SETUP_CONFIG_H
 #define SETUP_CONFIG_H
 
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <yaml-cpp/yaml.h>
 

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.18)
 set(PROJECT_NAME_STR complexes++)
 project(${PROJECT_NAME_STR} CXX)
 
@@ -35,7 +35,6 @@ if(CCACHE_FOUND)
 endif(CCACHE_FOUND)
 
 # look for external dependencies that we require
-find_package(fmt REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(OpenMP)
 
@@ -105,6 +104,7 @@ include_directories(SYSTEM
   ${fmt_INCLUDE_DIR}
   ext/CLI11
   )
+add_subdirectory(ext/fmt-8.1.1)
 
 # inastemp
 set(INASTEMP_JUST_LIB TRUE)

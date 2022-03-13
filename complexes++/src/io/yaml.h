@@ -19,6 +19,7 @@
 #define IO_YAML_H
 
 #include <algorithm>
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <yaml-cpp/yaml.h>
 

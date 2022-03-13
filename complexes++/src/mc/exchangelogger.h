@@ -17,6 +17,7 @@
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef EXCHANGELOGGER_H
 #define EXCHANGELOGGER_H
+#define FMT_HEADER_ONLY
 
 #include <fmt/format.h>
 #include <string>
