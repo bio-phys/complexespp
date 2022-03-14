@@ -258,9 +258,12 @@ class ProteinTopology(AbstractTopology):
 
         # guess connections for gaussian domains
         guessed_connections = []
+        flag_linkers_plus_random_placement=False
         for dom in self.domains:
             n = dom.node
             if dom.type == "gaussian":
+                if randomize:
+                    flag_linkers_plus_random_placement=True
                 start_atom = u.select_atoms(n["start_connection"][1])
                 if start_atom.n_atoms != 1:
                     raise RuntimeError(
@@ -287,7 +290,11 @@ class ProteinTopology(AbstractTopology):
                 }
                 guessed_connections.append(con3)
                 dom._metadata['connection_id'] = len(guessed_connections) - 1
-
+        if flag_linkers_plus_random_placement:
+            print("WARNING: You used the randomized starting position in combination with Gaussian linker domains!")
+            print("The random placement does not respect the distance restraints, " +
+                  "which are implied by the Gaussian linker domains")
+            print("We strongly recommend not to combine random initial placement with Gaussian Linker domains!")
 
         # update connections
         connections = node.get("connections", dict())
@@ -477,7 +484,7 @@ class Convert(six.with_metaclass(_ScriptMeta)):
         p.add_argument("--debye_length", type=float, default=10)
         p.add_argument("--dielectric_constant", type=float, default=80)
         p.add_argument(
-            "--random", type=bool, help="random placement of the topologies in the box"
+            "--random", action="store_true", help="random placement of the topologies in the box"
         )
         p.add_argument(
             "--list_forcefields",
