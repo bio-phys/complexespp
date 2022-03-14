@@ -747,7 +747,6 @@ class Visualize(six.with_metaclass(_ScriptMeta)):
 
     @staticmethod
     def parser(p):
-        p.describe()
         files = p.add_argument_group(
             "files",
             "files to be passed to visualize. Are only passed if neither "
