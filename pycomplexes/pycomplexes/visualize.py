@@ -85,6 +85,11 @@ DEL_REP_FORMAT = (
     "mol delrep {rep_counter} 0 "
 )
 
+ADD_PERIODIC_FORMAT = (
+    "mol showperiodic 0 {rep_counter} {periodic_image_code} \n"
+    "mol numperiodic 0 {rep_counter} {n_images} \n"
+)
+
 SHOW_SIM_BOX = "\npbc box"
 
 FUNCTIONS = """
@@ -579,6 +584,40 @@ def vmd_visualize_unified(pdb_filename, trajectory_filename, cplx_filename, step
     return rep
 
 
+def add_periodic_images(output_string):
+    """Add periodic images to all representations, which are already
+    in the output string"""
+    # I decided to parse the previously generated output string to extract
+    # the last rep-id that was written there. I do that, by looking for the
+    # deletion of the automatically generated all-rep
+    # Thus, if this entry is not present tha adding of the representation for
+    # the periodic images will fail.
+    # Why do I do that? Otherwise, I would have to figure out the total number
+    # of representations for all different routines that may have been applied
+    # in the previous steps.
+    # we are trying to process this line:
+    # "mol delrep {rep_counter} 0 "
+    del_rep_lines = [line for line in output_string.split("\n") if "mol delrep " in line]
+    if len(del_rep_lines) != 1:
+        print("Cannot determine the number of vmd-representations.")
+        print("Skipping the addition of periodic images.")
+        return output_string  # Simply don't execute the addition of the periodic images
+    max_rep_counter = del_rep_lines[0].split("delrep ")[1].split()[0]
+    try:
+        max_rep_counter = int(max_rep_counter)
+    except:
+        print("Cannot determine the number of vmd representations")
+        print(max_rep_counter)
+        print("Skipping the addition of periodic images.")
+        return output_string  # Simply don't execute the addition of the periodic images
+    out = StringIO()
+    for rep_count in range(max_rep_counter):
+        out.write(ADD_PERIODIC_FORMAT.format(rep_counter=rep_count, periodic_image_code="xyzXYZ", n_images=1))
+    rep = out.getvalue()
+    out.close()
+    return "\n".join([output_string, rep])
+
+
 def write_to_file(string, outputfilename):
     with open(outputfilename, "w") as outputfile:
         outputfile.write(string)
@@ -590,7 +629,7 @@ def vmd_runner(outputfilename):
     - In case of linux vmd has to be included in your .bashrc with alias="vmd"
     - In case of Windows the vmd-executable should be in the directory behind
       variable: vmd_directory
-    - Has not been tested on mac-OS yet. But there is a certain chance, that it
+    - Has not been tested on mac-OS yet. But there is a certain chance that it
       already works like this...
 
     Parameters:
@@ -611,7 +650,7 @@ def vmd_runner(outputfilename):
 
 def argument_processing(args):
     """Function the parsed arguments. Keeps main() clean. Mainly distinguishes
-     between the direct parsing of arguments, the vis-config and the the extraction
+     between the direct parsing of arguments, the vis-config and the extraction
      from the complexes-config.
 
     Parameters
@@ -646,6 +685,7 @@ def argument_processing(args):
             args.run_vmd,
             args.unify,
             args.step,
+            args.periodic_imgs
         )
     if args.vis_config:  # seperate vis-conf given
         print("Extracting Information from visualization-config: " + args.vis_config)
@@ -669,7 +709,11 @@ def argument_processing(args):
             step = vis_config["unify"]
         else:
             step = args.step
-        return cplx, vmd_top, xtc, coloring, output_filename, run_vmd, unify, step
+        if "periodic_imgs" in vis_config:
+            periodic_imgs = vis_config["periodic_imgs"]
+        else:
+            periodic_imgs = args.periodic_imgs
+        return cplx, vmd_top, xtc, coloring, output_filename, run_vmd, unify, step, periodic_imgs
     else:  # No config given, direct argument input
         print("Reading console arguments.")
         if args.output:
@@ -685,13 +729,14 @@ def argument_processing(args):
             args.run_vmd,
             args.unify,
             args.step,
+            args.periodic_imgs
         )
 
 
 class Visualize(six.with_metaclass(_ScriptMeta)):
     description = (
         "create vmd file from cplx-, pdb- and trajectoryfile. "
-        "There is 3 options how to povide these files:\n"
+        "There are 3 options how to provide these files:\n"
         "direct argument-input,\n"
         "extract from complexes-simulation-config (-cc)\n"
         "use a special config for visualize (-vc)\n"
@@ -702,6 +747,7 @@ class Visualize(six.with_metaclass(_ScriptMeta)):
 
     @staticmethod
     def parser(p):
+        p.describe()
         files = p.add_argument_group(
             "files",
             "files to be passed to visualize. Are only passed if neither "
@@ -717,7 +763,7 @@ class Visualize(six.with_metaclass(_ScriptMeta)):
             "vmd_top",
             type=str,
             nargs="?",
-            help="the name of the file, taht contains the topology for vmd (f.e. pdb-file)",
+            help="the name of the file, that contains the topology for vmd (f.e. pdb-file)",
         )
         files.add_argument(
             "xtc",
@@ -743,6 +789,13 @@ class Visualize(six.with_metaclass(_ScriptMeta)):
             action="store_true",
             help="overwrites the coloring scheme and creates a single representation, where all "
             "beads are represented as vdw-particles with radius set to 1.0.",
+        )
+        p.add_argument(
+            "-pi",
+            "--periodic_imgs",
+            action="store_true",
+            help="Add periodic images of all domains. Particularly useful for large structures, "
+                 "which may span across the periodic boundary box",
         )
         p.add_argument(
             "-o",
@@ -801,7 +854,7 @@ class Visualize(six.with_metaclass(_ScriptMeta)):
                 parsed arguments (from argparse)
             """
 
-        cplx, vmd_top, xtc, coloring, output_filename, run_vmd, unify, step = argument_processing(
+        cplx, vmd_top, xtc, coloring, output_filename, run_vmd, unify, step, periodic_im = argument_processing(
             args
         )
         check_files_exist(cplx, vmd_top, xtc)
@@ -825,6 +878,8 @@ class Visualize(six.with_metaclass(_ScriptMeta)):
             output_string = vmd_visualize_script(
                 vmd_top, xtc, topology, cplx, coloring, step
             )
+        if periodic_im:
+            output_string = add_periodic_images(output_string)
         write_to_file(output_string, output_filename)
         print("Your output will be in file: " + output_filename)
         if run_vmd:
