@@ -518,7 +518,7 @@ def test_vmd_rigid_rep():
 # Following the preparation of the different possible cases for argument_parsing:
 Arguments = collections.namedtuple(
     "Arguments",
-    "cplx xtc vmd_top coloring run_vmd complexes_config vis_config output unify step",
+    "cplx xtc vmd_top coloring run_vmd complexes_config vis_config output unify step periodic_imgs",
 )
 args_console = Arguments(
     cplx="cplx",
@@ -531,8 +531,9 @@ args_console = Arguments(
     output=None,
     unify=None,
     step=2,
+    periodic_imgs=False,
 )
-expected_console = "cplx", "vmd_top", "xtc", "domain", "cplx_output.vmd", False, None, 2
+expected_console = "cplx", "vmd_top", "xtc", "domain", "cplx_output.vmd", False, None, 2, False
 
 args_com_config = Arguments(
     cplx=None,
@@ -545,6 +546,7 @@ args_com_config = Arguments(
     output=None,
     unify=None,
     step=1,
+    periodic_imgs=True,
 )
 expected_com_config = (
     "cplx.cplx",
@@ -555,6 +557,7 @@ expected_com_config = (
     True,
     None,
     1,
+    True
 )
 
 args_vis_config = Arguments(
@@ -568,6 +571,7 @@ args_vis_config = Arguments(
     output=None,
     unify=None,
     step=1,
+    periodic_imgs=None,
 )
 expected_vis_config = (
     "cplx.cplx",
@@ -578,6 +582,7 @@ expected_vis_config = (
     True,
     True,
     1,
+    None
 )
 # coloring key will be be overwritten by the vis-config, is set to test, that console input is ignored
 # for the vis_conf-case
