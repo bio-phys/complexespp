@@ -24,7 +24,7 @@ class vector;
 namespace util {
 
 std::vector<std::string> splitStr(const std::string &str,
-                                  const std::string &delimiter);
+                                  const char delimiter);
 
 /* truncate left most number from an integer. So 12345 -> 2345
  * Useful to prevent overflow in writing a PDB/GRO

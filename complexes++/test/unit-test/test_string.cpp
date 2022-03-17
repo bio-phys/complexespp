@@ -20,7 +20,7 @@
 #include "util/string.h"
 
 TEST(STRING_TEST, splitStrTest_single_token) {
-  auto const tokens = util::splitStr("foo.bar.baz", ".");
+  auto const tokens = util::splitStr("foo.bar.baz", '.');
   EXPECT_EQ(3u, tokens.size());
   EXPECT_STREQ("foo", tokens[0].c_str());
   EXPECT_STREQ("bar", tokens[1].c_str());
@@ -28,21 +28,21 @@ TEST(STRING_TEST, splitStrTest_single_token) {
 }
 
 TEST(STRING_TEST, splitStrTest_double_token) {
-  auto const tokens = util::splitStr("foo  bar", " ");
+  auto const tokens = util::splitStr("foo  bar", ' ');
   EXPECT_EQ(2u, tokens.size());
   EXPECT_STREQ("foo", tokens[0].c_str());
   EXPECT_STREQ("bar", tokens[1].c_str());
 }
 
 TEST(STRING_TEST, splitStrTest_trailing_delimiter) {
-  auto const tokens = util::splitStr("foo bar  ", " ");
-  EXPECT_EQ(2u, tokens.size());
+  auto const tokens = util::splitStr("foo bar  ", ' ');
   EXPECT_STREQ("foo", tokens[0].c_str());
   EXPECT_STREQ("bar", tokens[1].c_str());
+  EXPECT_EQ(2u, tokens.size());
 }
 
 TEST(STRING_TEST, splitStrTest_prepended_delimiter) {
-  auto const tokens = util::splitStr("  foo bar", " ");
+  auto const tokens = util::splitStr("  foo bar", ' ');
   EXPECT_EQ(2u, tokens.size());
   EXPECT_STREQ("foo", tokens[0].c_str());
   EXPECT_STREQ("bar", tokens[1].c_str());

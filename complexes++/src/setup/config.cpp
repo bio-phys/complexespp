@@ -31,7 +31,7 @@ Config::Config(io::Deserializer &deserializer)
       m_config(m_configFile) {}
 
 bool Config::hasValue(const std::string &key) const {
-  auto const tokens = util::splitStr(key, ".");
+  auto const tokens = util::splitStr(key, '.');
   auto node = YAML::Clone(m_config);
   for (auto const &t : tokens) {
     node = node[t];

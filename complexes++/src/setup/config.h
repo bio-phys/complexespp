@@ -37,7 +37,7 @@ public:
   void serialize(io::Serializer &serializer) const final;
 
   template <class T> T value(const std::string &key) const {
-    auto const tokens = util::splitStr(key, ".");
+    auto const tokens = util::splitStr(key, '.');
 
     auto node = YAML::Clone(m_config);
     for (auto const &t : tokens) {
@@ -65,7 +65,7 @@ public:
   // need to be turned on explicitly.
   template <typename T>
   T experimental_value(const std::string &key, const T def) const {
-    auto const tokens = util::splitStr(key, ".");
+    auto const tokens = util::splitStr(key, '.');
 
     auto node = YAML::Clone(m_config)["experimental"];
     for (auto const &t : tokens) {

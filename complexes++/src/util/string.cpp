@@ -17,7 +17,6 @@
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include <string>
 #include <vector>
-#include <regex>
 #include <sstream>
 
 #include "util/log.h"
@@ -26,10 +25,16 @@
 namespace util {
 
 std::vector<std::string> splitStr(const std::string &str,
-                                  const std::string &delimiter) {
-	std::regex rgx(delimiter);
-	std::sregex_token_iterator first{begin(str), end(str), rgx, -1}, last;
-	return {first, last};
+                                  const char delimiter) {
+	std::vector<std::string> tokens;
+	std::string token;
+	std::istringstream tokenStream(str);
+	while (std::getline(tokenStream, token, delimiter)) {
+		if (!token.empty()) {
+			tokens.push_back(token);
+		}
+	}
+	return tokens;
 }
 
 int truncateLeft(const int val, const int ndigits) {

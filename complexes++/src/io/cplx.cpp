@@ -44,7 +44,7 @@ util::rvec readBoxCPLX(const std::string &file) {
 }
 
 domains::BeadChainID parseChainIDstr(const std::string &rawID) {
-  const auto tokens = util::splitStr(rawID, " ");
+  const auto tokens = util::splitStr(rawID, ' ');
   if (tokens.size() != 2) {
     throw std::invalid_argument(
         fmt::format("Invalid Bead Chain ID: {}\n", rawID));
