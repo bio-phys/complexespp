@@ -96,15 +96,16 @@ endif()
 
 # add external libraries that live in the repository
 add_subdirectory(ext/xdrfile-1.1.4)
+add_subdirectory(ext/fmt-8.1.1 EXCLUDE_FROM_ALL)
 
 include_directories(SYSTEM
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${XDRFILE_INCLUDE_DIR}
   ${yaml-cpp_INCLUDE_DIR}
-  ${fmt_INCLUDE_DIR}
   ext/CLI11
+  # should not need this according to docs
+  ext/fmt-8.1.1/include
   )
-add_subdirectory(ext/fmt-8.1.1)
 
 # inastemp
 set(INASTEMP_JUST_LIB TRUE)
