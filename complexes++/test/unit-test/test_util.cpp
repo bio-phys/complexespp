@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include "util/util.h"
+#include "util/string.h"
 
 #include "complexes_test.h"
 #include "gtest/gtest.h"
