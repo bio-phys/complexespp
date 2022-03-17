@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.18)
 set(PROJECT_NAME_STR complexes++)
 project(${PROJECT_NAME_STR} CXX)
 
@@ -14,7 +14,7 @@ option(USE_TIMINGOUTPUT "Enable output time of important sections." OFF)
 option(USE_DEBUGINFO "Attach source code to binary to use debuger/profiler even in release." OFF)
 
 # check if the compiler supports c++14
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -35,8 +35,6 @@ if(CCACHE_FOUND)
 endif(CCACHE_FOUND)
 
 # look for external dependencies that we require
-find_package(fmt REQUIRED)
-find_package(Boost 1.55 REQUIRED COMPONENTS program_options filesystem system)
 find_package(yaml-cpp REQUIRED)
 find_package(OpenMP)
 
@@ -102,9 +100,11 @@ add_subdirectory(ext/xdrfile-1.1.4)
 include_directories(SYSTEM
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${XDRFILE_INCLUDE_DIR}
-  ${Boost_INCLUDE_DIRS}
   ${yaml-cpp_INCLUDE_DIR}
-  ${fmt_INCLUDE_DIR})
+  ${fmt_INCLUDE_DIR}
+  ext/CLI11
+  )
+add_subdirectory(ext/fmt-8.1.1)
 
 # inastemp
 set(INASTEMP_JUST_LIB TRUE)

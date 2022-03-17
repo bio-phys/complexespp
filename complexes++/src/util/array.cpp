@@ -17,7 +17,6 @@
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #include <array>
 #include <cstdint>
-#include <fmt/format.h>
 #include <iostream>
 #include <vector>
 
@@ -27,5 +26,5 @@ namespace std {
 std::ostream &operator<<(std::ostream &out, const util::rvec &v) {
   out << fmt::format("{:12.8f},{:12.8f},{:12.8f}", v[0], v[1], v[2]);
   return out;
-} // namespace std
+} 
 } // namespace std

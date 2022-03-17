@@ -17,6 +17,7 @@
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
 #ifndef MPI_MPICLIARGS_H
 #define MPI_MPICLIARGS_H
+#define FMT_HEADER_ONLY
 
 #include <boost/program_options.hpp>
 #include <fmt/format.h>

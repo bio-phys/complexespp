@@ -18,6 +18,7 @@
 #ifndef ENERGY_ENERGYMATRIX_H
 #define ENERGY_ENERGYMATRIX_H
 
+#define FMT_HEADER_ONLY
 #include <array>
 #include <fmt/format.h>
 #include <fmt/ostream.h>

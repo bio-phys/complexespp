@@ -18,6 +18,7 @@
 #ifndef UTIL_LOG_H
 #define UTIL_LOG_H
 
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <fstream>

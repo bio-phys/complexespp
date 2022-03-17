@@ -15,55 +15,40 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
+#include <CLI11.hpp>
 #include <iostream>
 #include <string>
 
 #include "parallelization/ompmanager.h"
 #include "setup/cliargs.h"
 
-namespace po = boost::program_options;
-
 namespace setup {
 
-void printHelp(const CLIArgs &args) {
-  std::cout << "COMPLEXES is a corse grained simulation tool\n\n";
-  std::cout << "Description of CLI arguments" << std::endl;
-  std::cout << std::endl;
-  std::cout << args << std::endl;
-}
+#define ADD_OPTION(type, name, default, help)                                  \
+  type name = default;                                                         \
+  app.add_option("--" #name, name, help);                                      \
+  m_args.insert({#name, name});
 
-CLIArgs::CLIArgs(const int &argc, const char *const argv[])
-    : m_required("Required"), m_args() {
-  defineArgs();
-  po::store(po::command_line_parser(argc, argv).options(m_required).run(),
-            m_args);
-  po::notify(m_args);
-}
-
-CLIArgs::CLIArgs() : m_required("Required"), m_args() { defineArgs(); }
-
-void CLIArgs::defineArgs() {
-  m_required.add_options()("help,h", "print this help")(
-      "config,c", po::value<std::string>(), "config file")(
-      "multidir", po::value<std::vector<std::string>>()->multitoken(),
-      "multi-simulation source directories")(
-      "backup", po::value<bool>()->default_value(true),
-      "turn on creation of backup files")(
-      "rerun", po::value<bool>()->default_value(false),
-      "recalculate energies from trajectory")(
-      "restart", po::value<std::string>(), "restart file")(
-      "version", "show version")("replex", po::value<int>(),
-                                 "number of sweeps between exchanges")(
-      "replex-stat", po::value<int>()->default_value(1000),
-      "number of sweeps between statistic output")(
-      "replex-accept", po::value<std::string>(), "exchange accept function")(
-      "movestats", po::value<std::string>()->default_value("pertype"),
-      "specify the move statistics to show. Could be pertype, perdomain, all, "
-      "none")("nb-threads",
-              po::value<int>()->default_value(omp_get_max_threads()),
-              "number of threads")(
-      "replex-verbosity", po::value<std::string>()->default_value("stats"),
-      "exchange log verbosity (stats, all, none)");
+CLIArgs::CLIArgs(const int &argc, const char *const argv[]) : m_args() {
+  CLI::App app{"COMPLEXES is a coarse grained simulation tool"};
+  ADD_OPTION(std::vector<std::string>, multidir, {},
+             "multiple simulation directories");
+  ADD_OPTION(std::string, config, "", "config file");
+  ADD_OPTION(bool, backup, true, "backup of files");
+  ADD_OPTION(bool, rerun, false, "recalculate energies from trajectory");
+  ADD_OPTION(std::string, restart, "", "restart file");
+  ADD_OPTION(bool, version, false, "show version");
+  ADD_OPTION(int, replex, 0, "number of sweeps between exchanges");
+  ADD_OPTION(int, replex_stat, 1000,
+             "number of sweeps between statistic output");
+  ADD_OPTION(std::string, replex_accept, "", "exchange accept function");
+  ADD_OPTION(std::string, movestats, "pertype",
+             "specify the move statistics to show. Could be pertype, "
+             "perdomain, all, none");
+  ADD_OPTION(int, nb_threads, omp_get_max_threads(), "number of threads");
+  ADD_OPTION(std::string, replex_verbosity, "stats",
+             "exchange log verbosity (stats, all, none)");
+  app.parse(argc,argv);
 }
 
 std::string CLIArgs::value(const std::string &key) const {
@@ -72,14 +57,6 @@ std::string CLIArgs::value(const std::string &key) const {
 
 bool CLIArgs::hasKey(const std::string &key) const noexcept {
   return static_cast<bool>(m_args.count(key));
-}
-
-std::ostream &CLIArgs::print(std::ostream &out) const {
-  return out << m_required;
-}
-
-std::ostream &operator<<(std::ostream &out, const CLIArgs &args) {
-  return args.print(out);
 }
 
 } // namespace setup

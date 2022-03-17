@@ -30,12 +30,13 @@ set(SOURCES
   "util/random.cpp"
   "util/string.cpp"
   "util/util.cpp"
+  "util/demangle.cpp"
   )
 
 set(LIBRARIES
   ${XDRFILE_LIB_DIR}
   ${yaml-cpp_LIBRARY}
-  ${fmt_LIBRARY}
+  fmt::fmt
   ${netcdf-cxx4_LIBRARIES}
   ${Boost_PROGRAM_OPTIONS_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}

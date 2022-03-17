@@ -18,10 +18,12 @@
 #ifndef SETUP_CLIARGS_H
 #define SETUP_CLIARGS_H
 
-#include <boost/program_options.hpp>
+#define FMT_HEADER_ONLY
+#include <any>
 #include <fmt/format.h>
 #include <initializer_list>
 #include <utility>
+#include <unordered_map>
 
 class string;
 class ostream;
@@ -37,7 +39,7 @@ public:
   template <class T> T value(const std::string &key) const {
     auto val = T();
     try {
-      val = m_args[key].as<T>();
+      val = std::any_cast<T>(m_args.at(key));
     } catch (...) {
       throw std::invalid_argument(
           fmt::format("No CLI argument called : {}", key));
@@ -47,7 +49,6 @@ public:
   }
   std::string value(const std::string &key) const;
   bool hasKey(const std::string &key) const noexcept;
-  std::ostream &print(std::ostream &out) const;
 
   template <class T>
   T getMappingValue(
@@ -74,15 +75,9 @@ public:
   }
 
 protected:
-  void defineArgs();
-
-  boost::program_options::options_description m_required;
-  boost::program_options::variables_map m_args;
+  std::unordered_map<std::string, std::any> m_args;
 };
 
-void printHelp(const CLIArgs &args);
-
-std::ostream &operator<<(std::ostream &s, const CLIArgs &);
 } // namespace setup
 
 #endif // SETUP_CLIARGS_H

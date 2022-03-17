@@ -15,6 +15,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <xdrfile/xdrfile_trr.h>
 #include <xdrfile/xdrfile_xtc.h>

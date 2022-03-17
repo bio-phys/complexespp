@@ -21,6 +21,7 @@
 #include <stdexcept>
 // Do not use the openmpi c++ binding
 #define OMPI_SKIP_MPICXX
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <mpi.h>
 
