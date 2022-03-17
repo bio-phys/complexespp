@@ -36,11 +36,7 @@ set(SOURCES
 set(LIBRARIES
   ${XDRFILE_LIB_DIR}
   ${yaml-cpp_LIBRARY}
-  fmt::fmt
-  ${netcdf-cxx4_LIBRARIES}
-  ${Boost_PROGRAM_OPTIONS_LIBRARY}
-  ${Boost_SYSTEM_LIBRARY}
-  ${Boost_FILESYSTEM_LIBRARY}
+  fmt::fmt-header-only
   CACHE STRING "link time dependencies")
 
 include(GetGitRevisionDescription)
@@ -66,8 +62,8 @@ add_library(${PROJECT_NAME_STR}_objects OBJECT ${SOURCES})
 add_dependencies(${PROJECT_NAME_STR}_objects xdrfile)
 
 add_executable (${PROJECT_NAME_STR} $<TARGET_OBJECTS:${PROJECT_NAME_STR}_objects> "main.cpp")
-target_link_libraries(${PROJECT_NAME_STR} ${LIBRARIES})
-
+target_link_libraries(${PROJECT_NAME_STR} PRIVATE ${LIBRARIES})
+  
 install (TARGETS ${PROJECT_NAME_STR}
   RUNTIME DESTINATION bin)
 
