@@ -27,13 +27,15 @@ namespace fs = std::filesystem;
 
 namespace util {
 
+const auto DefaultTimeStamp = std::time(nullptr);
+
 // rename file to backup-POSIXTIME-originalname if the file already exists.
 std::string backUpIfExists(const std::string &file) {
   if (!fs::exists(file)) {
     return std::string();
   }
   fs::path bpath(file);
-  auto datetime = std::time(nullptr);
+  auto datetime = DefaultTimeStamp;
   auto newName = appendPaths(bpath.parent_path().string(),
                              fmt::format("backup_{0:%Y-%m-%d}:{0:%H-%M-%S}_{1}",
                                          *std::localtime(&datetime),
