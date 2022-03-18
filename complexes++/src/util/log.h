@@ -38,7 +38,7 @@ class Logger {
 public:
   explicit Logger() : m_stream(nullptr), m_prefix("[LOG] "), m_toCLOG(false) {}
   explicit Logger()
-      : m_stream(std::make_unique<std::ofstream>(inFname, std::ofstream::app)),
+      : m_stream(nullptr),
         m_prefix("[LOG] "), m_toCLOG(true) {}
   explicit Logger(const std::string &inPrefix, const bool inToCLOG)
       : m_stream(),
