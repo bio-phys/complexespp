@@ -41,7 +41,6 @@ the following:
 
 Complexes++ has the following external dependencies.
 
-- boost >= 1.55
 - fmt
 - yaml-cpp
 

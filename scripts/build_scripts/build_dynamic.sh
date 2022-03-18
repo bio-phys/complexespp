@@ -60,9 +60,6 @@ mkdir -p $PREFIX
 mkdir -p $BUILD
 
 # --- system-wide installations (--> loaded environment modules at MPCDF) override local dependency installation
-if [ x"$BOOST_ROOT" == x"" ]; then
-  export BOOST_ROOT=$PREFIX/dep
-fi
 if [ x"$FMT_ROOT" == x"" ]; then
   export FMT_ROOT=$PREFIX/dep
 fi

@@ -88,7 +88,6 @@ function download {
     fi
 }
 
-download ${TARGZ} https://sourceforge.net/projects/boost/files/boost/1.60.0 ${BOOST}.tar.gz
 download ${TARGZ} https://github.com/fmtlib/fmt/releases/download/3.0.1 ${FMT}.zip
 download ${TARGZ} https://github.com/jbeder/yaml-cpp/archive/ ${YAML_CPP}.tar.gz
 # --- Check MD5 Sums
@@ -124,21 +123,6 @@ if [ ! -e $FMT_OK ]; then
 fi
 cd $BASE
 
-# --- build boost
-BOOST_OK=$PREFIX/.boost_ok
-if [ ! -e $BOOST_OK ]; then
-  cd $BUILD
-  if [ ! -d $BOOST ]; then
-    tar -xzf ${TARGZ}/${BOOST}.tar.gz
-  fi
-  cd $BOOST
-  ./bootstrap.sh --prefix=$PREFIX --with-libraries=program_options,filesystem,system
-  ./bjam -j $NPROC link=static install
-  # ./bjam -j `nproc` link=shared install
-  touch $BOOST_OK
-fi
-cd $BASE
-
 # --- build yaml-cpp
 YAML_CPP_OK=$PREFIX/.yaml_cpp_ok
 if [ ! -e $YAML_CPP_OK ]; then
@@ -150,13 +134,11 @@ if [ ! -e $YAML_CPP_OK ]; then
   cd $YAML_CPP/yaml-cpp-${YAML_CPP}
   mkdir -p build && cd build
   cmake -DCMAKE_INSTALL_PREFIX=$PREFIX \
-        -DBUILD_SHARED_LIBS=OFF \
-        -DBoost_DIR=$PREFIX ..
+        -DBUILD_SHARED_LIBS=OFF ..
   make -j $NPROC
   make install
   # cmake -DCMAKE_INSTALL_PREFIX=$PREFIX \
-  #       -DBUILD_SHARED_LIBS=ON \
-  #       -DBoost_DIR=$PREFIX ..
+  #       -DBUILD_SHARED_LIBS=ON ..
   # make -j `nproc`
   # make install
   touch $YAML_CPP_OK

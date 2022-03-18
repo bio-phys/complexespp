@@ -24,9 +24,15 @@
 #include <initializer_list>
 #include <utility>
 #include <unordered_map>
+#include <CLI11.hpp>
 
 class string;
 class ostream;
+
+#define ADD_OPTION(type, name, default, help)                                  \
+  type name = default;                                                         \
+  app.add_option("--" #name, name, help);                                      \
+  m_args.insert({#name, name});
 
 namespace setup {
 class CLIArgs {
@@ -35,6 +41,8 @@ protected:
 
 public:
   CLIArgs(const int &argc, const char *const argv[]);
+
+  virtual void fillArgs(CLI::App& inApp);
 
   template <class T> T value(const std::string &key) const {
     auto val = T();
