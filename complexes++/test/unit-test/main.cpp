@@ -24,7 +24,8 @@
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
   util::GlobalLog::setNumberOfThreads(omp_get_max_threads());
-  util::Logger unitTestLog("foo.log");
+  util::Logger unitTestLog;
+  unitTestLog.setLogFile("foo.log");
   util::GlobalLog::setGlobalLog(&unitTestLog);
   return RUN_ALL_TESTS();
 }
