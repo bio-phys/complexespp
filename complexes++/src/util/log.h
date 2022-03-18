@@ -64,7 +64,8 @@ public:
     }
     else{
 #pragma omp critical(FILEOUTPUT)
-        buffer << m_prefix << params...;
+        buffer << m_prefix;
+        ( (buffer << std::forward<const Params>(params)),... );
     }
     if (m_toCLOG) {
 // Standard output should be thread safe but lets consider it is not
