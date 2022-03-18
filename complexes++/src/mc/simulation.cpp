@@ -30,7 +30,7 @@ Simulation::Simulation(const std::string &inConfigPath,
       m_shortName(inConfigPath + inConfigFilename),
       m_logFile(util::appendPathsIfSubRelative(
           m_configPath, m_configParameters.value<std::string>("output.log"))),
-      m_simuLog(m_logFile), m_registerLog(RegisterMyLog(m_simuLog)),
+      m_simuLog(), m_registerLog(RegisterMyLog(m_simuLog)),
       m_sweepTimeCounter(0),
       m_box(io::readBox(util::appendPathsIfSubRelative(
           m_configPath, m_configParameters.value<std::string>("structure")))),
