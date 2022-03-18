@@ -36,7 +36,6 @@ namespace util {
 
 class Logger {
 public:
-  explicit Logger() : m_stream(nullptr), m_prefix("[LOG] "), m_toCLOG(false) {}
   explicit Logger()
       : m_stream(nullptr),
         m_prefix("[LOG] "), m_toCLOG(true) {}
