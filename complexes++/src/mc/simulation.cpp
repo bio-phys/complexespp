@@ -142,6 +142,8 @@ int Simulation::run(const int nbSweepToProceed) {
 //! The currentSweepIdx will be shifted accordingly
 void Simulation::initFromRestart(const std::string &restartValue) {
   util::GlobalLog::setGlobalLog(&m_simuLog);
+  m_simuLog.setLogFile(m_logFile);
+
   // reset performance counter
   m_sweepTimeCounter = 0;
 
@@ -205,6 +207,7 @@ void Simulation::init(const bool backupOutput) {
         m_configParameters.value<std::string>("output.stat-file")));
     util::backUpIfExists(util::appendPathsIfSubRelative(
         m_configPath, m_configParameters.value<std::string>("output.file")));
+    util::backUpIfExists(m_logFile);
   } else {
     util::Log("overwriting existing files\n");
     util::deleteFileIfExists(util::appendPathsIfSubRelative(
@@ -215,7 +218,10 @@ void Simulation::init(const bool backupOutput) {
     if (m_logBackupName.size()) {
       util::deleteFileIfExists(m_logBackupName);
     }
+    util::deleteFileIfExists(m_logFile);
   }
+
+  m_simuLog.setLogFile(m_logFile);
 
   const auto refFileType = m_configParameters.experimental_value<std::string>(
       "output.reference_file_type", "pdb");

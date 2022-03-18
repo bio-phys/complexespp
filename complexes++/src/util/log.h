@@ -24,6 +24,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #include "util/util.h"
 
@@ -36,12 +37,11 @@ namespace util {
 class Logger {
 public:
   explicit Logger() : m_stream(nullptr), m_prefix("[LOG] "), m_toCLOG(false) {}
-  explicit Logger(const std::string &inFname)
+  explicit Logger()
       : m_stream(std::make_unique<std::ofstream>(inFname, std::ofstream::app)),
         m_prefix("[LOG] "), m_toCLOG(true) {}
-  explicit Logger(const std::string &inFname, const std::string &inPrefix,
-                  const bool inToCLOG)
-      : m_stream(std::make_unique<std::ofstream>(inFname, std::ofstream::app)),
+  explicit Logger(const std::string &inPrefix, const bool inToCLOG)
+      : m_stream(),
         m_prefix(inPrefix), m_toCLOG(inToCLOG) {}
 
   // support moving
@@ -62,6 +62,10 @@ public:
         fmt::print(*m_stream, inFormat, params...);
       }
     }
+    else{
+#pragma omp critical(FILEOUTPUT)
+        buffer << m_prefix << params...;
+    }
     if (m_toCLOG) {
 // Standard output should be thread safe but lets consider it is not
 #pragma omp critical(STDLOGOUTPUT)
@@ -80,10 +84,18 @@ public:
 
   bool isSet() const { return m_stream != nullptr; }
 
+  void setLogFile(const std::string &inFname){
+      DEBUG_ASSERT(!isSet(), "Logger already set");
+      m_stream = std::make_unique<std::ofstream>(inFname, std::ofstream::app);
+      (*m_stream) << buffer.str();
+      buffer.clear();
+  }
+
 private:
   std::unique_ptr<std::ostream> m_stream = nullptr;
   std::string m_prefix;
   bool m_toCLOG;
+  std::ostringstream buffer;
 };
 
 namespace GlobalLog {
