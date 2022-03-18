@@ -30,7 +30,7 @@ CLIArgs::CLIArgs(const int &argc, const char *const argv[]) : m_args() {
   app.parse(argc,argv);
 }
 
-void CLIArgs::fillArgs(CLI::App& inApp){
+void CLIArgs::fillArgs(CLI::App& app){
     ADD_OPTION(std::vector<std::string>, multidir, {},
                "multiple simulation directories");
     ADD_OPTION(std::string, config, "", "config file");

@@ -34,7 +34,7 @@ public:
   }
 
 private:
-  virtual void fillArgs(CLI::App& inApp){
+  virtual void fillArgs(CLI::App& app){
       setup::CLIArgs::fillArgs(inApp);
       ADD_OPTION(int, mpi-partitions, 1,
                  "number of simulation per nodes");
