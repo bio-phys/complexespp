@@ -23,7 +23,7 @@
 #include "util/array.h"
 #include "vectorization/functionsvec.h"
 
-#include "InastempConfig.h"
+#include "InastempCompileConfig.h"
 #include "SCALAR/InaVecSCALARDouble.hpp"
 
 #ifdef INASTEMP_USE_AVX2

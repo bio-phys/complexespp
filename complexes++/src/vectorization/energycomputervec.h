@@ -25,7 +25,7 @@
 #include "util/random.h"
 #include "util/util.h"
 
-#include "InastempConfig.h"
+#include "InastempCompileConfig.h"
 #include "SCALAR/InaVecSCALARDouble.hpp"
 #include "SCALAR/InaVecSCALARFloat.hpp"
 #include "functionsvec.h"

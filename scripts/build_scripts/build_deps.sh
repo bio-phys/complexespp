@@ -89,6 +89,11 @@ function download {
 }
 
 download ${TARGZ} https://github.com/jbeder/yaml-cpp/archive/ ${YAML_CPP}.tar.gz
+
+# --- Get submodules
+
+git submodule update --init --recursive
+
 # --- Check MD5 Sums
 
 cd $TARGZ
