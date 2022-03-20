@@ -88,7 +88,6 @@ function download {
     fi
 }
 
-download ${TARGZ} https://github.com/fmtlib/fmt/releases/download/3.0.1 ${FMT}.zip
 download ${TARGZ} https://github.com/jbeder/yaml-cpp/archive/ ${YAML_CPP}.tar.gz
 # --- Check MD5 Sums
 
@@ -101,27 +100,6 @@ cd $BASE
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
 mkdir -p $PKG_CONFIG_PATH
 
-
-# --- build cppformat
-FMT_OK=$PREFIX/.cppformat_ok
-if [ ! -e $FMT_OK ]; then
-  cd $BUILD
-  if [ ! -d $FMT ]; then
-    unzip ${TARGZ}/${FMT}.zip
-  fi
-  cd $FMT
-  mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=$PREFIX -DFMT_DOC=OFF -DFMT_TEST=ON \
-        -DBUILD_SHARED_LIBS=OFF ..
-  make -j $NPROC
-  make install
-  # cmake -DCMAKE_INSTALL_PREFIX=$PREFIX -DFMT_DOC=OFF -DFMT_TEST=OFF \
-  #       -DBUILD_SHARED_LIBS=ON ..
-  # make -j `nproc`
-  # make install
-  touch $FMT_OK
-fi
-cd $BASE
 
 # --- build yaml-cpp
 YAML_CPP_OK=$PREFIX/.yaml_cpp_ok

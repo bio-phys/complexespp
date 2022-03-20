@@ -60,7 +60,6 @@ mkdir -p $PREFIX
 mkdir -p $BUILD
 
 export PKG_CONFIG_PATH=$PREFIX/dep/lib/pkgconfig
-export FMT_ROOT=$PREFIX/dep
 export YAML_CPP_ROOT=$PREFIX/dep
 
 cd $BUILD
