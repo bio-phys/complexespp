@@ -15,7 +15,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
-#include <CLI11.hpp>
 #include <iostream>
 #include <string>
 
@@ -24,31 +23,31 @@
 
 namespace setup {
 
-#define ADD_OPTION(type, name, default, help)                                  \
-  type name = default;                                                         \
-  app.add_option("--" #name, name, help);                                      \
-  m_args.insert({#name, name});
 
 CLIArgs::CLIArgs(const int &argc, const char *const argv[]) : m_args() {
   CLI::App app{"COMPLEXES is a coarse grained simulation tool"};
-  ADD_OPTION(std::vector<std::string>, multidir, {},
-             "multiple simulation directories");
-  ADD_OPTION(std::string, config, "", "config file");
-  ADD_OPTION(bool, backup, true, "backup of files");
-  ADD_OPTION(bool, rerun, false, "recalculate energies from trajectory");
-  ADD_OPTION(std::string, restart, "", "restart file");
-  ADD_OPTION(bool, version, false, "show version");
-  ADD_OPTION(int, replex, 0, "number of sweeps between exchanges");
-  ADD_OPTION(int, replex_stat, 1000,
-             "number of sweeps between statistic output");
-  ADD_OPTION(std::string, replex_accept, "", "exchange accept function");
-  ADD_OPTION(std::string, movestats, "pertype",
-             "specify the move statistics to show. Could be pertype, "
-             "perdomain, all, none");
-  ADD_OPTION(int, nb_threads, omp_get_max_threads(), "number of threads");
-  ADD_OPTION(std::string, replex_verbosity, "stats",
-             "exchange log verbosity (stats, all, none)");
+  fillArgs(app);
   app.parse(argc,argv);
+}
+
+void CLIArgs::fillArgs(CLI::App& app){
+    ADD_OPTION(std::vector<std::string>, multidir, {},
+               "multiple simulation directories");
+    ADD_OPTION(std::string, config, "", "config file");
+    ADD_OPTION(bool, backup, true, "backup of files");
+    ADD_OPTION(bool, rerun, false, "recalculate energies from trajectory");
+    ADD_OPTION(std::string, restart, "", "restart file");
+    ADD_OPTION(bool, version, false, "show version");
+    ADD_OPTION(int, replex, 0, "number of sweeps between exchanges");
+    ADD_OPTION(int, replex_stat, 1000,
+               "number of sweeps between statistic output");
+    ADD_OPTION(std::string, replex_accept, "", "exchange accept function");
+    ADD_OPTION(std::string, movestats, "pertype",
+               "specify the move statistics to show. Could be pertype, "
+               "perdomain, all, none");
+    ADD_OPTION(int, nb_threads, omp_get_max_threads(), "number of threads");
+    ADD_OPTION(std::string, replex_verbosity, "stats",
+               "exchange log verbosity (stats, all, none)");
 }
 
 std::string CLIArgs::value(const std::string &key) const {

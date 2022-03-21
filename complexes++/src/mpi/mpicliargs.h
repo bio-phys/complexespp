@@ -19,7 +19,7 @@
 #define MPI_MPICLIARGS_H
 #define FMT_HEADER_ONLY
 
-#include <boost/program_options.hpp>
+#include <CLI11.hpp>
 #include <fmt/format.h>
 
 #include "setup/cliargs.h"
@@ -28,25 +28,16 @@ namespace mpi {
 class MpiCLIArgs : public setup::CLIArgs {
 public:
   MpiCLIArgs(const int &argc, const char *const argv[]) : setup::CLIArgs() {
-    addMpiArgs();
-    boost::program_options::store(
-        boost::program_options::command_line_parser(argc, argv)
-            .options(m_required)
-            .run(),
-        m_args);
-    boost::program_options::notify(m_args);
+      CLI::App app{"COMPLEXES is a coarse grained simulation tool"};
+      fillArgs(app);
+      app.parse(argc,argv);
   }
 
 private:
-  void addMpiArgs() {
-    boost::program_options::options_description mpirequired("Requiered");
-
-    mpirequired.add_options()(
-        "mpi-partitions",
-        boost::program_options::value<std::vector<int>>()->multitoken(),
-        "number of simulation per nodes");
-
-    m_required.add(mpirequired);
+  virtual void fillArgs(CLI::App& app){
+      setup::CLIArgs::fillArgs(inApp);
+      ADD_OPTION(int, mpi-partitions, 1,
+                 "number of simulation per nodes");
   }
 };
 

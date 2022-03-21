@@ -22,16 +22,12 @@ needs to be run with sudo rights because docker doesn't work for normal users.
 You can test the Docker image by creating a short scripts that downloads the
 complexes repo and runs the tests.
 
-    git clone https://username:password@gitlab.mpcdf.mpg.de/MPIBP-Hummer/complexes-pp.git /builds/gitlab-org/complexes-pp
+    git clone https://github.com/bio-phys/complexespp.git /builds/gitlab-org/complexes-pp
     cd /builds/gitlab-org/complexes-pp
     # copy of script lines in `.gitlab-ci.yml` from root folder
     bash scripts/gitlab-ci/gitlab-python-ci.sh
     bash scripts/gitlab-ci/gitlab-complexes-ci.sh
     bash scripts/gitlab-ci/gitlab-tutorials-ci.sh
-
-In the above script replace `username` and `password`. This file will have your
-password in clear text. So make sure that only you have reading rights for and
-and NEVER EVER add it to the git repository.
 
 To run the build as a test use.
 

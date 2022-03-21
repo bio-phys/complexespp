@@ -103,7 +103,7 @@ include_directories(SYSTEM
   ${XDRFILE_INCLUDE_DIR}
   ${yaml-cpp_INCLUDE_DIR}
   ext/CLI11
-  # should not need this according to docs
+  # FMT should not need this according to docs
   ext/fmt-8.1.1/include
   )
 
