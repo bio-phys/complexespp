@@ -22,7 +22,6 @@
 #include "io/io.h"
 #include "io/serializer.h"
 #include "mc/mc.h"
-#include "setup/cliargs.h"
 #include "setup/config.h"
 #include "util/file.h"
 #include "util/log.h"

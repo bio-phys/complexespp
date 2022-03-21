@@ -20,7 +20,12 @@
 #include "util/timer.h"
 
 int main(int argc, char **argv) {
-  setup::Application app(argc, argv);
+  auto args = setup::CLIArgs();
+  auto status = args.parse(argc, argv);
+  if (status != 0) {
+    return 0;
+  }
+  setup::Application app(args);
   auto timer = util::Timer();
   auto res = app.run();
   fmt::print(std::clog, "[LOG] total runtime = {}s\n",

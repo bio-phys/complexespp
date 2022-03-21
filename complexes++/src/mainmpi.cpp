@@ -30,7 +30,12 @@
 #include "mpi/mpiapplication.h"
 
 int main(int argc, char **argv) {
-  mpi::MpiApplication app(argc, argv);
+  auto args = mpi::MPICLIArgs();
+  auto status = args.parse(argc, argv);
+  if (status != 0) {
+    return status;
+  }
+  mpi::MpiApplication app(args, argv, args);
   auto timer = util::Timer();
   auto res = app.run();
   fmt::print(std::clog, "[LOG] total runtime = {}s\n",
