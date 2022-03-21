@@ -226,9 +226,9 @@ class MpiApplication {
   /// Public methods
   //////////////////////////////////////////////////////////////////////////
 public:
-  MpiApplication(int inArgc, char **inArgv)
+  MpiApplication(int inArgc, char **inArgv, const MPICLIArgs args)
       : m_myRank(InitMpi(inArgc, inArgv)), m_nbProcesses(GetNbProcesses()),
-        m_args(inArgc, inArgv) {}
+        m_args(args) {}
 
   ~MpiApplication() {
 #ifdef USE_TIMINGOUTPUT

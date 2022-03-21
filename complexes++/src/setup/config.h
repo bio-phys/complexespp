@@ -23,9 +23,9 @@
 #include <yaml-cpp/yaml.h>
 
 #include "io/serializer.h"
+#include "util/demangle.h"
 #include "util/log.h"
 #include "util/string.h"
-#include "util/demangle.h"
 
 namespace setup {
 

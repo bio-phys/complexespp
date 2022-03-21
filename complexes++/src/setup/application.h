@@ -51,7 +51,7 @@ class Application {
   /// Public methods
   //////////////////////////////////////////////////////////////////////////
 public:
-  Application(const int inArgc, char **inArgv) : m_args(inArgc, inArgv) {}
+  Application(const CLIArgs args) : m_args(args) {}
 
   //! Forbid copy
   Application(const Application &) = delete;

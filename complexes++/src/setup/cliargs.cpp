@@ -23,35 +23,42 @@
 
 namespace setup {
 
+CLIArgs::CLIArgs() : m_args() {}
 
-CLIArgs::CLIArgs(const int &argc, const char *const argv[]) : m_args() {
-  CLI::App app{"COMPLEXES is a coarse grained simulation tool"};
-  fillArgs(app);
-  app.parse(argc,argv);
-}
-
-void CLIArgs::fillArgs(CLI::App& app){
-    ADD_OPTION(std::vector<std::string>, multidir, {},
-               "multiple simulation directories");
-    ADD_OPTION(std::string, config, "", "config file");
-    ADD_OPTION(bool, backup, true, "backup of files");
-    ADD_OPTION(bool, rerun, false, "recalculate energies from trajectory");
-    ADD_OPTION(std::string, restart, "", "restart file");
-    ADD_OPTION(bool, version, false, "show version");
-    ADD_OPTION(int, replex, 0, "number of sweeps between exchanges");
-    ADD_OPTION(int, replex_stat, 1000,
-               "number of sweeps between statistic output");
-    ADD_OPTION(std::string, replex_accept, "", "exchange accept function");
-    ADD_OPTION(std::string, movestats, "pertype",
-               "specify the move statistics to show. Could be pertype, "
-               "perdomain, all, none");
-    ADD_OPTION(int, nb_threads, omp_get_max_threads(), "number of threads");
-    ADD_OPTION(std::string, replex_verbosity, "stats",
-               "exchange log verbosity (stats, all, none)");
+void CLIArgs::fillArgs(CLI::App &app) {
+  ADD_OPTION(std::vector<std::string>, multidir, {},
+             "multiple simulation directories");
+  ADD_OPTION(std::string, config, "", "config file");
+  ADD_OPTION(bool, backup, true, "backup of files");
+  ADD_OPTION(bool, rerun, false, "recalculate energies from trajectory");
+  ADD_OPTION(std::string, restart, "", "restart file");
+  ADD_OPTION(bool, version, false, "show version");
+  ADD_OPTION(int, replex, 0, "number of sweeps between exchanges");
+  ADD_OPTION(int, replex_stat, 1000,
+             "number of sweeps between statistic output");
+  ADD_OPTION(std::string, replex_accept, "", "exchange accept function");
+  ADD_OPTION(std::string, movestats, "pertype",
+             "specify the move statistics to show. Could be pertype, "
+             "perdomain, all, none");
+  ADD_OPTION(int, nb_threads, omp_get_max_threads(), "number of threads");
+  ADD_OPTION(std::string, replex_verbosity, "stats",
+             "exchange log verbosity (stats, all, none)");
 }
 
 std::string CLIArgs::value(const std::string &key) const {
   return value<std::string>(key);
+}
+
+int CLIArgs::parse(const int &argc, const char *const argv[]) {
+  auto app = CLI::App{"COMPLEXES is a coarse grained simulation tool"};
+  fillArgs(app);
+  try {
+    app.parse(argc, argv);
+  } catch (const CLI::ParseError &e) {
+    app.exit(e);
+    return 1;
+  }
+  return 0;
 }
 
 bool CLIArgs::hasKey(const std::string &key) const noexcept {

@@ -19,16 +19,17 @@
 #define SETUP_CLIARGS_H
 
 #define FMT_HEADER_ONLY
+#include <CLI11.hpp>
 #include <any>
 #include <fmt/format.h>
 #include <initializer_list>
-#include <utility>
 #include <unordered_map>
-#include <CLI11.hpp>
+#include <utility>
 
 class string;
 class ostream;
 
+// Use with CARE!!!
 #define ADD_OPTION(type, name, default, help)                                  \
   type name = default;                                                         \
   app.add_option("--" #name, name, help);                                      \
@@ -36,13 +37,10 @@ class ostream;
 
 namespace setup {
 class CLIArgs {
-protected:
+public:
   CLIArgs();
 
-public:
-  CLIArgs(const int &argc, const char *const argv[]);
-
-  virtual void fillArgs(CLI::App& inApp);
+  virtual void fillArgs(CLI::App &inApp);
 
   template <class T> T value(const std::string &key) const {
     auto val = T();
@@ -81,6 +79,7 @@ public:
                     "{} are valid ",
                     key, strValue, allValidValues));
   }
+  int parse(const int &argc, const char *const argv[]);
 
 protected:
   std::unordered_map<std::string, std::any> m_args;
