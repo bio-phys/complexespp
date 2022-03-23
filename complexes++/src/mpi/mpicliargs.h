@@ -19,26 +19,17 @@
 #define MPI_MPICLIARGS_H
 #define FMT_HEADER_ONLY
 
-#include <CLI11.hpp>
-#include <fmt/format.h>
-
 #include "setup/cliargs.h"
 
 namespace mpi {
 class MpiCLIArgs : public setup::CLIArgs {
 public:
-  MpiCLIArgs(const int &argc, const char *const argv[]) : setup::CLIArgs() {
-      CLI::App app{"COMPLEXES is a coarse grained simulation tool"};
-      fillArgs(app);
-      app.parse(argc,argv);
+  MpiCLIArgs(const int &argc, const char *const argv[]) : setup::CLIArgs(argc, argv) {
+      args.addParameter<int>("mpi-partitions", "number of simulation per nodes",
+                             mpi_partitions, 1);
   }
 
-private:
-  virtual void fillArgs(CLI::App& app){
-      setup::CLIArgs::fillArgs(inApp);
-      ADD_OPTION(int, mpi-partitions, 1,
-                 "number of simulation per nodes");
-  }
+  int mpi_partitions;
 };
 
 } // namespace mpi

@@ -20,9 +20,9 @@
 #include "util/timer.h"
 
 int main(int argc, char **argv) {
-  auto args = setup::CLIArgs();
-  auto status = args.parse(argc, argv);
-  if (status != 0) {
+  auto args = setup::CLIArgs(argc, argv);
+  if (args.parse() == false) {
+    args.printHelp(std::cout);
     return 0;
   }
   setup::Application app(args);
