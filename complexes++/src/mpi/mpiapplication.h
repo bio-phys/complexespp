@@ -56,9 +56,9 @@ class MpiApplication {
   int multiDirExecution() const {
     const std::string configFilename = m_args.value("config");
     const std::vector<std::string> configDirNames =
-        m_args.value<std::vector<std::string>>("multidir");
+        m_args.multidir;
     const int nbSimu = static_cast<int>(configDirNames.size());
-    const int nbThreads = m_args.value<int>("nb-threads");
+    const int nbThreads = m_args.nb_threads;
     util::GlobalLog::setNumberOfThreads(nbThreads);
 
     if (nbSimu == 0) {
@@ -76,7 +76,7 @@ class MpiApplication {
     std::vector<int> partitions;
     std::vector<int> partitionsOffset;
     if (m_args.hasKey("mpi-partitions")) {
-      partitions = m_args.value<std::vector<int>>("mpi-partitions");
+      partitions = m_args.mpi_partitions;
       if (static_cast<int>(partitions.size()) != m_nbProcesses) {
         throw std::runtime_error(
             fmt::format("You are currently executing {} processes and provide "
@@ -129,15 +129,15 @@ class MpiApplication {
           configDirNamesLocal, configDirNames, configFilename,
           m_args.hasKey("restart"),
           m_args.hasKey("restart") ? m_args.value("restart") : "",
-          m_args.value<bool>("backup"), moveStatsVerbosity, nbThreads,
+          m_args.backup, moveStatsVerbosity, nbThreads,
           partitions, partitionsOffset);
     } else {
       simu = mpi::MpiExchangeBuilder(
           configDirNamesLocal, configDirNames, configFilename,
-          m_args.value<int>("replex"), m_args.value<int>("replex-stat"),
+          m_args.replex_stat,
           m_args.value("replex-accept"), m_args.hasKey("restart"),
           m_args.hasKey("restart") ? m_args.value("restart") : "",
-          m_args.value<bool>("backup"), moveStatsVerbosity, nbThreads,
+          m_args.backup, moveStatsVerbosity, nbThreads,
           partitions, partitionsOffset);
     }
 
@@ -170,7 +170,7 @@ class MpiApplication {
                         moveStatsVerbosity);
 
     int returnedValue;
-    const int nbThreads = m_args.value<int>("nb-threads");
+    const int nbThreads = m_args.nb_threads;
     util::GlobalLog::setNumberOfThreads(nbThreads);
 
     // Init TIMEZONE before a parallel section
@@ -178,7 +178,7 @@ class MpiApplication {
     // Force task creation in parallel section if more than one thread
     vectorization::TasksLimiter::Controller.setEnableTasks(nbThreads > 1);
 
-    if (m_args.value<bool>("rerun")) {
+    if (m_args.rerun) {
 #pragma omp parallel default(shared) num_threads(nbThreads)
       {
 #pragma omp master
@@ -188,7 +188,7 @@ class MpiApplication {
       if (m_args.hasKey("restart")) {
         simu.initFromRestart(m_args.value("restart"));
       } else {
-        simu.init(m_args.value<bool>("backup"));
+        simu.init(m_args.backup);
       }
       simu.printToLog(util::startingString());
       simu.printToLog(

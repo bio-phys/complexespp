@@ -19,70 +19,86 @@
 #define SETUP_CLIARGS_H
 
 #define FMT_HEADER_ONLY
-#include <CLI11.hpp>
+#include <clsimple.hpp>
 #include <any>
 #include <fmt/format.h>
 #include <initializer_list>
 #include <unordered_map>
 #include <utility>
 
-class string;
-class ostream;
-
-// Use with CARE!!!
-#define ADD_OPTION(type, name, default, help)                                  \
-  type name = default;                                                         \
-  app.add_option("--" #name, name, help);                                      \
-  m_args.insert({#name, name});
+#include "parallelization/ompmanager.h"
 
 namespace setup {
 class CLIArgs {
 public:
-  CLIArgs();
+    CLIArgs(const int &argc, const char *const argv[]):
+        args("COMPLEXES is a coarse grained simulation tool",
+             argc, argv){
 
-  virtual void fillArgs(CLI::App &inApp);
+        args.addMultiParameter<std::string>("multidir", "multiple simulation directories",
+                                        multidir);
+        args.addParameter<std::string>("config", "config file",
+                                       config, "");
+        args.addParameter<bool>("backup", "backup of files",
+                                backup, true);
+        args.addParameter<bool>("rerun", "recalculate energies from trajectory",
+                                rerun, false);
+        args.addParameter<std::string>("restart", "restart file",
+                                       restart, "");
+        args.addParameter<bool>("version", "show version",
+                                version, false);
+        args.addParameter<int>("replex", "number of sweeps between exchanges",
+                               replex, 0);
+        args.addParameter<int>("replex_stat", "number of sweeps between statistic output",
+                               replex_stat, 1000);
+        args.addParameter<std::string>("replex_accept", "exchange accept function",
+                                       replex_accept, "");
+        args.addParameter<std::string>("movestats",
+                                     "specify the move statistics to show. Could be pertype, "
+                                     "perdomain, all, none",
+                                      movestats, "pertype");
+        args.addParameter<int>("nb_threads", "number of threads",
+                               nb_threads, omp_get_max_threads());
+        args.addParameter<std::string>("replex_verbosity", "exchange log verbosity (stats, all, none)",
+                                       replex_verbosity, "stats");
 
-  template <class T> T value(const std::string &key) const {
-    auto val = T();
-    try {
-      val = std::any_cast<T>(m_args.at(key));
-    } catch (...) {
-      throw std::invalid_argument(
-          fmt::format("No CLI argument called : {}", key));
     }
 
-    return val;
-  }
-  std::string value(const std::string &key) const;
-  bool hasKey(const std::string &key) const noexcept;
-
-  template <class T>
-  T getMappingValue(
-      const std::string &key,
-      std::initializer_list<std::pair<std::string, T>> inMapping) const {
-    const std::string strValue = value(key);
-
-    for (const auto &keyvalue : inMapping) {
-      if (keyvalue.first == strValue) {
-        return keyvalue.second;
-      }
+    bool hasKey(const std::string &key) const {
+        return args.hasKey(key);
     }
 
-    // Build list for error
-    std::string allValidValues;
-    for (const auto &keyvalue : inMapping) {
-      allValidValues += keyvalue.first + ", ";
+    bool parse(){
+      return args.parse();
     }
 
-    throw std::invalid_argument(
-        fmt::format("Invalid argument for parameter {}, you passed {} but only "
-                    "{} are valid ",
-                    key, strValue, allValidValues));
-  }
-  int parse(const int &argc, const char *const argv[]);
+    template <class StreamClass>
+    void printHelp(StreamClass& inStream) const{
+        args.printHelp(inStream);
+    }
 
+    template <class ValType>
+    static ValType getMapping(const std::string& inKey,
+                              std::initializer_list<std::pair<std::string, ValType>> inMapping,
+                              const ValType defaultVal = ValType()){
+        return CLsimple::GetMapping(inKey, inMapping, defaultVal);
+    }
+
+    std::vector<std::string> multidir;
+    std::string config;
+    bool backup;
+    bool rerun;
+    std::string restart;
+    bool version;
+    int replex;
+    int replex_stat;
+    std::string replex_accept;
+    std::string movestats;
+    int nb_threads;
+    std::string replex_verbosity;
 protected:
-  std::unordered_map<std::string, std::any> m_args;
+  CLsimple args;
+
 };
 
 } // namespace setup

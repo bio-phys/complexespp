@@ -102,7 +102,7 @@ include_directories(SYSTEM
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${XDRFILE_INCLUDE_DIR}
   ${yaml-cpp_INCLUDE_DIR}
-  ext/CLI11
+  ext/CLsimple
   # FMT should not need this according to docs
   ext/fmt-8.1.1/include
   )

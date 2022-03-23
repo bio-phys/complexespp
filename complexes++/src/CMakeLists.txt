@@ -21,7 +21,6 @@ set(SOURCES
   "pairkernels/pairkernelbuilder.cpp"
   "parallelization/taskslimiter.cpp"
   "setup/application.cpp"
-  "setup/cliargs.cpp"
   "setup/config.cpp"
   "util/array.cpp"
   "util/file.cpp"
