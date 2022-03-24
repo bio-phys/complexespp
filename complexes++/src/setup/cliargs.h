@@ -42,6 +42,8 @@ public:
                                         multidir);
         args.addParameter<std::string>("config", "config file",
                                        config, "");
+        args.addParameter<std::string>("c", "same as --config",
+                                       config, "");
         args.addParameter<bool>("backup", "backup of files",
                                 backup, true);
         args.addParameter<bool>("rerun", "recalculate energies from trajectory",

@@ -122,7 +122,7 @@ class CLsimple{
                 bool convertionOkStr;
                 auto valueStr = Convert<std::string>(inValue, &convertionOkStr);
                 if(_variable && convertionOkStr){
-                    _variable->get().push_back(valueStr == "TRUE" || valueStr == "true");
+                    _variable->get().push_back(valueStr == "TRUE" || valueStr == "true" || valueStr == "True");
                     return true;
                 }
                 return false;
@@ -174,7 +174,7 @@ class CLsimple{
                 bool convertionOkStr;
                 auto valueStr = Convert<std::string>(inValue, &convertionOkStr);
                 if(_variable && convertionOkStr){
-                    _variable->get() = (valueStr == "TRUE" || valueStr == "true");
+                    _variable->get() = (valueStr == "TRUE" || valueStr == "true" || valueStr == "True");
                     return true;
                 }
                 return false;
@@ -332,6 +332,7 @@ public:
                     }
                     else{
                         parseIsOK &= param->applyValue(_argv[pos+1]);
+                        usedFields += 1;
                     }
                 }
                 else{
