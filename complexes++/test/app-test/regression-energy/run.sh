@@ -5,7 +5,7 @@ set -e
 
 function run {
     complexes=../../../src/complexes++
-    $complexes --backup=false --config=rerun.conf --rerun=True --nb-thread=1
+    $complexes --backup=false --config=rerun.conf --rerun=True --nb-threads=1
 }
 
 function testit {

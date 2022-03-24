@@ -58,7 +58,7 @@ public:
                                      "specify the move statistics to show. Could be pertype, "
                                      "perdomain, all, none",
                                       movestats, "pertype");
-        args.addParameter<int>("nb_threads", "number of threads",
+        args.addParameter<int>("nb-threads", "number of threads",
                                nb_threads, omp_get_max_threads());
         args.addParameter<std::string>("replex_verbosity", "exchange log verbosity (stats, all, none)",
                                        replex_verbosity, "stats");

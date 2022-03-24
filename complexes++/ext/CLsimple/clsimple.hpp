@@ -17,7 +17,6 @@
 #include <type_traits>
 #include <limits>
 
-
 class CLsimple{
     template <class ParamType>
     static ParamType Convert(const std::string& str, bool* outFlag = nullptr){
