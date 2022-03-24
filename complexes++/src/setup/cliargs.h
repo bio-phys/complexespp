@@ -35,6 +35,9 @@ public:
         args("COMPLEXES is a coarse grained simulation tool",
              argc, argv){
 
+        args.addParameterNoArg("help", "to print this help");
+        args.addParameterNoArg("version", "to get the version of the current binary");
+
         args.addMultiParameter<std::string>("multidir", "multiple simulation directories",
                                         multidir);
         args.addParameter<std::string>("config", "config file",
@@ -45,8 +48,6 @@ public:
                                 rerun, false);
         args.addParameter<std::string>("restart", "restart file",
                                        restart, "");
-        args.addParameter<bool>("version", "show version",
-                                version, false);
         args.addParameter<int>("replex", "number of sweeps between exchanges",
                                replex, 0);
         args.addParameter<int>("replex_stat", "number of sweeps between statistic output",
@@ -89,7 +90,6 @@ public:
     bool backup;
     bool rerun;
     std::string restart;
-    bool version;
     int replex;
     int replex_stat;
     std::string replex_accept;

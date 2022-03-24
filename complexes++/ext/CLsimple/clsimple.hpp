@@ -47,16 +47,26 @@ class CLsimple{
         return typeid(std::remove_reference_t<ParamType>).name();
     }
 
+
+    enum ParamTypes{
+        NoArg,
+        Multi,
+        Single
+    };
+
     class AbstractParam{
         const std::string _key;
         const std::string _help;
-        const bool _isMulti;
+        const ParamTypes _paramType;
+        const bool _isMandatory;
 
     public:
         AbstractParam(std::string inKey,
                       std::string inHelp,
-                      const bool inIsMulti):
-            _key(std::move(inKey)), _help(std::move(inHelp)), _isMulti(inIsMulti){}
+                      const ParamTypes inType,
+                      const bool inIsMandatory):
+            _key(std::move(inKey)), _help(std::move(inHelp)),
+            _paramType(inType), _isMandatory(inIsMandatory){}
 
         std::string getKey() const{
             return _key;
@@ -66,8 +76,20 @@ class CLsimple{
             return _help;
         }
 
+        bool isSingle() const {
+            return _paramType == Single;
+        }
+
         bool isMulti() const {
-            return _isMulti;
+            return _paramType == Multi;
+        }
+
+        bool isNoArg() const {
+            return _paramType == NoArg;
+        }
+
+        bool isMandatory() const{
+            return _isMandatory;
         }
 
         virtual bool applyValue(const std::string& inValue) = 0;
@@ -83,9 +105,10 @@ class CLsimple{
     public:
         MultiParam(std::string inKey,
                    std::string inHelp,
+                   const bool inIsMandatory,
                    std::optional<std::reference_wrapper<std::vector<ParamType>>> inVariable,
                    std::vector<ParamType> inDefault):
-            AbstractParam(std::move(inKey), std::move(inHelp), true),
+            AbstractParam(std::move(inKey), std::move(inHelp), Multi, inIsMandatory),
             _variable(std::move(inVariable)),
             _default(std::move(inDefault)){}
 
@@ -134,9 +157,10 @@ class CLsimple{
     public:
         Param(std::string inKey,
               std::string inHelp,
+              const bool inIsMandatory,
               std::optional<std::reference_wrapper<ParamType>> inVariable,
               ParamType inDefault):
-            AbstractParam(std::move(inKey), std::move(inHelp), false),
+            AbstractParam(std::move(inKey), std::move(inHelp), Single, inIsMandatory),
             _variable(std::move(inVariable)),
             _default(std::move(inDefault)){}
 
@@ -174,6 +198,23 @@ class CLsimple{
         }
         std::string getTypeStr() const final{
             return TypeToStr<ParamType>();
+        }
+    };
+
+    class ParamNoArg : public AbstractParam{
+    public:
+        ParamNoArg(std::string inKey,
+              std::string inHelp,
+                   const bool inIsMandatory):
+            AbstractParam(std::move(inKey), std::move(inHelp), NoArg, inIsMandatory){}
+
+        bool applyValue(const std::string& inValue) final{
+            return true;
+        }
+        void applyDefault() final{
+        }
+        std::string getTypeStr() const final{
+            return "(No argument)";
         }
     };
 
@@ -216,7 +257,7 @@ public:
     CLsimple(const std::string inTitle,
              const int argc, const char *const argv[],
              const bool inFailsIfInvalid = true,
-             const bool inAcceptUnregisteredParams = true)
+             const bool inAcceptUnregisteredParams = false)
         : _title(std::move(inTitle)),
           _params(new std::vector<std::unique_ptr<AbstractParam>>),
           _failsIfInvalid(inFailsIfInvalid),
@@ -264,13 +305,18 @@ public:
             const int pos = getKeyPos(param->getKey());
             if(pos == -1){
                 param->applyDefault();
+                if(param->isMandatory()){
+                    parseIsOK = false;
+                }
             }
             else{
                 usedFields += 1;
-                if(IsKeyValueFormat(_argv[pos])){
+                if(param->isNoArg()){
+                    // Do nothing
+                }
+                else if(IsKeyValueFormat(_argv[pos])){
                     const auto keyValue = SplitKeyValue(_argv[pos]);
                     parseIsOK &= param->applyValue(std::get<1>(keyValue));
-                    usedFields += 1;
                 }
                 else if(pos+1 != int(_argv.size())){
                     if(param->isMulti()){
@@ -278,6 +324,7 @@ public:
                         while(idxVal != int(_argv.size()) && !StrSeemsAKey(_argv[idxVal])){
                             parseIsOK &= param->applyValue(_argv[idxVal]);
                             idxVal += 1;
+                            usedFields += 1;
                         }
                         if(idxVal == pos + 1){
                             param->applyDefault();
@@ -306,10 +353,12 @@ public:
     template <class ParamType>
     void addMultiParameter(std::string inKey, std::string inHelp,
                            std::optional<std::reference_wrapper<std::vector<ParamType>>> inVariable = std::nullopt,
-                           std::vector<ParamType> inDefaultValue = std::vector<ParamType>()){
+                           std::vector<ParamType> inDefaultValue = std::vector<ParamType>(),
+                           const bool inIsMandatory = false){
         std::unique_ptr<AbstractParam> newParam(new MultiParam<ParamType>(
                                                     std::move(inKey),
                                                     std::move(inHelp),
+                                                    inIsMandatory,
                                                     std::move(inVariable),
                                                     std::move(inDefaultValue)
                                                     ));
@@ -319,12 +368,24 @@ public:
     template <class ParamType>
     void addParameter(std::string inKey, std::string inHelp,
                       std::optional<std::reference_wrapper<ParamType>> inVariable = std::nullopt,
-                      ParamType inDefaultValue = ParamType()){
+                      ParamType inDefaultValue = ParamType(),
+                      const bool inIsMandatory = false){
         std::unique_ptr<AbstractParam> newParam(new Param<ParamType>(
                                                     std::move(inKey),
                                                     std::move(inHelp),
+                                                    inIsMandatory,
                                                     std::move(inVariable),
                                                     std::move(inDefaultValue)
+                                                    ));
+        (*_params).emplace_back(std::move(newParam));
+    }
+
+    void addParameterNoArg(std::string inKey, std::string inHelp,
+                           const bool inIsMandatory = false){
+        std::unique_ptr<AbstractParam> newParam(new ParamNoArg(
+                                                    std::move(inKey),
+                                                    std::move(inHelp),
+                                                    inIsMandatory
                                                     ));
         (*_params).emplace_back(std::move(newParam));
     }
@@ -336,6 +397,7 @@ public:
             inStream << "[HELP] Parameter name: " << param->getKey() << "\n";
             inStream << "[HELP]  - Description: " << param->getHelp() << "\n";
             inStream << "[HELP]  - Type: " << param->getTypeStr() << "\n";
+            inStream << "[HELP]  - Mandatory: " << (param->isMandatory()?"True":"False") << "\n";
             inStream << "[HELP]\n";
         }
         inStream << std::endl;

@@ -21,7 +21,7 @@
 
 int main(int argc, char **argv) {
   auto args = setup::CLIArgs(argc, argv);
-  if (args.parse() == false) {
+  if (args.parse() == false || args.hasKey("help")) {
     args.printHelp(std::cout);
     return 0;
   }
