@@ -25,7 +25,7 @@ namespace mpi {
 class MpiCLIArgs : public setup::CLIArgs {
 public:
   MpiCLIArgs(const int &argc, const char *const argv[]) : setup::CLIArgs(argc, argv) {
-      args.addParameter<int>("mpi-partitions", "number of simulation per nodes",
+      args.addParameter<int>({"mpi-partitions", "np"}, "number of simulation per nodes",
                              mpi_partitions, 1);
   }
 

@@ -35,34 +35,32 @@ public:
         args("COMPLEXES is a coarse grained simulation tool",
              argc, argv){
 
-        args.addParameterNoArg("help", "to print this help");
-        args.addParameterNoArg("version", "to get the version of the current binary");
+        args.addParameterNoArg({"help"}, "to print this help");
+        args.addParameterNoArg({"version"}, "to get the version of the current binary");
 
-        args.addMultiParameter<std::string>("multidir", "multiple simulation directories",
+        args.addMultiParameter<std::string>({"multidir"}, "multiple simulation directories",
                                         multidir);
-        args.addParameter<std::string>("config", "config file",
+        args.addParameter<std::string>({"config", "c"}, "config file",
                                        config, "");
-        args.addParameter<std::string>("c", "same as --config",
-                                       config, "");
-        args.addParameter<bool>("backup", "backup of files",
+        args.addParameter<bool>({"backup"}, "backup of files",
                                 backup, true);
-        args.addParameter<bool>("rerun", "recalculate energies from trajectory",
+        args.addParameter<bool>({"rerun"}, "recalculate energies from trajectory",
                                 rerun, false);
-        args.addParameter<std::string>("restart", "restart file",
+        args.addParameter<std::string>({"restart"}, "restart file",
                                        restart, "");
-        args.addParameter<int>("replex", "number of sweeps between exchanges",
+        args.addParameter<int>({"replex"}, "number of sweeps between exchanges",
                                replex, 0);
-        args.addParameter<int>("replex_stat", "number of sweeps between statistic output",
+        args.addParameter<int>({"replex_stat"}, "number of sweeps between statistic output",
                                replex_stat, 1000);
-        args.addParameter<std::string>("replex_accept", "exchange accept function",
+        args.addParameter<std::string>({"replex_accept"}, "exchange accept function",
                                        replex_accept, "");
-        args.addParameter<std::string>("movestats",
+        args.addParameter<std::string>({"movestats"},
                                      "specify the move statistics to show. Could be pertype, "
                                      "perdomain, all, none",
                                       movestats, "pertype");
-        args.addParameter<int>("nb-threads", "number of threads",
+        args.addParameter<int>({"nb-threads"}, "number of threads",
                                nb_threads, omp_get_max_threads());
-        args.addParameter<std::string>("replex_verbosity", "exchange log verbosity (stats, all, none)",
+        args.addParameter<std::string>({"replex_verbosity"}, "exchange log verbosity (stats, all, none)",
                                        replex_verbosity, "stats");
 
     }

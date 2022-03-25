@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     args.printHelp(std::cout);
     return 0;
   }
-  mpi::MpiApplication app(args, argv, args);
+  mpi::MpiApplication app(args);
   auto timer = util::Timer();
   auto res = app.run();
   fmt::print(std::clog, "[LOG] total runtime = {}s\n",
