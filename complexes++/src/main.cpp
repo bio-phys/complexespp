@@ -15,11 +15,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with complexes++.  If not, see <https://www.gnu.org/licenses/>
+#include "setup/copyright.h"
 #include "setup/application.h"
 #include "util/log.h"
 #include "util/timer.h"
 
 int main(int argc, char **argv) {
+  setup::printGPL();
+
   auto args = setup::CLIArgs(argc, argv);
   if (args.parse() == false || args.hasKey("help")) {
     args.printHelp(std::cout);
