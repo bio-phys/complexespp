@@ -35,13 +35,13 @@ public:
         args("COMPLEXES is a coarse grained simulation tool",
              argc, argv){
 
-        args.addParameterNoArg({"help"}, "to print this help");
-        args.addParameterNoArg({"version"}, "to get the version of the current binary");
+        args.addParameterNoArg({"help"}, "to print this help", 0);
+        args.addParameterNoArg({"version"}, "to get the version of the current binary", 1);
 
         args.addMultiParameter<std::string>({"multidir"}, "multiple simulation directories",
                                         multidir);
         args.addParameter<std::string>({"config", "c"}, "config file",
-                                       config, "");
+                                       config, "", 2);
         args.addParameter<bool>({"backup"}, "backup of files",
                                 backup, true);
         args.addParameter<bool>({"rerun"}, "recalculate energies from trajectory",
