@@ -52,19 +52,17 @@ public:
 
   template <class... Params>
   void operator()(const std::string &inFormat, const Params &... params) {
-    if (m_stream) {
-      DEBUG_ASSERT(m_stream != nullptr, "Logger not initialized");
-// TODO use a mutex here
 #pragma omp critical(FILEOUTPUT)
       {
-        fmt::print(*m_stream, m_prefix);
-        fmt::print(*m_stream, inFormat, params...);
-      }
-    }
-    else{
-#pragma omp critical(FILEOUTPUT)
-        buffer << m_prefix;
-        ( (buffer << std::forward<const Params>(params)),... );
+        if (m_stream) {
+          DEBUG_ASSERT(m_stream != nullptr, "Logger not initialized");
+            fmt::print(*m_stream, m_prefix);
+            fmt::print(*m_stream, inFormat, params...);
+          }
+        else{
+            fmt::print(buffer, m_prefix);
+            fmt::print(buffer, inFormat, params...);
+        }
     }
     if (m_toCLOG) {
 // Standard output should be thread safe but lets consider it is not
@@ -79,16 +77,21 @@ public:
   void flush() {
 // TODO use a mutex here
 #pragma omp critical(FILEOUTPUT)
-    m_stream->flush();
+      if(m_stream){
+        m_stream->flush();
+      }
   }
 
   bool isSet() const { return m_stream != nullptr; }
 
   void setLogFile(const std::string &inFname){
-      DEBUG_ASSERT(!isSet(), "Logger already set");
-      m_stream = std::make_unique<std::ofstream>(inFname, std::ofstream::app);
-      (*m_stream) << buffer.str();
-      buffer.clear();
+#pragma omp critical(FILEOUTPUT)
+      {
+          DEBUG_ASSERT(!isSet(), "Logger already set");
+          m_stream = std::make_unique<std::ofstream>(inFname, std::ofstream::app);
+          (*m_stream) << buffer.str();
+          buffer.clear();
+      }
   }
 
 private:
