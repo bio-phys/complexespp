@@ -50,9 +50,9 @@ public:
                                        restart, "");
         args.addParameter<int>({"replex"}, "number of sweeps between exchanges",
                                replex, 0);
-        args.addParameter<int>({"replex_stat"}, "number of sweeps between statistic output",
+        args.addParameter<int>({"replex-stat"}, "number of sweeps between statistic output",
                                replex_stat, 1000);
-        args.addParameter<std::string>({"replex_accept"}, "exchange accept function",
+        args.addParameter<std::string>({"replex-accept"}, "exchange accept function",
                                        replex_accept, "");
         args.addParameter<std::string>({"movestats"},
                                      "specify the move statistics to show. Could be pertype, "
@@ -60,7 +60,7 @@ public:
                                       movestats, "pertype");
         args.addParameter<int>({"nb-threads"}, "number of threads",
                                nb_threads, omp_get_max_threads());
-        args.addParameter<std::string>({"replex_verbosity"}, "exchange log verbosity (stats, all, none)",
+        args.addParameter<std::string>({"replex-verbosity"}, "exchange log verbosity (stats, all, none)",
                                        replex_verbosity, "stats");
 
     }
