@@ -21,7 +21,9 @@ jobs:
         with:
           python-version: 3.9
       - name: Install dependencies
-        run: sudo apt-get install -y build-essential cmake libyaml-cpp-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake libyaml-cpp-dev valgrind
       - name: configure
         run: |
           mkdir build && cd build
@@ -30,3 +32,9 @@ jobs:
         run: |
           cd build
           make
+      - name: test
+        run: |
+          cd build
+          make test
+        # well lets pass initially
+        continue-on-error: true
