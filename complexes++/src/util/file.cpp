@@ -37,7 +37,7 @@ std::string backUpIfExists(const std::string &file) {
   fs::path bpath(file);
   auto datetime = DefaultTimeStamp;
   auto newName = appendPaths(bpath.parent_path().string(),
-                             fmt::format("backup_{0:%Y-%m-%d}:{0:%H-%M-%S}_{1}",
+                             fmt::format("backup_{0:%Y-%m-%d}_{0:%H-%M-%S}_{1}",
                                          *std::localtime(&datetime),
                                          bpath.filename().string()));
   fs::rename(file, newName);
