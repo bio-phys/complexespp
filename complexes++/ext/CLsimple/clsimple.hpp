@@ -228,24 +228,24 @@ class CLsimple{
     };
 
     static bool StrSeemsAKey(const std::string& str){
-        std::regex keyFormat("-{1,2}(\\D|[0-9]\\D)");
+        std::regex keyFormat("^-{1,2}(\\D|[0-9]+\\D)");
         return std::regex_search(str, keyFormat);
     }
 
     static std::string StrToKey(const std::string& str){
-        std::regex keyValueFormat("-{1,2}([^=]+).*");
+        std::regex keyValueFormat("^-{1,2}([^=]+).*");
         std::smatch match;
         std::regex_search(str, match, keyValueFormat);
         return match[1];
     }
 
     static bool IsKeyValueFormat(const std::string& str){
-        std::regex keyValueFormat("--[^=]+=.+");
+        std::regex keyValueFormat("^--[^=]+=.+");
         return std::regex_search(str, keyValueFormat);
     }
 
     static std::pair<std::string,std::string> SplitKeyValue(const std::string& str){
-        std::regex keyValueFormat("--([^=]+)=(.+)");
+        std::regex keyValueFormat("^--([^=]+)=(.+)");
         std::smatch match;
         std::regex_search(str, match, keyValueFormat);
         const std::string key = match[1];
