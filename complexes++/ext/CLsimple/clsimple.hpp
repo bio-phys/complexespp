@@ -17,6 +17,7 @@
 #include <type_traits>
 #include <limits>
 #include <cassert>
+#include <set>
 
 class CLsimple{
     template <class ParamType>
@@ -253,7 +254,7 @@ class CLsimple{
     }
 
     template <class ParamType>
-    void processParam(ParamType&& param, bool* parseIsOK = nullptr, int* usedFields = nullptr) const {
+    void processParam(ParamType&& param, bool* parseIsOK = nullptr, std::set<int>* usedFields = nullptr) {
         const auto& keys = param->getKeys();
         int pos = -1;
         for(const auto& key : keys){
@@ -269,7 +270,7 @@ class CLsimple{
         }
         else{
             if(usedFields){
-                (*usedFields) += 1;
+                (*usedFields).insert(pos);
             }
             if(param->isNoArg()){
                 // Do nothing
@@ -277,6 +278,10 @@ class CLsimple{
             else if(IsKeyValueFormat(_argv[pos])){
                 const auto keyValue = SplitKeyValue(_argv[pos]);
                 const bool res = param->applyValue(std::get<1>(keyValue));
+                if(!res){
+                    (*errorStr) << "[ERROR] Error in parsing the value for arg \""
+                             << _argv[pos] << "\"\n";
+                }
                 if(parseIsOK){
                     (*parseIsOK) &= res;
                 }
@@ -286,16 +291,24 @@ class CLsimple{
                     int idxVal = pos + 1;
                     while(idxVal != int(_argv.size()) && !StrSeemsAKey(_argv[idxVal])){
                         const bool res = param->applyValue(_argv[idxVal]);
+                        if(!res){
+                            (*errorStr) << "[ERROR] Error in parsing the value \"" << _argv[idxVal] << "\" for arg \""
+                                     << _argv[pos] << "\"\n";
+                        }
                         if(parseIsOK){
                             (*parseIsOK) &= res;
                         }
-                        idxVal += 1;
                         if(usedFields){
-                            (*usedFields) += 1;
+                            (*usedFields).insert(idxVal);
                         }
+                        idxVal += 1;
                     }
                     if(idxVal == pos + 1){
                         param->applyDefault();
+
+                        (*errorStr) << "[ERROR] Cannot get value, but we expect one, for arg \""
+                                 << _argv[pos] << "\"\n";
+
                         if(parseIsOK){
                             (*parseIsOK) = false;
                         }
@@ -303,16 +316,22 @@ class CLsimple{
                 }
                 else{
                     const bool res = param->applyValue(_argv[pos+1]);
+                    if(!res){
+                        (*errorStr) << "[ERROR] Error in parsing the value \"" << _argv[pos+1] << "\" for arg \""
+                                 << _argv[pos] << "\"\n";
+                    }
                     if(parseIsOK){
                         (*parseIsOK) &= res;
                     }
                     if(usedFields){
-                        (*usedFields) += 1;
+                        (*usedFields).insert(pos+1);
                     }
                 }
             }
             else{
                 param->applyDefault();
+                (*errorStr) << "[ERROR] Cannot get value, but we expect one, for arg \""
+                         << _argv[pos] << "\"\n";
                 if(parseIsOK){
                     (*parseIsOK) = false;
                 }
@@ -330,6 +349,8 @@ class CLsimple{
     bool _acceptUnregisteredParams;
     bool _isValid;
 
+    std::shared_ptr<std::ostringstream> errorStr;
+
 public:
     static const int NotMandatory = -1;
 
@@ -341,7 +362,8 @@ public:
           _params(new std::vector<std::unique_ptr<AbstractParam>>),
           _failsIfInvalid(inFailsIfInvalid),
           _acceptUnregisteredParams(inAcceptUnregisteredParams),
-          _isValid(true) {
+          _isValid(true),
+          errorStr(new std::ostringstream){
         if(argc){
             _exec = argv[0];
             _argv.reserve(argc-1);
@@ -422,7 +444,7 @@ public:
 
     bool parse(){
         bool parseIsOK = true;
-        int usedFields = 0;
+        std::set<int> usedFields;
 
         // Process param values
         for(auto& param : *_params){
@@ -430,7 +452,13 @@ public:
         }
         if(_failsIfInvalid){
             _isValid = parseIsOK;
-            if(!_acceptUnregisteredParams && usedFields != int(_argv.size())){
+            if(!_acceptUnregisteredParams && usedFields.size() != _argv.size()){
+                (*errorStr) << "[ERROR] The following arguments are invalid:\n";
+                for(int idx = 0 ; idx < int(_argv.size()) ; ++idx){
+                    if(usedFields.find(idx) == usedFields.end()){
+                        (*errorStr) << "[ERROR] \"" << _argv[idx] << "\"\n";
+                    }
+                }
                 _isValid = false;
             }
         }
@@ -452,6 +480,9 @@ public:
                 if(oneGroupIsOk){
                     break;
                 }
+            }
+            if(!oneGroupIsOk){
+                (*errorStr) << "[ERROR] Some arguments are mandatory, but none of them were provided...\n";
             }
 
             _isValid &= oneGroupIsOk;
@@ -500,7 +531,7 @@ public:
     }
 
     template <class StreamClass>
-    void printHelp(StreamClass& inStream) const{
+    void printHelp(StreamClass& inStream, const bool inPrintError = true) const{
         auto join = [](auto&& elements, auto&& delimiter) -> std::string {
             std::string res;
             for(const auto& elm : elements){
@@ -547,6 +578,19 @@ public:
         }
         inStream << std::endl;
         inStream << "[HELP]" << std::endl;
+
+        if(inPrintError){
+            printError(inStream);
+        }
+    }
+
+    template <class StreamClass>
+    void printError(StreamClass& inStream) const{
+        const std::string errors = (*errorStr).str();
+        if(errors.length()){
+            inStream << "[ERROR] There are some errors...\n";
+            inStream << errors << std::endl;;
+        }
     }
 
     template <class ValType>
