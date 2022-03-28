@@ -19,6 +19,7 @@
 #include <fmt/format.h>
 #include <iostream>
 
+#include "setup/copyright.h"
 #include "complexesconfig.h"
 #include "util/log.h"
 #include "util/timer.h"
@@ -30,12 +31,14 @@
 #include "mpi/mpiapplication.h"
 
 int main(int argc, char **argv) {
-  auto args = mpi::MPICLIArgs();
-  auto status = args.parse(argc, argv);
-  if (status != 0) {
-    return status;
+  setup::printGPL();
+
+  auto args = setup::MPICLIArgs(argc, argv);
+  if (args.parse() == false || args.hasKey("help")) {
+    args.printHelp(std::cout);
+    return 0;
   }
-  mpi::MpiApplication app(args, argv, args);
+  mpi::MpiApplication app(args);
   auto timer = util::Timer();
   auto res = app.run();
   fmt::print(std::clog, "[LOG] total runtime = {}s\n",

@@ -52,7 +52,7 @@ std::string basename(const std::string &file) { return fs::path(file).stem().str
 
 void throwIfFileDoesNotExists(const std::string &file) {
   if (!fs::exists(file)) {
-    throw std::invalid_argument(fmt::format("{} <-- does not exist.\n", file));
+    throw std::invalid_argument(fmt::format("File \"{}\" does not exist.\n", file));
   }
 }
 

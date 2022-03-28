@@ -16,7 +16,7 @@
 #include <typeinfo>
 #include <type_traits>
 #include <limits>
-
+#include <cassert>
 
 class CLsimple{
     template <class ParamType>
@@ -47,27 +47,57 @@ class CLsimple{
         return typeid(std::remove_reference_t<ParamType>).name();
     }
 
+
+    enum ParamTypes{
+        NoArg,
+        Multi,
+        Single
+    };
+
     class AbstractParam{
-        const std::string _key;
+        const std::vector<std::string> _keys;
         const std::string _help;
-        const bool _isMulti;
+        const ParamTypes _paramType;
+        const int _mandatoryGroup;
 
     public:
-        AbstractParam(std::string inKey,
+        AbstractParam(std::vector<std::string> inKeys,
                       std::string inHelp,
-                      const bool inIsMulti):
-            _key(std::move(inKey)), _help(std::move(inHelp)), _isMulti(inIsMulti){}
+                      const ParamTypes inType,
+                      const int inMandatoryGroup):
+            _keys(std::move(inKeys)), _help(std::move(inHelp)),
+            _paramType(inType), _mandatoryGroup(inMandatoryGroup){
+            assert(_keys.size());
+        }
 
-        std::string getKey() const{
-            return _key;
+        virtual ~AbstractParam(){}
+
+        std::vector<std::string> getKeys() const{
+            return _keys;
         }
 
         std::string getHelp() const{
             return _help;
         }
 
+        bool isSingle() const {
+            return _paramType == Single;
+        }
+
         bool isMulti() const {
-            return _isMulti;
+            return _paramType == Multi;
+        }
+
+        bool isNoArg() const {
+            return _paramType == NoArg;
+        }
+
+        bool isMandatory() const{
+            return _mandatoryGroup != NotMandatory;
+        }
+
+        int mandatoryGroup() const{
+            return _mandatoryGroup;
         }
 
         virtual bool applyValue(const std::string& inValue) = 0;
@@ -81,11 +111,12 @@ class CLsimple{
         const std::vector<ParamType> _default;
 
     public:
-        MultiParam(std::string inKey,
+        MultiParam(std::vector<std::string> inKeys,
                    std::string inHelp,
+                   const int inMandatoryGroup,
                    std::optional<std::reference_wrapper<std::vector<ParamType>>> inVariable,
                    std::vector<ParamType> inDefault):
-            AbstractParam(std::move(inKey), std::move(inHelp), true),
+            AbstractParam(std::move(inKeys), std::move(inHelp), Multi, inMandatoryGroup),
             _variable(std::move(inVariable)),
             _default(std::move(inDefault)){}
 
@@ -100,7 +131,7 @@ class CLsimple{
                 bool convertionOkStr;
                 auto valueStr = Convert<std::string>(inValue, &convertionOkStr);
                 if(_variable && convertionOkStr){
-                    _variable->get().push_back(valueStr == "TRUE" || valueStr == "true");
+                    _variable->get().push_back(valueStr == "TRUE" || valueStr == "true" || valueStr == "True");
                     return true;
                 }
                 return false;
@@ -132,11 +163,12 @@ class CLsimple{
         const ParamType _default;
 
     public:
-        Param(std::string inKey,
+        Param(std::vector<std::string> inKeys,
               std::string inHelp,
+              const int inMandatoryGroup,
               std::optional<std::reference_wrapper<ParamType>> inVariable,
               ParamType inDefault):
-            AbstractParam(std::move(inKey), std::move(inHelp), false),
+            AbstractParam(std::move(inKeys), std::move(inHelp), Single, inMandatoryGroup),
             _variable(std::move(inVariable)),
             _default(std::move(inDefault)){}
 
@@ -151,7 +183,7 @@ class CLsimple{
                 bool convertionOkStr;
                 auto valueStr = Convert<std::string>(inValue, &convertionOkStr);
                 if(_variable && convertionOkStr){
-                    _variable->get() = (valueStr == "TRUE" || valueStr == "true");
+                    _variable->get() = (valueStr == "TRUE" || valueStr == "true" || valueStr == "True");
                     return true;
                 }
                 return false;
@@ -174,6 +206,23 @@ class CLsimple{
         }
         std::string getTypeStr() const final{
             return TypeToStr<ParamType>();
+        }
+    };
+
+    class ParamNoArg : public AbstractParam{
+    public:
+        ParamNoArg(std::vector<std::string> inKeys,
+              std::string inHelp,
+                   const int inMandatoryGroup):
+            AbstractParam(std::move(inKeys), std::move(inHelp), NoArg, inMandatoryGroup){}
+
+        bool applyValue(const std::string& inValue) final{
+            return true;
+        }
+        void applyDefault() final{
+        }
+        std::string getTypeStr() const final{
+            return "(No argument)";
         }
     };
 
@@ -203,7 +252,76 @@ class CLsimple{
         return std::pair<std::string,std::string>(std::move(key), std::move(value));
     }
 
+    template <class ParamType>
+    void processParam(ParamType&& param, bool* parseIsOK = nullptr, int* usedFields = nullptr) const {
+        const auto& keys = param->getKeys();
+        int pos = -1;
+        for(const auto& key : keys){
+            const int testPos = getKeyPos(key);
+            if(testPos != -1){
+                pos = testPos;
+                break;
+            }
+        }
+
+        if(pos == -1){
+            param->applyDefault();
+        }
+        else{
+            if(usedFields){
+                (*usedFields) += 1;
+            }
+            if(param->isNoArg()){
+                // Do nothing
+            }
+            else if(IsKeyValueFormat(_argv[pos])){
+                const auto keyValue = SplitKeyValue(_argv[pos]);
+                const bool res = param->applyValue(std::get<1>(keyValue));
+                if(parseIsOK){
+                    (*parseIsOK) &= res;
+                }
+            }
+            else if(pos+1 != int(_argv.size())){
+                if(param->isMulti()){
+                    int idxVal = pos + 1;
+                    while(idxVal != int(_argv.size()) && !StrSeemsAKey(_argv[idxVal])){
+                        const bool res = param->applyValue(_argv[idxVal]);
+                        if(parseIsOK){
+                            (*parseIsOK) &= res;
+                        }
+                        idxVal += 1;
+                        if(usedFields){
+                            (*usedFields) += 1;
+                        }
+                    }
+                    if(idxVal == pos + 1){
+                        param->applyDefault();
+                        if(parseIsOK){
+                            (*parseIsOK) = false;
+                        }
+                    }
+                }
+                else{
+                    const bool res = param->applyValue(_argv[pos+1]);
+                    if(parseIsOK){
+                        (*parseIsOK) &= res;
+                    }
+                    if(usedFields){
+                        (*usedFields) += 1;
+                    }
+                }
+            }
+            else{
+                param->applyDefault();
+                if(parseIsOK){
+                    (*parseIsOK) = false;
+                }
+            }
+        }
+    }
+
     const std::string _title;
+    std::string _exec;
 
     std::vector<std::string> _argv;
     std::shared_ptr<std::vector<std::unique_ptr<AbstractParam>>> _params;
@@ -213,18 +331,23 @@ class CLsimple{
     bool _isValid;
 
 public:
+    static const int NotMandatory = -1;
+
     CLsimple(const std::string inTitle,
              const int argc, const char *const argv[],
              const bool inFailsIfInvalid = true,
-             const bool inAcceptUnregisteredParams = true)
+             const bool inAcceptUnregisteredParams = false)
         : _title(std::move(inTitle)),
           _params(new std::vector<std::unique_ptr<AbstractParam>>),
           _failsIfInvalid(inFailsIfInvalid),
           _acceptUnregisteredParams(inAcceptUnregisteredParams),
           _isValid(true) {
-        _argv.reserve(argc-1);
-        for(int idxArg = 1 ; idxArg < argc ; ++idxArg){
-            _argv.emplace_back(argv[idxArg]);
+        if(argc){
+            _exec = argv[0];
+            _argv.reserve(argc-1);
+            for(int idxArg = 1 ; idxArg < argc ; ++idxArg){
+                _argv.emplace_back(argv[idxArg]);
+            }
         }
     }
 
@@ -256,43 +379,54 @@ public:
         return getKeyPos(inKey) != -1;
     }
 
+    bool hasOneOfKeys(const std::vector<std::string>& inKeys) const{
+        for(const auto& key : inKeys){
+            const int pos = getKeyPos(key);
+            if(pos != -1){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool hasOneOfKeys(std::initializer_list<std::string> inKeys) const{
+        std::vector<std::string> keys = inKeys;
+        return hasOneOfKeys(keys);
+    }
+
+    template <class ParamType>
+    std::vector<ParamType> getValues(std::vector<std::string> inKeys,
+                  std::vector<ParamType> inDefaultValue = std::vector<ParamType>(),
+                  bool* outOk = nullptr) const{
+        std::vector<ParamType> variable;
+        std::optional<std::reference_wrapper<std::vector<ParamType>>> variableRef(variable);
+        MultiParam<ParamType> newParam(std::move(inKeys), "", false,
+                                                    std::move(variableRef),
+                                                    std::move(inDefaultValue));
+        processParam(&newParam, outOk);
+        return variable;
+    }
+
+    template <class ParamType>
+    ParamType getValue(std::vector<std::string> inKeys,
+                  ParamType inDefaultValue = ParamType(),
+                  bool* outOk = nullptr) const{
+        ParamType variable;
+        std::optional<std::reference_wrapper<ParamType>> variableRef(variable);
+        Param<ParamType> newParam(std::move(inKeys), "", false,
+                                                    std::move(variableRef),
+                                                    std::move(inDefaultValue));
+        processParam(&newParam, outOk);
+        return variable;
+    }
+
     bool parse(){
         bool parseIsOK = true;
         int usedFields = 0;
 
+        // Process param values
         for(auto& param : *_params){
-            const int pos = getKeyPos(param->getKey());
-            if(pos == -1){
-                param->applyDefault();
-            }
-            else{
-                usedFields += 1;
-                if(IsKeyValueFormat(_argv[pos])){
-                    const auto keyValue = SplitKeyValue(_argv[pos]);
-                    parseIsOK &= param->applyValue(std::get<1>(keyValue));
-                    usedFields += 1;
-                }
-                else if(pos+1 != int(_argv.size())){
-                    if(param->isMulti()){
-                        int idxVal = pos + 1;
-                        while(idxVal != int(_argv.size()) && !StrSeemsAKey(_argv[idxVal])){
-                            parseIsOK &= param->applyValue(_argv[idxVal]);
-                            idxVal += 1;
-                        }
-                        if(idxVal == pos + 1){
-                            param->applyDefault();
-                            parseIsOK = false;
-                        }
-                    }
-                    else{
-                        parseIsOK &= param->applyValue(_argv[pos+1]);
-                    }
-                }
-                else{
-                    param->applyDefault();
-                    parseIsOK = false;
-                }
-            }
+            processParam(param, &parseIsOK, &usedFields);
         }
         if(_failsIfInvalid){
             _isValid = parseIsOK;
@@ -300,16 +434,39 @@ public:
                 _isValid = false;
             }
         }
+        // Ensure that one mandatory group is used
+        std::unordered_map<int, bool> groupStates;
+        for(auto& param : *_params){
+            if(param->isMandatory()){
+                if(groupStates.find(param->mandatoryGroup()) == groupStates.end()){
+                    groupStates[param->mandatoryGroup()] = true;
+                }
+                const auto& keys = param->getKeys();
+                groupStates[param->mandatoryGroup()] &= hasOneOfKeys(keys);
+            }
+        }
+        bool oneGroupIsOk = false;
+        for(auto iter : groupStates){
+            oneGroupIsOk = iter.second;
+            if(oneGroupIsOk){
+                break;
+            }
+        }
+
+        _isValid &= oneGroupIsOk;
+
         return _isValid;
     }
 
     template <class ParamType>
-    void addMultiParameter(std::string inKey, std::string inHelp,
+    void addMultiParameter(std::vector<std::string> inKeys, std::string inHelp,
                            std::optional<std::reference_wrapper<std::vector<ParamType>>> inVariable = std::nullopt,
-                           std::vector<ParamType> inDefaultValue = std::vector<ParamType>()){
+                           std::vector<ParamType> inDefaultValue = std::vector<ParamType>(),
+                           const int inMandatoryGroup = NotMandatory){
         std::unique_ptr<AbstractParam> newParam(new MultiParam<ParamType>(
-                                                    std::move(inKey),
+                                                    std::move(inKeys),
                                                     std::move(inHelp),
+                                                    inMandatoryGroup,
                                                     std::move(inVariable),
                                                     std::move(inDefaultValue)
                                                     ));
@@ -317,28 +474,78 @@ public:
     }
 
     template <class ParamType>
-    void addParameter(std::string inKey, std::string inHelp,
+    void addParameter(std::vector<std::string> inKeys, std::string inHelp,
                       std::optional<std::reference_wrapper<ParamType>> inVariable = std::nullopt,
-                      ParamType inDefaultValue = ParamType()){
+                      ParamType inDefaultValue = ParamType(),
+                      const int inMandatoryGroup = NotMandatory){
         std::unique_ptr<AbstractParam> newParam(new Param<ParamType>(
-                                                    std::move(inKey),
+                                                    std::move(inKeys),
                                                     std::move(inHelp),
+                                                    inMandatoryGroup,
                                                     std::move(inVariable),
                                                     std::move(inDefaultValue)
+                                                    ));
+        (*_params).emplace_back(std::move(newParam));
+    }
+
+    void addParameterNoArg(std::vector<std::string> inKeys, std::string inHelp,
+                           const int inMandatoryGroup = NotMandatory){
+        std::unique_ptr<AbstractParam> newParam(new ParamNoArg(
+                                                    std::move(inKeys),
+                                                    std::move(inHelp),
+                                                    inMandatoryGroup
                                                     ));
         (*_params).emplace_back(std::move(newParam));
     }
 
     template <class StreamClass>
     void printHelp(StreamClass& inStream) const{
+        auto join = [](auto&& elements, auto&& delimiter) -> std::string {
+            std::string res;
+            for(const auto& elm : elements){
+                if(std::size(res)){
+                    res += delimiter;
+                }
+                res += elm;
+            }
+            return res;
+        };
+
+        inStream << "[HELP] \n";
         inStream << "[HELP] " << _title << "\n";
+        inStream << "[HELP] \n";
+        if(!_isValid){
+            inStream << "[HELP] \n";
+            inStream << "[HELP] Currant parameters are not valid...\n";
+            inStream << "[HELP] \n";
+        }
         for(auto& param : *_params){
-            inStream << "[HELP] Parameter name: " << param->getKey() << "\n";
+            inStream << "[HELP] Parameter names: {" << join(param->getKeys(),", ") << "}\n";
             inStream << "[HELP]  - Description: " << param->getHelp() << "\n";
             inStream << "[HELP]  - Type: " << param->getTypeStr() << "\n";
+            if(param->isMandatory()){
+                inStream << "[HELP]  - Is mandatory (group " << param->mandatoryGroup() << ")\n";
+            }
             inStream << "[HELP]\n";
         }
+        inStream << "[HELP]" << std::endl;
+
+
+        inStream << "[HELP] Command line with all args: " << _exec << " ";
+        for(auto& param : *_params){
+            assert(param->getKeys().size());
+            if(param->isMulti()){
+                inStream << "--" << param->getKeys()[0] << " [" << param->getTypeStr() << "] ";
+            }
+            else if(param->isSingle()){
+                inStream << "--" << param->getKeys()[0] << "=[" << param->getTypeStr() << "] ";
+            }
+            else{
+                inStream << "--" << param->getKeys()[0] << " ";
+            }
+        }
         inStream << std::endl;
+        inStream << "[HELP]" << std::endl;
     }
 
     template <class ValType>

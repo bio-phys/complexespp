@@ -8,7 +8,7 @@ function run {
     for folder in Residue-*
     do
         cd $folder
-        $complexes -c config.yaml --rerun=True --nb-thread=1 --backup=false
+        $complexes -c config.yaml --rerun=True --nb-threads=1 --backup=false
         cd ..
     done
 }
