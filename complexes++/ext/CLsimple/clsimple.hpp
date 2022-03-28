@@ -285,6 +285,23 @@ class CLsimple{
                 if(parseIsOK){
                     (*parseIsOK) &= res;
                 }
+                if(param->isMulti()){
+                    int idxVal = pos + 1;
+                    while(idxVal != int(_argv.size()) && !StrSeemsAKey(_argv[idxVal])){
+                        const bool res = param->applyValue(_argv[idxVal]);
+                        if(!res){
+                            (*errorStr) << "[ERROR] Error in parsing the value \"" << _argv[idxVal] << "\" for arg \""
+                                     << _argv[pos] << "\"\n";
+                        }
+                        if(parseIsOK){
+                            (*parseIsOK) &= res;
+                        }
+                        if(usedFields){
+                            (*usedFields).insert(idxVal);
+                        }
+                        idxVal += 1;
+                    }
+                }
             }
             else if(pos+1 != int(_argv.size())){
                 if(param->isMulti()){
