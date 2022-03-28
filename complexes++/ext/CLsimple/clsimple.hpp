@@ -445,16 +445,17 @@ public:
                 groupStates[param->mandatoryGroup()] &= hasOneOfKeys(keys);
             }
         }
-        bool oneGroupIsOk = false;
-        for(auto iter : groupStates){
-            oneGroupIsOk = iter.second;
-            if(oneGroupIsOk){
-                break;
+        if(groupStates.size()){
+            bool oneGroupIsOk = false;
+            for(auto iter : groupStates){
+                oneGroupIsOk = iter.second;
+                if(oneGroupIsOk){
+                    break;
+                }
             }
+
+            _isValid &= oneGroupIsOk;
         }
-
-        _isValid &= oneGroupIsOk;
-
         return _isValid;
     }
 
