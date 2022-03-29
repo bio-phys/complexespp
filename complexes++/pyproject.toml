@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "test-complexes++"
+version = "0.1.0"
+description = "test helper environment"
+authors = ["Max Linke <max.linke88@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+MDAnalysis = "^2.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.conda-lock]
+channels = ["conda-forge", "defaults"]
+platforms = ["linux-64"]
