@@ -34,9 +34,12 @@ jobs:
         run: |
           cd build
           make
+      - name: conda info
+        run: conda info
       - name: test
         run: |
           cd build
+          conda activate explicit-env
           ctest --output-on-failure
         # well lets pass initially
         continue-on-error: true
