@@ -37,6 +37,6 @@ jobs:
       - name: test
         run: |
           cd build
-          make test
+          ctest --output-on-failure
         # well lets pass initially
         continue-on-error: true
