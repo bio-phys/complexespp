@@ -1,0 +1,3 @@
+[submodule "complexes++/ext/inastemp"]
+	path = complexes++/ext/inastemp
+	url = https://gitlab.inria.fr/bramas/inastemp.git

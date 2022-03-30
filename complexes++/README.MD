@@ -49,6 +49,7 @@ Complexes++ has the following external dependencies.
 Assuming all [build dependencies](#dependencies) are installed on your system you
 can build and install complexes++ using cmake directly
 
+    git submodule update --init --recursive # to get inastemp
     mkdir build && cd build
     cmake ..
     make install

@@ -1,6 +1,7 @@
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
+- [Getting submodules](#getting-submodules)
 - [Out Of Source Builds](#out-of-source-builds)
 - [Release/Debug builds](#releasedebug-builds)
 - [Source Code Formatting](#source-code-formatting)
@@ -13,6 +14,12 @@
     - [Leak Checking](#leak-checking)
 
 <!-- markdown-toc end -->
+
+# Getting submodules
+
+It is required to checkout the submodules using the following command
+
+    git submodule update --init --recursive
 
 # Out Of Source Builds
 
