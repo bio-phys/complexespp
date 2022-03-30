@@ -13,6 +13,7 @@ jobs:
     defaults:
       run:
         working-directory: ./complexes++
+        shell: bash -l {0}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -20,7 +21,6 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: false
-          activate-environment: explicit-env
           environment-file: complexes++/conda-linux-64.lock
       - name: Install dependencies
         run: |
@@ -34,9 +34,11 @@ jobs:
         run: |
           cd build
           make
+      - name: conda info
+        run: conda info
       - name: test
         run: |
           cd build
-          make test
+          ctest --output-on-failure
         # well lets pass initially
         continue-on-error: true
