@@ -44,7 +44,7 @@ namespace nc = constants::natural;
   {                                                                            \
     const VecTypeClass v1 = X;                                                 \
     const VecTypeClass v2 = Y;                                                 \
-    for (int idx = 0; idx < VecType::VecLength; ++idx) {                       \
+    for (int idx = 0; idx < VecType::GetVecLength(); ++idx) {                       \
       EXPECT_DOUBLE_EQ(v1.at(idx), v2.at(idx));                                \
     }                                                                          \
   }
@@ -53,7 +53,7 @@ namespace nc = constants::natural;
   {                                                                            \
     const VecTypeClass v1 = X;                                                 \
     const VecTypeClass v2 = Y;                                                 \
-    for (int idx = 0; idx < VecTypeClass::VecLength; ++idx) {                  \
+    for (int idx = 0; idx < VecTypeClass::GetVecLength(); ++idx) {                  \
       EXPECT_NEAR(v1.at(idx), v2.at(idx), Z);                                  \
     }                                                                          \
   }
