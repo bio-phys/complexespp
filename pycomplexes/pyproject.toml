@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "pycomplexes"
+version = "0.1.0"
+description = "Python helper library for complexes++"
+authors = ["Max Linke <max.linke88@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+MDAnalysis = "^2.1.0"
+jupyter = "^1.0.0"
+numpy = "*"
+pyyaml = "^5.1"
+six = "*"
+pandas  = "*"
+tqdm  = "*"
+numba = "*"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.conda-lock]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
