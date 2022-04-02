@@ -5,4 +5,4 @@ file(COPY "test.py" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY "test-log.py" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY "run.sh" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-add_test(app-remc-hrex-diff-temp run.sh)
+add_test(app-remc-acceptance-counter run.sh)

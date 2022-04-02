@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+        with:
+          submodules: 'true'
       - name: Setup Python
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -26,7 +28,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential cmake libyaml-cpp-dev valgrind
-          git submodule update --init --recursive
       - name: configure
         run: |
           mkdir build && cd build
@@ -41,5 +42,3 @@ jobs:
         run: |
           cd build
           ctest --output-on-failure
-        # well lets pass initially
-        continue-on-error: true
