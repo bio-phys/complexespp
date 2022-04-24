@@ -101,8 +101,8 @@ class PairKernelManager : public io::AbstractSerializable {
 
     std::unordered_map<std::string, std::unique_ptr<AbstractPairKernel>>
         kernels;
-    std::unordered_map<std::string, int> allTypesIds;
-    std::unordered_map<int, std::string> allTypesIdsStr;
+    std::map<std::string, int> allTypesIds;
+    std::map<int, std::string> allTypesIdsStr;
     int maxTypeId = 0;
     for (auto& dom : topology) {
       if (allTypesIds.find(dom->name()) != allTypesIds.end() &&
