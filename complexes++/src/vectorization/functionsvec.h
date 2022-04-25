@@ -106,7 +106,7 @@ inline VecType lennardJones(const VecType r2, const VecType epsilon,
   VecType results = VecType::If(epsilon == 0)
                         .Then(.01 * ri12)
                         .ElseIf(epsilon > 0 & r2 < r2ij0)
-                        .Then(2.0 * epsilon + coef)
+                        .Then(2.0 * epsilon - coef)
                         .Else(coef);
 
   return results;
