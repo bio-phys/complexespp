@@ -122,7 +122,7 @@ template <class VecType> void simd_lennard_jones() {
                    0);
 }
 // enable again
-//TEST_SIMD_FUNC(lennard_jones, simd_lennard_jones)
+TEST_SIMD_FUNC(lennard_jones, simd_lennard_jones)
 
 template <class VecType> void simd_debye_hueckel() {
   const VecType charge1 = 1;
