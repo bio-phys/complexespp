@@ -36,7 +36,7 @@ endif(CCACHE_FOUND)
 
 # look for external dependencies that we require
 find_package(yaml-cpp REQUIRED)
-find_package(OpenMP)
+find_package(OpenMP REQUIRED)
 
 # --- set up compiler flags, depending on the compiler (g++, icpc) and the build type ---
 # To set the compiler, set the environment variable `CXX`
