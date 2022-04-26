@@ -45,5 +45,5 @@ jobs:
           for nb in `find . -name '*ipynb' -not -name '*checkpoint*'`
           do
           echo $nb
-          jupyter nbconvert --execute --ExecutePreprocessor.timeout=1000 --ExecutePreprocessor.kernel_name=python3 $nb
+          jupyter nbconvert --execute --ExecutePreprocessor.timeout=1000 --ExecutePreprocessor.kernel_name=python3 --to latex $nb
           done
