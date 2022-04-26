@@ -94,16 +94,23 @@ inline VecType lennardJones(const VecType r2, const VecType epsilon,
   const VecType r2ij0 = r2ij * sigma * sigma;
 
   // Non optimized is given by:
-    VecType results = VecType::If(epsilon == 0)
-                          .Then(.01 * ri12)
-                          .ElseIf(epsilon < 0)
-                          .Then(-4.0 * epsilon * (ri12 - ri6))
-                          .ElseIf(r2 < r2ij0)
-                          .Then(4.0 * epsilon * (ri12 - ri6 + .5))
-                          .Else(-4 * epsilon * (ri12 - ri6));
+//    VecType results = VecType::If(epsilon == 0)
+//                          .Then(.01 * ri12)
+//                          .ElseIf(epsilon < 0)
+//                          .Then(-4.0 * epsilon * (ri12 - ri6))
+//                          .ElseIf(r2 < r2ij0)
+//                          .Then(4.0 * epsilon * (ri12 - ri6 + .5))
+//                          .Else(-4 * epsilon * (ri12 - ri6));
 
   // Optimized is given by:
-//  const VecType coef = -4 * epsilon * (ri12 - ri6);
+  const VecType coef = -4 * epsilon * (ri12 - ri6);
+  VecType results = VecType::If(epsilon == 0)
+                        .Then(.01 * ri12)
+                        .ElseIf(epsilon < 0)
+                        .Then(coef)
+                        .ElseIf(r2 < r2ij0)
+                        .Then(2.0 * epsilon - coef)
+                        .Else(coef);
 //  VecType results = VecType::If(epsilon == 0)
 //                        .Then(.01 * ri12)
 //                        .ElseIf(epsilon > 0 & r2 < r2ij0)
