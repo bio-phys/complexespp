@@ -29,7 +29,7 @@ jobs:
           sudo apt-get install -y libyaml-cpp-dev build-essential cmake
       - name: install library
         run: |
-          pip install -e .
+          python setup.py install
       - name: configure
         run: |
           cd ../complexes++
@@ -39,6 +39,10 @@ jobs:
         run: |
           cd ../complexes++/build
           make install
+      - name: test-install
+        run: |
+          which pycomplexes
+          which complexes++
       - name: run tutorials
         run: | 
           cd tutorials
