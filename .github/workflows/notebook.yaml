@@ -1,0 +1,53 @@
+name: Notebook CI
+on: 
+  push:
+   branches: 
+     - main
+  pull_request:
+   branches: 
+     - main
+jobs:
+   tests:
+    runs-on: ubuntu-latest
+    name: notebook tests
+    defaults:
+      run:
+        working-directory: ./pycomplexes
+        shell: bash -l {0}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      - name: Setup Python
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: false
+          environment-file: pycomplexes/conda-linux-64.lock
+      - name: install Dependencies
+        run: |
+          sudo apt-get install -y libyaml-cpp-dev build-essential cmake
+      - name: install library
+        run: |
+          python setup.py install
+      - name: configure
+        run: |
+          cd ../complexes++
+          mkdir build && cd build
+          cmake ..
+      - name: build
+        run: |
+          cd ../complexes++/build
+          make install
+      - name: test-install
+        run: |
+          which pycomplexes
+          which complexes++
+      - name: run tutorials
+        run: | 
+          cd tutorials
+          for nb in `find . -name '*ipynb' -not -name '*checkpoint*'`
+          do
+          echo $nb
+          jupyter nbconvert --execute --ExecutePreprocessor.timeout=1000 --ExecutePreprocessor.kernel_name=python3 --to latex $nb
+          done
