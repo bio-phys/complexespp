@@ -1,3 +1,5 @@
+[![complexespp CI](https://github.com/bio-phys/complexespp/actions/workflows/complexes-ci.yml/badge.svg)](https://github.com/bio-phys/complexespp/actions/workflows/complexes-ci.yml)
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
@@ -7,12 +9,29 @@
 - [Help](#help)
 
 <!-- markdown-toc end -->
+
+
 complexes++ is a Monte-Carlo engine for coarse grained protein models. For an
-explanation of the implemented algorithms please have a look into the manual.
+explanation of the implemented algorithms please have a look into the [manual](https://github.com/bio-phys/complexespp/blob/main/manual/manual.pdf).
+
+
 Usage examples are given in the tutorials directory in the form of jupyter
 notebooks.
 
 # Installation
+
+To install all build requirements you can run the following commands on ubuntu/debian. 
+
+	git submodule update --init --recursive # to get inastemp
+	sudo apt-get install libyaml-cpp-dev build-essential cmake libomp-dev
+
+
+
+To build complexes use
+
+	mkdir build && cd build
+	cmake ..
+	make install
 
 In case you cannot install the [dependencies](#dependencies) of complexes yourself
 we also provide scripts that download and build the dependencies for you. Those
@@ -41,18 +60,14 @@ the following:
 
 Complexes++ has the following external dependencies.
 
-- fmt
 - yaml-cpp
+- openMP
 
 # Advanced installation
 
 Assuming all [build dependencies](#dependencies) are installed on your system you
 can build and install complexes++ using cmake directly
 
-    git submodule update --init --recursive # to get inastemp
-    mkdir build && cd build
-    cmake ..
-    make install
 
 The default installation path is `/usr`. To change the installation directory to
 `/your/path` change the second line to
