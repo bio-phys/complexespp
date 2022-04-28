@@ -35,8 +35,21 @@ if(CCACHE_FOUND)
 endif(CCACHE_FOUND)
 
 # look for external dependencies that we require
-find_package(yaml-cpp REQUIRED)
 find_package(OpenMP REQUIRED)
+
+include(ExternalProject)
+
+ExternalProject_Add(
+	yaml_cpp_project
+	GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+	GIT_TAG yaml-cpp-0.7.0
+	INSTALL_DIR "${CMAKE_BINARY_DIR}/prefix"
+	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DYAML_CPP_BUILD_TESTS=OFF -DYAML_CPP_BUILD_TOOLS=OFF -DYAML_CPP_BUILD_CONTRIB=OFF
+)
+
+add_library(yaml-cpp UNKNOWN IMPORTED)
+
+
 
 # --- set up compiler flags, depending on the compiler (g++, icpc) and the build type ---
 # To set the compiler, set the environment variable `CXX`
@@ -48,9 +61,9 @@ if( USE_DEBUGINFO )
 endif()
 
 # -- Warnings --
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wnon-virtual-dtor")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Woverloaded-virtual")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpointer-arith -Wcast-qual -Wconversion")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wnon-virtual-dtor")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Woverloaded-virtual")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpointer-arith -Wcast-qual -Wconversion")
 
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-conversion -Wold-style-cast")
@@ -101,7 +114,7 @@ add_subdirectory(ext/fmt-8.1.1 EXCLUDE_FROM_ALL)
 include_directories(SYSTEM
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${XDRFILE_INCLUDE_DIR}
-  ${yaml-cpp_INCLUDE_DIR}
+  ${PROJECT_BINARY_DIR}/prefix/include
   ext/CLsimple
   # FMT should not need this according to docs
   ext/fmt-8.1.1/include
@@ -134,6 +147,9 @@ if (TESTS)
   else()
     set_target_properties(gtest PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error")
   endif()
+  set_target_properties(gtest PROPERTIES
+  	IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/prefix/lib/${CMAKE_STATIC_LIBRARY_PREFIX}yaml-cpp${CMAKE_STATIC_LIBRARY_SUFFIX}
+  )
   enable_testing()
   subdirs(test)
 endif()

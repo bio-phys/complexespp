@@ -35,6 +35,7 @@ set(SOURCES
 set(LIBRARIES
   ${XDRFILE_LIB_DIR}
   ${yaml-cpp_LIBRARY}
+  ${PROJECT_BINARY_DIR}/prefix/lib/${CMAKE_STATIC_LIBRARY_PREFIX}yaml-cpp${CMAKE_STATIC_LIBRARY_SUFFIX}
   fmt::fmt-header-only
   CACHE STRING "link time dependencies")
 
@@ -58,9 +59,13 @@ include_directories(${CMAKE_CURRENT_LIST_DIR})
 
 # build files as a library so that I can reuse the object files
 add_library(${PROJECT_NAME_STR}_objects OBJECT ${SOURCES})
-add_dependencies(${PROJECT_NAME_STR}_objects xdrfile)
+add_dependencies(${PROJECT_NAME_STR}_objects xdrfile yaml_cpp_project)
 
 add_executable (${PROJECT_NAME_STR} $<TARGET_OBJECTS:${PROJECT_NAME_STR}_objects> "main.cpp")
+set_target_properties(${PROJECT_NAME_STR} PROPERTIES
+	IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/prefix/lib/${CMAKE_STATIC_LIBRARY_PREFIX}yaml-cpp${CMAKE_STATIC_LIBRARY_SUFFIX}
+)
+
 target_link_libraries(${PROJECT_NAME_STR} PRIVATE ${LIBRARIES})
   
 install (TARGETS ${PROJECT_NAME_STR}
