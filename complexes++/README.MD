@@ -22,51 +22,13 @@ You can find examples of using complexes++ in the pycomplexes included [tutorial
 To install all build requirements you can run the following commands on ubuntu/debian. 
 
 	git submodule update --init --recursive # to get inastemp
-	sudo apt-get install libyaml-cpp-dev build-essential cmake libomp-dev
-
-
 
 To build complexes use
 
 	mkdir build && cd build
 	cmake ..
-	make install
-
-In case you cannot install the [dependencies](#dependencies) of complexes yourself
-we also provide scripts that download and build the dependencies for you. Those
-require that you also build complexes with our scripts.
-
-    cd ../scripts/build_scripts
-    ./build_deps.sh
-    ./build_dynamic.sh
-
-Using these scripts complexes++ will be installed at `~/complexes-pp/bin`. You
-can change the installation directory in `build.cfg`. To find the executable in
-bash by name you have to update your `PATH` variable.
-
-    export PATH=$HOME/complexes-pp/bin:$PATH
-
-To update to a new version of complexes with our scripts run it can happen that the
-dependencies have to be rebuild. To rebuild complexes++ with all dependencies run
-the following:
-
-    cd ../scripts/build_scripts
-    ./build_deps.sh -f
-    ./build_dynamic.sh -f
-
-
-# Dependencies
-
-Complexes++ has the following external dependencies.
-
-- yaml-cpp
-- openMP
-
-# Advanced installation
-
-Assuming all [build dependencies](#dependencies) are installed on your system you
-can build and install complexes++ using cmake directly
-
+	make -j
+	sudo make install
 
 The default installation path is `/usr`. To change the installation directory to
 `/your/path` change the second line to
@@ -80,3 +42,23 @@ This will install complexes in `/your/path/bin`.
 To find help for the complexes++ program options use
 
     complexes++ --help
+
+# Development
+
+Complexes++ is written in C++. Do develop
+
+## run tests
+
+We use a mixture of unit and integration tests. You can find them all in the tests folder. 
+Assuming you already build complexes you can prepare the test environment and run tests 
+with the following commands.
+
+	conda create -n complexestest -f conda-linux-64.lock
+	conda activate complexestest
+	cd build
+	make tests
+
+
+This will create a conda environment with the python packages we need to our integration tests.
+If you want to add new run time dependencies for the tests please add them to the pyproject.toml 
+file and create a new lock file using [conda-lock](https://github.com/conda-incubator/conda-lock).
