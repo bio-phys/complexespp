@@ -15,7 +15,7 @@ For help for an individual command run:
 To install and run pycomplexes we recommend to use conda environments. To create 
 a environment called pycomplexes and install it run:
 
-    conda create -n pycomplexes -f conda-linux-64.lock
+    conda create -n pycomplexes --file conda-linux-64.lock
     conda activate pycomplexes
     python setup.py install
 
