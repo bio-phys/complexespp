@@ -37,6 +37,7 @@ set(LIBRARIES
   ${yaml-cpp_LIBRARY}
   ${PROJECT_BINARY_DIR}/prefix/lib/${CMAKE_STATIC_LIBRARY_PREFIX}yaml-cpp${CMAKE_STATIC_LIBRARY_SUFFIX}
   fmt::fmt-header-only
+  ${complexes++_LIBRARIES}
   CACHE STRING "link time dependencies")
 
 include(GetGitRevisionDescription)

@@ -33,12 +33,19 @@
 int main(int argc, char **argv) {
   setup::printGPL();
 
-  auto args = setup::MPICLIArgs(argc, argv);
+  auto args = mpi::MpiCLIArgs(argc, argv);
   if (args.parse() == false || args.hasKey("help")) {
-    args.printHelp(std::cout);
+      MPI_ASSERT(MPI_Init(&argc, &argv));
+      int myRank;
+      MPI_ASSERT(MPI_Comm_rank(MPI_COMM_WORLD, &myRank));
+      if(myRank == 0){
+        args.printHelp(std::cout);
+      }
+      MPI_ASSERT(MPI_Finalize());
     return 0;
   }
-  mpi::MpiApplication app(args);
+
+  mpi::MpiApplication app(argc, argv, args);
   auto timer = util::Timer();
   auto res = app.run();
   fmt::print(std::clog, "[LOG] total runtime = {}s\n",
