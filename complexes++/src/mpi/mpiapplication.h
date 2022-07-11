@@ -54,7 +54,7 @@ class MpiApplication {
 
   //! For the remc/exchange executions
   int multiDirExecution() const {
-    const std::string configFilename = m_args.value("config");
+    const std::string configFilename = m_args.config;
     const std::vector<std::string> configDirNames =
         m_args.multidir;
     const int nbSimu = static_cast<int>(configDirNames.size());
@@ -67,7 +67,7 @@ class MpiApplication {
     }
 
     const io::MoveStatRecorder::Verbosity moveStatsVerbosity =
-        m_args.getMappingValue<io::MoveStatRecorder::Verbosity>(
+        m_args.getMapping<io::MoveStatRecorder::Verbosity>(
             "movestats", {{"none", io::MoveStatRecorder::TXT_NONE},
                           {"perdomain", io::MoveStatRecorder::TXT_PER_DOMAIN},
                           {"pertype", io::MoveStatRecorder::TXT_PER_TYPE},
@@ -127,16 +127,17 @@ class MpiApplication {
       // pure multidir
       simu = mpi::MpiMultidirBuilder(
           configDirNamesLocal, configDirNames, configFilename,
-          m_args.hasKey("restart"),
-          m_args.hasKey("restart") ? m_args.value("restart") : "",
+                  m_args.hasKey("restart"),
+          (m_args.hasKey("restart") ? m_args.restart : ""),
           m_args.backup, moveStatsVerbosity, nbThreads,
           partitions, partitionsOffset);
     } else {
       simu = mpi::MpiExchangeBuilder(
           configDirNamesLocal, configDirNames, configFilename,
-          m_args.replex_stat,
-          m_args.value("replex-accept"), m_args.hasKey("restart"),
-          m_args.hasKey("restart") ? m_args.value("restart") : "",
+          m_args.replex,
+          m_args.replex_stat, m_args.replex_accept,
+                  m_args.hasKey("restart"),
+          m_args.hasKey("restart") ? m_args.restart : "",
           m_args.backup, moveStatsVerbosity, nbThreads,
           partitions, partitionsOffset);
     }
@@ -159,14 +160,14 @@ class MpiApplication {
     }
 
     const io::MoveStatRecorder::Verbosity moveStatsVerbosity =
-        m_args.getMappingValue<io::MoveStatRecorder::Verbosity>(
+        m_args.getMapping<io::MoveStatRecorder::Verbosity>(
             "movestats", {{"none", io::MoveStatRecorder::TXT_NONE},
                           {"perdomain", io::MoveStatRecorder::TXT_PER_DOMAIN},
                           {"pertype", io::MoveStatRecorder::TXT_PER_TYPE},
                           {"all", io::MoveStatRecorder::TXT_ALL}});
 
-    mc::Simulation simu(util::dirname(m_args.value("config")),
-                        util::filename(m_args.value("config")),
+    mc::Simulation simu(util::dirname(m_args.config),
+                        util::filename(m_args.config),
                         moveStatsVerbosity);
 
     int returnedValue;
@@ -186,7 +187,7 @@ class MpiApplication {
       }
     } else {
       if (m_args.hasKey("restart")) {
-        simu.initFromRestart(m_args.value("restart"));
+        simu.initFromRestart(m_args.restart);
       } else {
         simu.init(m_args.backup);
       }
@@ -226,7 +227,7 @@ class MpiApplication {
   /// Public methods
   //////////////////////////////////////////////////////////////////////////
 public:
-  MpiApplication(int inArgc, char **inArgv, const MPICLIArgs args)
+  MpiApplication(int inArgc, char **inArgv, const MpiCLIArgs args)
       : m_myRank(InitMpi(inArgc, inArgv)), m_nbProcesses(GetNbProcesses()),
         m_args(args) {}
 
@@ -248,13 +249,6 @@ public:
     if (m_args.hasKey("version")) {
       if (m_myRank == 0) {
         fmt::print(util::buildInformation());
-      }
-      return 0;
-    }
-
-    if (m_args.hasKey("help") || !m_args.hasKey("config")) {
-      if (m_myRank == 0) {
-        setup::printHelp(m_args);
       }
       return 0;
     }

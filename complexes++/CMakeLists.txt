@@ -20,12 +20,17 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # test if a mpi file can be compiled
 OPTION( COMPLEXES_USE_MPI "Set to OFF to disable MPI" OFF )
-include(testmpi)
-TestMpi()
-if( MPI_WORKS )
-  set(COMPLEXES_USE_MPI ON)
-  message("-- Build mpi executable. Compiler warnings are turned off.")
+if(COMPLEXES_USE_MPI)
+    find_package(MPI REQUIRED)
+    include_directories(SYSTEM ${MPI_INCLUDE_PATH})
+    list(APPEND complexes++_LIBRARIES ${MPI_CXX_LIBRARIES})
+    include(testmpi)
+    TestMpi()
+    if( NOT MPI_WORKS )
+      message(ERROR "-- Cannot compile MPI code.")
+    endif()
 endif()
+
 
 # https://stackoverflow.com/a/24305849/2207958
 find_program(CCACHE_FOUND ccache)

@@ -25,11 +25,11 @@ namespace mpi {
 class MpiCLIArgs : public setup::CLIArgs {
 public:
   MpiCLIArgs(const int &argc, const char *const argv[]) : setup::CLIArgs(argc, argv) {
-      args.addParameter<int>({"mpi-partitions", "np"}, "number of simulation per nodes",
-                             mpi_partitions, 1);
+      args.addMultiParameter<int>({"mpi-partitions", "np"}, "number of simulation per nodes",
+                             mpi_partitions);
   }
 
-  int mpi_partitions;
+  std::vector<int> mpi_partitions;
 };
 
 } // namespace mpi
