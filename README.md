@@ -11,9 +11,6 @@ Complexes consists of two separate programs:
 
 **Descriptions how to install each program can be found in the respective sub-directories.**
 
-To find detailed description of theory and implemented Monte-Carlo algorithms
-please have a look into the [manual](https://github.com/bio-phys/complexespp/blob/main/manual/manual.pdf).
-
 # Documentation
 
 ## Tutorials
