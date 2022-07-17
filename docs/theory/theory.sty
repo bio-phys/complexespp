@@ -1,0 +1,91 @@
+\ProvidesPackage{manual}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{import}
+
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
+
+\usepackage{graphicx}
+\graphicspath{ {figures/} }
+\usepackage{array}
+\usepackage{minted}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{booktabs}
+
+% abbreviations
+\usepackage[nonumberlist,toc,nopostdot,acronym]{glossaries}
+\makeglossaries
+\loadglsentries{./abbreviations.tex}
+\setglossarystyle{super}
+
+
+\usepackage{algorithm}
+\usepackage[algo2e,linesnumbered,commentsnumbered, lined, boxed,ruled,vlined]{algorithm2e}
+% algorithm2e config
+\def\HiLi{\leavevmode\rlap{\hbox to \hsize{\color{green!10}\leaders\hrule height .8\baselineskip depth .5ex\hfill}}}
+\def\HiLiScalar{\leavevmode\rlap{\hbox to \hsize{\color{blue!10}\leaders\hrule height .8\baselineskip depth .5ex\hfill}}}
+\renewcommand{\algorithmcfname}{ALGORITHM}
+\SetAlFnt{\small}
+\SetAlCapFnt{\small}
+\SetAlCapNameFnt{\small}
+\SetAlCapHSkip{0pt}
+\SetKwProg{Fn}{function}{}{}
+\SetKwBlock{Begin}{ }{ }
+% end algorithm2e config
+
+%%%%%%%%%%%%%%
+% MATH STUFF %
+%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{bm}% bold math
+\usepackage{dsfont}
+
+%%%%%%%%%%%%%
+% CITATIONS %
+%%%%%%%%%%%%%
+\usepackage[sort&compress,numbers]{natbib}
+\bibliographystyle{unsrtnat}
+
+%%%%%%%%%%%%%%%
+% References  %
+%%%%%%%%%%%%%%%
+\usepackage[bookmarks,pdfpagelabels,hyperindex,hyperfigures]{hyperref}
+\hypersetup{
+ pdftitle={Complexes Manual},
+ pdfkeywords={},
+ pdfsubject={},
+ colorlinks=true,
+ pdfcreator={},
+ pdfpagemode=UseOutlines,
+ pdflang={English}}
+\usepackage[capitalise]{cleveref}
+
+\creflabelformat{equation}{#2#1#3}
+\crefformat{equation}{eq~#2#1#3}
+\Crefformat{equation}{Eq~#2#1#3}
+\crefrangeformat{equation}{eqs~#3#1#4 to~#5#2#6}
+\crefmultiformat{equation}{eqs~#2#1#3}{ and~#2#1#3}{, #2#1#3}{ and~#2#1#3}
+\crefrangemultiformat{equation}{eqs~#3#1#4 to #5#2#6}%
+  {\crefpairconjunction#3#1#4 to #5#2#6}{, #3#1#4 to #5#2#6}%
+  {\creflastconjunction#3#1#4 to #5#2#6}
+%{\crefpairconjunction#3#1#4 to #5#2#6}{, #3#1#4 to #5#2#6}%
+%  {\creflastconjunction#3#1#4 to #5#2#6}
+
+\crefformat{figure}{Figure~#2#1#3}
+
+%%%%%%%%%%%%%%%%%%%
+% My own commands %
+%%%%%%%%%%%%%%%%%%%
+\newcommand{\latin}[1]{{\it #1}}
+\newcommand{\kT}{k_{\mathrm{B}}T}
+\newcommand{\calpha}{C\(_{\alpha}\) }
+\definecolor{lightgray}{gray}{0.9}
+\newcommand{\inlinecode}[1]{\texttt{#1}}
+\newcommand{\cplx}{\mbox{CPLX} }
+\newcommand{\yaml}{\mbox{YAML} }
+
+\newcommand{\complexes}{Complexes\small{++} }
+\newcommand{\pycomplexes}{pycomplexes }
