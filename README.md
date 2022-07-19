@@ -2,7 +2,9 @@
 
 [![Notebook CI](https://github.com/bio-phys/complexespp/actions/workflows/notebook.yaml/badge.svg)](https://github.com/bio-phys/complexespp/actions/workflows/notebook.yaml)
 [![Pycomplexes CI](https://github.com/bio-phys/complexespp/actions/workflows/pycomplexes-ci.yaml/badge.svg)](https://github.com/bio-phys/complexespp/actions/workflows/pycomplexes-ci.yaml)
-i[![complexespp CI](https://github.com/bio-phys/complexespp/actions/workflows/complexes-ci.yml/badge.svg)](https://github.com/bio-phys/complexespp/actions/workflows/complexes-ci.yml)
+[![complexespp CI](https://github.com/bio-phys/complexespp/actions/workflows/complexes-ci.yml/badge.svg)](https://github.com/bio-phys/complexespp/actions/workflows/complexes-ci.yml)
+
+![TOC](toc.png)
 
 Complexes consists of two separate programs: 
 
