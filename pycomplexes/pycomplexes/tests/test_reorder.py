@@ -62,17 +62,17 @@ def test_main(tmpdir, data):
     with open(pjoin(tmpdir.dirname, "test.pdb"), "r") as outputfile:
         test_lines = [l for l in outputfile.readlines() if "ATOM" in l]
     expected_lines = (
-        "ATOM      1  CA  LYS A   1      -7.998   1.609  -1.490  1.00  0.00      A    C\n",
-        "ATOM      2  CA  THR A   2      -4.754   3.630  -1.008  1.00  0.00      A    C\n",
-        "ATOM      3  CA  TRP A   3      -1.368   3.031  -2.738  1.00  0.00      A    C\n",
-        "ATOM      4  CA  ASN A   4       1.663   2.174  -0.525  1.00  0.00      A    C\n",
-        "ATOM      5  CA  PRO A   5       4.950   3.274  -2.280  1.00  0.00      A    C\n",
-        "ATOM      6  CA  ALA A   6       6.957   1.731   0.626  1.00  0.00      A    C\n",
-        "ATOM      7  CA  THR A   7       5.931  -1.892  -0.279  1.00  0.00      A    C\n",
-        "ATOM      8  CA  TRP A  10      -2.632  -1.198  -2.639  1.00  0.00      A    C\n",
-        "ATOM      9  CA  GLY B   8       4.569  -1.407  -3.861  1.00  0.00      B    C\n",
-        "ATOM     10  CA  LYS B   9       0.918  -2.504  -3.180  1.00  0.00      B    C\n",
-        "ATOM     11  CA  THR C  11      -4.250  -1.170   0.860  1.00  0.00      C    C\n",
-        "ATOM     12  CA  GLU C  12      -7.968  -1.794   1.715  1.00  0.00      C    C\n",
+        "ATOM      1  CA  LYS A   1      -7.998   1.609  -1.490  1.00  0.00      A    C  \n",
+        "ATOM      2  CA  THR A   2      -4.754   3.630  -1.008  1.00  0.00      A    C  \n",
+        "ATOM      3  CA  TRP A   3      -1.368   3.031  -2.738  1.00  0.00      A    C  \n",
+        "ATOM      4  CA  ASN A   4       1.663   2.174  -0.525  1.00  0.00      A    C  \n",
+        "ATOM      5  CA  PRO A   5       4.950   3.274  -2.280  1.00  0.00      A    C  \n",
+        "ATOM      6  CA  ALA A   6       6.957   1.731   0.626  1.00  0.00      A    C  \n",
+        "ATOM      7  CA  THR A   7       5.931  -1.892  -0.279  1.00  0.00      A    C  \n",
+        "ATOM      8  CA  TRP A  10      -2.632  -1.198  -2.639  1.00  0.00      A    C  \n",
+        "ATOM      9  CA  GLY B   8       4.569  -1.407  -3.861  1.00  0.00      B    C  \n",
+        "ATOM     10  CA  LYS B   9       0.918  -2.504  -3.180  1.00  0.00      B    C  \n",
+        "ATOM     11  CA  THR C  11      -4.250  -1.170   0.860  1.00  0.00      C    C  \n",
+        "ATOM     12  CA  GLU C  12      -7.968  -1.794   1.715  1.00  0.00      C    C  \n",
     )
     assert_array_equal(test_lines, expected_lines)
