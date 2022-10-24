@@ -163,7 +163,7 @@ endif()
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
     message( STATUS "Doxygen has been found, use \"make doc\" to generate the documentation." )
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../manual/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../docs/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
     add_custom_target(
         doc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile

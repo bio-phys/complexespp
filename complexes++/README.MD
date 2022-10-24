@@ -12,7 +12,7 @@
 
 
 complexes++ is a Monte-Carlo engine for coarse grained protein models. For an
-explanation of the implemented algorithms please have a look into the [manual](../manual/manual.pdf).
+explanation of the implemented algorithms please have a look into the [docs](../docs/).
 
 
 You can find examples of using complexes++ in the pycomplexes included [tutorials](../pycomplexes/tutorials).
