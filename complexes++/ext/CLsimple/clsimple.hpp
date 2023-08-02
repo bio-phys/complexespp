@@ -18,6 +18,7 @@
 #include <limits>
 #include <cassert>
 #include <set>
+#include <unordered_map>
 
 class CLsimple{
     template <class ParamType>
