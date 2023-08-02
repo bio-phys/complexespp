@@ -224,41 +224,6 @@ fi
 #####
 
 
-######
-# check for xtc headers
-case "${host_os}" in
-cygwin* | mingw*)   # use our own xdr stuff for cygwin/mingw
-  GMXLIB_LIBOBJS="$GMXLIB_LIBOBJS gmx_system_xdr.lo"
-  ;;
-*)
-  AC_CHECK_HEADERS([rpc/rpc.h])
-  AC_CHECK_HEADERS([rpc/xdr.h],,,
-[#if HAVE_RPC_RPC_H
-# include <rpc/rpc.h>
-#endif
-])
-  AC_CHECK_LIB(nsl,xdr_float)
-  AC_TRY_LINK([
-#if HAVE_RPC_RPC_H
-#include<rpc/rpc.h> 
-#else
-#error NO rpc.h header
-#endif
-#if HAVE_RPC_XDR_H
-#include<rpc/xdr.h>
-#else
-#error No xdr.h header
-#endif
-],[ XDR *xd; float f; xdr_float(xd,&f);],[have_xdr="yes"])
-
-  if test "$have_xdr" != "yes"; then
-    AC_DEFINE(GMX_INTERNAL_XDR,,[Use our own instead of system XDR libraries])	
-      GMXLIB_LIBOBJS="${GMXLIB_LIBOBJS} gmx_system_xdr.lo"
-    AC_MSG_WARN([Couldn't find XDR headers and/or libraries - using our own])
-  fi
-  ;;
-esac
-
 #####
 # Checks for additional and/or optional functions or libraries.
 #AC_FUNC_MALLOC
